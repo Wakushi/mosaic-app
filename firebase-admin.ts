@@ -1,17 +1,23 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import * as admin from "firebase-admin"
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-	projectId: process.env.FIREBASE_PROJECT_ID,
-	clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-	privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
-};
+if (!admin.apps.length) {
+  try {
+    console.log("Initializing Firebase Admin");
+    console.log("Project ID:", process.env.FIREBASE_PROJECT_ID);
+console.log("Client Email:", process.env.FIREBASE_CLIENT_EMAIL);
+console.log("Private Key:", process.env.FIREBASE_PRIVATE_KEY);
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+    admin.initializeApp({
+      credential: admin.credential.cert({
+        projectId: process.env.FIREBASE_PROJECT_ID,
+        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+        privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
+      }),
+    })
+  } catch (error: any) {
+    console.log("Firebase admin initialization error", error.stack)
+  }
+}
+
+export { admin }
+export const adminDb = admin.firestore()
