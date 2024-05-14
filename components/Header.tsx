@@ -3,7 +3,7 @@ import { useState } from "react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { Button } from "./ui/button";
 import { Modal } from "@/components/clientUi/modal";
-import { ProfileForm } from "./newClient-form";
+import { ProfileForm } from "./profile-form";
 export default function Header() {
   const [modalOpen, setModalOpen] = useState(false);
   const toggleModal = () => setModalOpen(!modalOpen);
@@ -18,12 +18,13 @@ export default function Header() {
         <ConnectButton
         accountStatus={{
           smallScreen: "avatar",
-          largeScreen: "full",
+          largeScreen: "avatar",
         }}
         showBalance={{
           smallScreen: false,
           largeScreen: false,
         }}
+        chainStatus="none"
       />
       </div>
       
