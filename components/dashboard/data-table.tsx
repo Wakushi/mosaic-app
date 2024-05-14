@@ -22,6 +22,8 @@ import {
 
 import { Input } from "@/components/ui/input";
 
+import { Button } from "@/components/ui/button";
+
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -47,7 +49,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-10">
+      <div className="flex items-center py-10 gap-10">
         <Input
           placeholder="Filter works..."
           value={(table.getColumn("artwork")?.getFilterValue() as string) ?? ""}
@@ -56,6 +58,7 @@ export function DataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
+		<Button>Add Artwork</Button>
       </div>
       <div className="rounded-md border">
         <Table>
