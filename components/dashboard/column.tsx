@@ -1,6 +1,6 @@
 "use client";
 
-import { Artwork } from "@/data/artwork";
+import { Artwork } from "@/types/artwork";
 
 import { ColumnDef } from "@tanstack/react-table";
 
@@ -33,7 +33,7 @@ export const columns: ColumnDef<Artwork>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const payment = row.original;
+      const artwork = row.original;
 
       return (
         <DropdownMenu>
