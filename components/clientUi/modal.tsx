@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode } from "react";
 
 interface ModalProps {
   isOpen: boolean;
@@ -21,6 +21,7 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, close, children }) => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+		zIndex: 1000
       }}
     >
       <div

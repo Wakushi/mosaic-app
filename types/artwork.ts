@@ -1,6 +1,10 @@
 export type Artwork = {
-	id: string;
-	amount: number;
-	status: "pending" | "processing" | "success" | "failed";
-	artwork: string;
-  };
+  id: string;
+  clientAddress: string;
+  status: "pending" | "approved" | "rejected";
+  createdAt: number;
+  approvedAt?: number;
+  title: string;
+  artist: string;
+  owner: string;
+};

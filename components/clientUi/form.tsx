@@ -11,6 +11,7 @@ interface FormFieldData {
   name: string;
   label: string;
   description: string;
+  type?: string;
 }
 
 interface ReusableFormProps {
@@ -38,7 +39,7 @@ export const ReusableForm: React.FC<ReusableFormProps> = ({ schema, defaultValue
               <FormItem>
                 <FormLabel>{field.label}</FormLabel>
                 <FormControl>
-                  <Input {...formField} />
+                  <Input type={field.type || 'text'} {...formField} />
                 </FormControl>
                 <FormDescription>
                   {field.description}

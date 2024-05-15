@@ -1,4 +1,3 @@
-// pages/api/addClient.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { Client } from '@/types/client';
 import { addClient } from '@/utils/firebase-data';

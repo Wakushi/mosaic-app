@@ -1,7 +1,14 @@
 "use client";
 
+// React
 import * as React from "react";
+import { useState } from "react";
 
+// composants
+import { Modal } from "@/components/clientUi/modal";
+import { ProfileForm } from "@/components/profile-form";
+
+// React table
 import {
   ColumnDef,
   flexRender,
@@ -11,6 +18,7 @@ import {
   getFilteredRowModel,
 } from "@tanstack/react-table";
 
+// Shadcn
 import {
   Table,
   TableBody,
@@ -19,10 +27,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
 import { Input } from "@/components/ui/input";
-
 import { Button } from "@/components/ui/button";
+import { ArtForm } from "../artwork-form";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -46,6 +53,8 @@ export function DataTable<TData, TValue>({
       columnFilters,
     },
   });
+  const [modalOpen, setModalOpen] = useState(false);
+  const toggleModal = () => setModalOpen(!modalOpen);
 
   return (
     <div className="w-full">
@@ -58,7 +67,10 @@ export function DataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
-		<Button>Add Artwork</Button>
+        <Button onClick={toggleModal}>Add Artwork</Button>
+        <Modal isOpen={modalOpen} close={toggleModal}>
+        <ArtForm/> 
+      </Modal>
       </div>
       <div className="rounded-md border">
         <Table>
