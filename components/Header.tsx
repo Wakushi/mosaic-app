@@ -12,7 +12,7 @@ export default function Header() {
   const [modalOpen, setModalOpen] = useState(false);
   const toggleModal = () => setModalOpen(!modalOpen);
   return (
-    <div className="flex justify-between p-3 z-30 w-screen">
+    <div className="flex justify-between p-3 z-30 w-screen border-b fixed">
       <Link href="/">
         <div>Mosaic</div>
       </Link>
