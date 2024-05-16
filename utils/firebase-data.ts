@@ -36,3 +36,13 @@ export const getArtworksByClientAddress = async (clientAddress: string): Promise
     throw new Error('Failed to get artworks');
   }
 };
+
+export const isUserRegistered = async (clientAddress: string) => {
+  try {
+    const snapshot = await adminDb.collection('users').where('clientAddress', '==', clientAddress).get();
+    return snapshot.empty;
+  } catch (error) {
+    console.error('Error checking user registration:', error);
+    throw new Error('Failed to check user registration');
+  }
+};

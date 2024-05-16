@@ -1,11 +1,10 @@
 "use client";
 import Experience from "@/components/canvas/Canvas";
 import { Canvas } from "@react-three/fiber";
-import Image from "next/image";
 
 export default function Home() {
   return (
-    <div className="flex pl-14 bg-gradient-to-r from-white to-gray-300 border-b">
+    <div className="flex pl-14 pb-20 bg-gradient-to-r from-white to-gray-300 border-b">
       <div className="w-1/2 flex flex-col mt-24">
         <div className="flex flex-col gap-10">
           <h1 className="text-8xl">Mosaic</h1>
@@ -20,7 +19,7 @@ export default function Home() {
           </p>
         </div>
       </div>
-      <div className="w-1/2 h-2/3 mt-24 ">
+      <div className="w-1/2 mt-24 ">
         <Canvas>
           <Experience />
         </Canvas>
