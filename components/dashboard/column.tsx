@@ -1,35 +1,29 @@
 "use client";
 
-import { Artwork } from "@/types/artwork";
-
 import { ColumnDef } from "@tanstack/react-table";
-
 import { MoreHorizontal } from "lucide-react";
-
+import { Artwork } from "@/types/artwork";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 export const columns: ColumnDef<Artwork>[] = [
+  {
+    accessorKey: "title",
+    header: "Title",
+  },
+  {
+    accessorKey: "artist",
+    header: "Artist",
+  },
+  {
+    accessorKey: "price",
+    header: "Price",
+  },
   {
     accessorKey: "status",
     header: "Status",
   },
-  {
-    accessorKey: "artwork",
-    header: "Artwork",
-  },
-  {
-    accessorKey: "amount",
-    header: "Amount",
-  },
+  
   {
     id: "actions",
     cell: ({ row }) => {

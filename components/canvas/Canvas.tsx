@@ -1,4 +1,4 @@
-import { OrbitControls, useTexture, useMatcapTexture } from "@react-three/drei";
+import { useTexture, useMatcapTexture } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 ``;
 import { useRef } from "react";

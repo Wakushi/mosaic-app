@@ -21,3 +21,18 @@ export const addArtwork = async (artworkData: Omit<Artwork, 'id'>): Promise<void
 	  throw new Error('Failed to add artwork');
 	}
   };
+
+
+export const getArtworksByClientAddress = async (clientAddress: string): Promise<Artwork[]> => {
+  try {
+    const snapshot = await adminDb.collection('artworks').where('clientAddress', '==', clientAddress).get();
+    const artworks: Artwork[] = [];
+    snapshot.forEach((doc) => {
+      artworks.push({ id: doc.id, ...doc.data() } as Artwork);
+    });
+    return artworks;
+  } catch (error) {
+    console.error('Error getting artworks:', error);
+    throw new Error('Failed to get artworks');
+  }
+};

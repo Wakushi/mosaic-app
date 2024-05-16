@@ -1,14 +1,7 @@
 "use client";
 
-// React
 import * as React from "react";
 import { useState } from "react";
-
-// composants
-import { Modal } from "@/components/clientUi/modal";
-import { ProfileForm } from "@/components/profile-form";
-
-// React table
 import {
   ColumnDef,
   flexRender,
@@ -17,8 +10,6 @@ import {
   ColumnFiltersState,
   getFilteredRowModel,
 } from "@tanstack/react-table";
-
-// Shadcn
 import {
   Table,
   TableBody,
@@ -29,6 +20,7 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Modal } from "@/components/clientUi/modal";
 import { ArtForm } from "../artwork-form";
 
 interface DataTableProps<TData, TValue> {
@@ -61,16 +53,16 @@ export function DataTable<TData, TValue>({
       <div className="flex items-center py-10 gap-10">
         <Input
           placeholder="Filter works..."
-          value={(table.getColumn("artwork")?.getFilterValue() as string) ?? ""}
+          value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("artwork")?.setFilterValue(event.target.value)
+            table.getColumn("title")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
         <Button onClick={toggleModal}>Add Artwork</Button>
         <Modal isOpen={modalOpen} close={toggleModal}>
-        <ArtForm/> 
-      </Modal>
+          <ArtForm />
+        </Modal>
       </div>
       <div className="rounded-md border">
         <Table>
