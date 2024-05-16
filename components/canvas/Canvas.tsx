@@ -5,7 +5,7 @@ import { useRef } from "react";
 import * as THREE from "three";
 
 export default function Experience() {
-  const texture = useTexture("/test3.png");
+  const texture = useTexture("/logoTexture.png");
   const [matcapTexture] = useMatcapTexture("0A0A0A_A9A9A9_525252_747474", 256);
 
   const groupRef = useRef<THREE.Group | null>(null);
@@ -20,7 +20,7 @@ export default function Experience() {
     <>
       <ambientLight />
       <pointLight position={[10, 10, 10]} />
-      <group ref={groupRef} scale={0.9}>
+      <group ref={groupRef} scale={1.2}>
         <mesh rotation={[Math.PI * 0.5, 0, 0]}>
           <cylinderGeometry args={[1.5, 1.5, 0.2, 100, 1]} />
           <meshMatcapMaterial matcap={matcapTexture} />
