@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Playfair_Display } from "next/font/google";
 import "./globals.css";
 import Providers from "./provider";
 import Header from "@/components/Header";
 
-const inter = Inter({ subsets: ["latin"] });
+const playfairDisplay = Playfair_Display({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Mosaic",
@@ -18,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={playfairDisplay.className}>
         <Providers>
           <header>
             <Header/>
