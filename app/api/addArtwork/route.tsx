@@ -4,7 +4,7 @@ import { Artwork } from '@/types/artwork';
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
-    const { clientAddress, title, artist, owner }: Omit<Artwork, 'id' | 'status' | 'createdAt'> = await req.json();
+    const { clientAddress, title, artist, owner, price }: Omit<Artwork, 'id' | 'status' | 'createdAt'> = await req.json();
     const newArtwork: Omit<Artwork, 'id'> = {
       clientAddress,
       status: 'pending',
@@ -12,6 +12,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       title,
       artist,
       owner,
+      price,
     };
     await addArtwork(newArtwork);
     return NextResponse.json({ message: 'Artwork added successfully' });

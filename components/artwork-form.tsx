@@ -49,6 +49,7 @@ export function ArtForm() {
           title: values.title,
           artist: values.artist,
           owner: values.owner,
+          price: values.price,
         }),
       });
       const responseData = await response.json();

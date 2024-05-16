@@ -7,4 +7,5 @@ export type Artwork = {
   title: string;
   artist: string;
   owner: string;
+  price: number;
 };
