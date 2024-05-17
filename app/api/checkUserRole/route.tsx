@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getArtworksByClientAddress } from "@/utils/firebase-data";
+import { isUserAdmin } from "@/utils/firebase-data";
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
   try {
@@ -13,8 +13,12 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       );
     }
 
-    const artworks = await getArtworksByClientAddress(clientAddress);
-    return NextResponse.json(artworks);
+    const isAdmin = await isUserAdmin(clientAddress);
+    const response =  NextResponse.json({ isAdmin });
+
+    response.cookies.set('isAdmin', isAdmin.toString(), { httpOnly: true });
+
+    return response;
   } catch (error) {
     console.error("API error:", error);
     if (error instanceof Error) {
