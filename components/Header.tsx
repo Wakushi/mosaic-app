@@ -70,7 +70,6 @@ export default function Header() {
 
     fetchUserRole();
   }, [account?.address]);
-  console.log(isRegistered, isAdmin)
   return (
     <div className="flex justify-between py-3 z-30 w-screen fixed px-14 items-center">
       <Link href="/">

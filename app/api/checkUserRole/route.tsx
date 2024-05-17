@@ -14,7 +14,11 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     }
 
     const isAdmin = await isUserAdmin(clientAddress);
-    return NextResponse.json({ isAdmin });
+    const response =  NextResponse.json({ isAdmin });
+
+    response.cookies.set('isAdmin', isAdmin.toString(), { httpOnly: true });
+
+    return response;
   } catch (error) {
     console.error("API error:", error);
     if (error instanceof Error) {
