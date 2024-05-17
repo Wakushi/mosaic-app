@@ -18,7 +18,7 @@ export default function Dashboard() {
   }, [clientAddress]);
 
   return (
-    <div className="bg-gradient-to-r from-white to-gray-300 h-screen">
+    <div className="bg-gradient-to-r from-white to-gray-300 min-h-screen">
       <div className="container mx-auto py-20">
         <DataTable columns={columns} data={data} />
       </div>
