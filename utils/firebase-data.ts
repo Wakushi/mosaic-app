@@ -74,3 +74,17 @@ export const isUserAdmin = async (clientAddress: string): Promise<boolean> => {
     throw new Error("Failed to check user role");
   }
 };
+
+export const getAllArtworks = async (): Promise<Artwork[]> => {
+  try {
+    const snapshot = await adminDb.collection("artworks").get();
+    const artworks: Artwork[] = [];
+    snapshot.forEach((doc) => {
+      artworks.push({ id: doc.id, ...doc.data() } as Artwork);
+    });
+    return artworks;
+  } catch (error) {
+    console.error("Error getting all artworks:", error);
+    throw new Error("Failed to get all artworks");
+  }
+};

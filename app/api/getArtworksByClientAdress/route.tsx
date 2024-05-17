@@ -1,4 +1,3 @@
-// app/api/getArtworks/route.tsx
 import { NextRequest, NextResponse } from "next/server";
 import { getArtworksByClientAddress } from "@/utils/firebase-data";
 
