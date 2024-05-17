@@ -4,7 +4,7 @@ import { Canvas } from "@react-three/fiber";
 
 export default function Home() {
   return (
-    <div className="flex pl-14 pb-20 bg-gradient-to-r from-white to-gray-300 border-b">
+    <div className="flex pl-14 pb-20 bg-gradient-to-r from-white to-gray-300 border-b ">
       <div className="w-1/2 flex flex-col mt-24">
         <div className="flex flex-col gap-10">
           <h1 className="text-8xl">Mosaic</h1>

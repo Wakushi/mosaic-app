@@ -35,6 +35,7 @@ export default function Admin() {
   }
   return (
     <div className="bg-gradient-to-r from-white to-gray-300 min-h-screen py-20 pl-14">
+		<h1 className="text-8xl">Admin</h1>
      <div className="container mx-auto py-20">
         <DataTable columns={columns} data={artworks} />
       </div>
