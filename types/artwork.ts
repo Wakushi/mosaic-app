@@ -9,3 +9,11 @@ export type Artwork = {
   owner: string;
   price: number;
 };
+
+export type ArtworkData = {
+  clientAddress: string | undefined;
+  title: string;
+  artist: string;
+  owner: string;
+  price: number;
+};

@@ -8,7 +8,6 @@ import { Artwork } from "@/types/artwork";
 export default function Dashboard() {
   const { address: clientAddress } = useAccount();
   const [data, setData] = useState<Artwork[]>([]);
-
   useEffect(() => {
     if (clientAddress) {
       fetch(`/api/getArtworksByClientAdress?clientAddress=${clientAddress}`)
