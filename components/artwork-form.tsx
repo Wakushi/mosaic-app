@@ -2,6 +2,8 @@ import { z } from "zod";
 import React from "react";
 import { ReusableForm } from "./clientUi/form";
 import { useAccount } from "wagmi";
+import { pinJSONToIPFS } from "@/utils/pinata-data";
+import { ArtworkData } from "@/types/artwork";
 
 const stringToNumber = z
   .union([
@@ -36,21 +38,32 @@ export const artFieldsData = [
   },
 ];
 
+
 export function ArtForm() {
   const account = useAccount();
 
   const onSubmit = async (values: ArtFormValues) => {
     try {
+      const artworkData: ArtworkData = {
+        clientAddress: account?.address,
+        title: values.title,
+        artist: values.artist,
+        owner: values.owner,
+        price: values.price,
+      };
+
+      const pinataResponse = await pinJSONToIPFS(artworkData);
+
+      if (pinataResponse.IpfsHash) {
+        console.log("Pinned JSON to IPFS with hash:", pinataResponse.IpfsHash);
+      } else {
+        throw new Error("Failed to pin JSON to IPFS");
+      }
+
       const response = await fetch("/api/addArtwork", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          clientAddress: account?.address,
-          title: values.title,
-          artist: values.artist,
-          owner: values.owner,
-          price: values.price,
-        }),
+        body: JSON.stringify(artworkData),
       });
       const responseData = await response.json();
       if (response.ok) {
