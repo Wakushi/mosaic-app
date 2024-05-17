@@ -29,10 +29,19 @@ const checkUserRegistration = async (clientAddress: string) => {
   return data.isRegistered;
 };
 
+const checkUserRole = async (clientAddress: string) => {
+  const response = await fetch(
+    `/api/checkUserRole?clientAddress=${clientAddress}`
+  );
+  const data = await response.json();
+  return data.isAdmin;
+};
+
 export default function Header() {
   const account = useAccount();
   const [modalOpen, setModalOpen] = useState(false);
   const [isRegistered, setIsRegistered] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const clientAddress = account.address;
   useEffect(() => {
     async function fetchUserRegistration() {
@@ -51,6 +60,17 @@ export default function Header() {
 
   const toggleModal = () => setModalOpen(!modalOpen);
 
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      if (account?.address) {
+        const adminStatus = await checkUserRole(account.address);
+        setIsAdmin(adminStatus);
+      }
+    };
+
+    fetchUserRole();
+  }, [account?.address]);
+  console.log(isRegistered, isAdmin)
   return (
     <div className="flex justify-between py-3 z-30 w-screen fixed px-14 items-center">
       <Link href="/">
@@ -82,6 +102,14 @@ export default function Header() {
                   <DropdownMenuShortcut>⌘D</DropdownMenuShortcut>
                 </DropdownMenuItem>
               </Link>
+              {isAdmin && (
+                <Link href="/admin">
+                  <DropdownMenuItem>
+                    Admin
+                    <DropdownMenuShortcut>⌘A</DropdownMenuShortcut>
+                  </DropdownMenuItem>
+                </Link>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         )}
