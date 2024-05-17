@@ -1,11 +1,25 @@
 "use client";
+// React
 import { useState, useEffect } from "react";
 import Link from "next/link";
+
+// Wagmi
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { Button } from "./ui/button";
+import { useAccount } from "wagmi";
+
+// Components
 import { Modal } from "@/components/clientUi/modal";
 import { ProfileForm } from "./profile-form";
-import { useAccount } from "wagmi";
+
+// Shadcn
+import { Button } from "./ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuShortcut,
+} from "./ui/dropdown-menu";
 
 const checkUserRegistration = async (clientAddress: string) => {
   const response = await fetch(
@@ -44,16 +58,33 @@ export default function Header() {
       </Link>
       <div className="flex gap-4">
         {isRegistered === false && (
-          <Button onClick={toggleModal}>Complete your register</Button>
+          <>
+            <Button onClick={toggleModal}>Complete your register</Button>
+            <Modal isOpen={modalOpen} close={toggleModal}>
+              <ProfileForm />
+            </Modal>
+          </>
         )}
         {isRegistered === true && (
-          <Link href="/dashboard">
-            <Button>Go to Dashboard</Button>
-          </Link>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">Menu</Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56">
+              <DropdownMenuItem>
+                Profile
+                <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+              </DropdownMenuItem>
+
+              <Link href="/dashboard">
+                <DropdownMenuItem>
+                  Dashboard
+                  <DropdownMenuShortcut>⌘D</DropdownMenuShortcut>
+                </DropdownMenuItem>
+              </Link>
+            </DropdownMenuContent>
+          </DropdownMenu>
         )}
-        <Modal isOpen={modalOpen} close={toggleModal}>
-          <ProfileForm />
-        </Modal>
         <ConnectButton
           accountStatus={{
             smallScreen: "avatar",
