@@ -38,9 +38,9 @@ export default function RequestWorkVerificationButton({ artwork }: RequestWorkVe
 
   return (
     <>
-      <Button onClick={handleRequest} disabled={isRequesting}>
+      <div onClick={handleRequest} className='cursor-pointer'>
         {isRequesting ? 'Requesting...' : 'Request Work Verification'}
-      </Button>
+      </div>
       {error && <p className="text-red-500">{error}</p>}
     </>
   );
