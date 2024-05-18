@@ -88,3 +88,24 @@ export const getAllArtworks = async (): Promise<Artwork[]> => {
     throw new Error("Failed to get all artworks");
   }
 };
+
+export const addHashData = async (
+  clientAddress: string,
+  title: string,
+  hashReport: string,
+  hashArtwork: string
+): Promise<void> => {
+  try {
+    await adminDb.collection("hash").add({
+      clientAddress,
+      title,
+      hashReport,
+      hashArtwork,
+      createdAt: Date.now(),
+    });
+    console.log("Hash data added successfully");
+  } catch (error) {
+    console.error("Error adding hash data:", error);
+    throw new Error("Failed to add hash data");
+  }
+};

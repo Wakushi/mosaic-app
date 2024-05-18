@@ -1,11 +1,9 @@
 import { z } from "zod";
 import React, { useState } from "react";
-
 import { ReusableForm } from "./clientUi/form";
 import { useAccount } from "wagmi";
 import { pinJSONToIPFS } from "@/utils/pinata-data";
 import { ArtworkData } from "@/types/artwork";
-
 import { Button } from "./ui/button";
 import Link from "next/link";
 
@@ -44,23 +42,61 @@ export const artFieldsData = [
 
 export function ArtForm() {
   const account = useAccount();
-
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const onSubmit = async (values: ArtFormValues) => {
     try {
       const artworkData: ArtworkData = {
-        clientAddress: account?.address,
+        clientAddress: account?.address || "",
         title: values.title,
         artist: values.artist,
         owner: values.owner,
         price: values.price,
       };
 
-      const pinataResponse = await pinJSONToIPFS(artworkData);
+      const pinataResponse = await pinJSONToIPFS(
+        artworkData,
+        `artwork-${values.title}`
+      );
 
       if (pinataResponse.IpfsHash) {
         console.log("Pinned JSON to IPFS with hash:", pinataResponse.IpfsHash);
+
+        const expertReport = {
+          createdAt: Date.now(),
+          artist: values.artist,
+          work: values.title,
+          valuationUSD: values.price,
+          owner: values.owner,
+        };
+
+        const reportResponse = await pinJSONToIPFS(
+          expertReport,
+          `rapport-${values.title}`
+        );
+
+        if (reportResponse.IpfsHash) {
+          const hashDataResponse = await fetch("/api/addHashData", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              clientAddress: account?.address || "",
+              title: values.title,
+              hashReport: reportResponse.IpfsHash,
+              hashArtwork: pinataResponse.IpfsHash,
+            }),
+          });
+
+          if (hashDataResponse.ok) {
+            setSuccessMessage(
+              "Artwork added successfully! Expert report generated and stored."
+            );
+          } else {
+            throw new Error("Failed to add hash data to Firebase");
+          }
+        } else {
+          throw new Error("Failed to pin expert report to IPFS");
+        }
       } else {
         throw new Error("Failed to pin JSON to IPFS");
       }
@@ -97,7 +133,6 @@ export function ArtForm() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              {" "}
               Schedule an Appointment for Authentication
             </Link>
           </Button>
