@@ -2,7 +2,7 @@ import { z } from "zod";
 import React, { useState } from "react";
 import { ReusableForm } from "./clientUi/form";
 import { useAccount } from "wagmi";
-import { pinJSONToIPFS } from "@/utils/pinata-data";
+import { pinJSONToIPFS, pinFileToIPFS } from "@/utils/pinata-data";
 import { ArtworkData } from "@/types/artwork";
 import { Button } from "./ui/button";
 import Link from "next/link";
@@ -87,12 +87,31 @@ export function ArtForm() {
             }),
           });
 
-          if (hashDataResponse.ok) {
+          if (!hashDataResponse.ok) {
+            throw new Error("Failed to add hash data to Firebase");
+          }
+
+          const certificateResponse = await fetch('/api/generateCertificate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title: values.title, artist: values.artist }),
+          });
+
+          const certificateData = await certificateResponse.json();
+
+          if (!certificateResponse.ok) {
+            throw new Error(certificateData.error || "Failed to generate certificate");
+          }
+
+          const certificateBuffer = Buffer.from(certificateData.certificateBuffer, 'base64');
+          const pinataCertificateResponse = await pinFileToIPFS(certificateBuffer, `certificate-${values.title}`);
+
+          if (pinataCertificateResponse.IpfsHash) {
             setSuccessMessage(
-              "Artwork added successfully! Expert report generated and stored."
+              "Artwork added successfully! Expert report and certificate generated and stored."
             );
           } else {
-            throw new Error("Failed to add hash data to Firebase");
+            throw new Error("Failed to pin certificate to IPFS");
           }
         } else {
           throw new Error("Failed to pin expert report to IPFS");
