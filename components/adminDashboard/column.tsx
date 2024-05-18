@@ -6,6 +6,7 @@ import { Artwork } from "@/types/artwork";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import DeployWorkButton from "@/components/adminDashboard/deployWork-button";
+import RequestCertificateExtractionButton from "@/components/adminDashboard/requestCertificateExtraction-button";
 
 export const columns: ColumnDef<Artwork>[] = [
   {
@@ -49,7 +50,9 @@ export const columns: ColumnDef<Artwork>[] = [
             <DropdownMenuItem>
             <DeployWorkButton artwork={artwork} />
             </DropdownMenuItem>
-            <DropdownMenuItem>Delete</DropdownMenuItem>
+            <DropdownMenuItem>
+            <RequestCertificateExtractionButton artwork={artwork} />
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

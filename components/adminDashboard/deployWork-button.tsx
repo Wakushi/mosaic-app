@@ -44,9 +44,9 @@ export default function DeployWorkButton({ artwork }: DeployWorkButtonProps) {
 
   return (
     <>
-      <Button onClick={handleDeploy} disabled={isDeploying}>
+      <div onClick={handleDeploy} className='cursor-pointer'>
         {isDeploying ? 'Deploying...' : 'Deploy'}
-      </Button>
+      </div>
       {error && <p className="text-red-500">{error}</p>}
     </>
   );
