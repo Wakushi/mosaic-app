@@ -74,3 +74,25 @@ export async function requestCertificateExtraction(args: string[]) {
     throw new Error("Failed to request certificate extraction");
   }
 }
+
+export async function requestWorkVerification(title: string) {
+  try {
+    const { request: workVerificationRequest } =
+      await publicClient.simulateContract({
+        account: walletClient.account,
+        address: DWORK_ADRESS,
+        abi: DWORK_ABI,
+        functionName: "requestWorkVerification",
+        args: [],
+      });
+
+    const result = await walletClient.writeContract(workVerificationRequest);
+
+    await updateArtworkStatus(title, "accepted");
+
+    return result;
+  } catch (error) {
+    console.error("Error requesting work verification:", error);
+    throw new Error("Failed to request work verification");
+  }
+}
