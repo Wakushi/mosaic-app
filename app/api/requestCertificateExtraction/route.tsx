@@ -1,16 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { addHashData } from '@/utils/firebase-data';
+import { requestCertificateExtraction } from '@/utils/contract-interactions'
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
-    const { clientAddress, title, hashReport, hashArtwork, hashCertificate } = await req.json();
+    const { args } = await req.json();
 
-    if (!clientAddress || !title || !hashReport || !hashArtwork || !hashCertificate) {
+    if (!args || !Array.isArray(args) || args.length === 0) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    await addHashData(clientAddress, title, hashReport, hashArtwork, hashCertificate);
-    return NextResponse.json({ message: 'Hash data added successfully' });
+    const result = await requestCertificateExtraction(args);
+    return NextResponse.json({ message: 'Certificate extraction requested successfully', result });
   } catch (error) {
     console.error('API error:', error);
     if (error instanceof Error) {
@@ -20,4 +20,3 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     }
   }
 }
-
