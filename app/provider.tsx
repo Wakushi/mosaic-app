@@ -17,12 +17,13 @@ import {
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import {
   mainnet,
-  sepolia
+  sepolia,
+  baseSepolia
 } from 'wagmi/chains';
 import { alchemyProvider } from "@wagmi/core/providers/alchemy"
 
 const { chains, publicClient } = configureChains(
-  [mainnet, sepolia],
+  [mainnet, sepolia, baseSepolia],
   [alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY ?? "" })]
 )
 

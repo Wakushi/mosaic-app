@@ -93,7 +93,8 @@ export const addHashData = async (
   clientAddress: string,
   title: string,
   hashReport: string,
-  hashArtwork: string
+  hashArtwork: string,
+  hashCertificate: string 
 ): Promise<void> => {
   try {
     await adminDb.collection("hash").add({
@@ -101,6 +102,7 @@ export const addHashData = async (
       title,
       hashReport,
       hashArtwork,
+      hashCertificate, 
       createdAt: Date.now(),
     });
     console.log("Hash data added successfully");

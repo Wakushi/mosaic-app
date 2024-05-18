@@ -1,11 +1,11 @@
-import { z } from "zod";
-import React, { useState } from "react";
-import { ReusableForm } from "./clientUi/form";
-import { useAccount } from "wagmi";
-import { pinJSONToIPFS, pinFileToIPFS } from "@/utils/pinata-data";
-import { ArtworkData } from "@/types/artwork";
-import { Button } from "./ui/button";
-import Link from "next/link";
+import { z } from 'zod';
+import React, { useState } from 'react';
+import { ReusableForm } from './clientUi/form';
+import { useAccount } from 'wagmi';
+import { pinJSONToIPFS, pinFileToIPFS } from '@/utils/pinata-data';
+import { ArtworkData } from '@/types/artwork';
+import { Button } from './ui/button';
+import Link from 'next/link';
 
 const stringToNumber = z
   .union([
@@ -15,28 +15,28 @@ const stringToNumber = z
       .transform(Number),
     z.number(),
   ])
-  .refine((value) => typeof value === "number", {
-    message: "Must be a valid number",
+  .refine((value) => typeof value === 'number', {
+    message: 'Must be a valid number',
   });
 
 export const artFormSchema = z.object({
-  artist: z.string().min(2, "Artist name is required").max(100),
-  owner: z.string().min(2, "Owner name is required").max(100),
-  title: z.string().min(2, "Title is required").max(100),
+  artist: z.string().min(2, 'Artist name is required').max(100),
+  owner: z.string().min(2, 'Owner name is required').max(100),
+  title: z.string().min(2, 'Title is required').max(100),
   price: stringToNumber,
 });
 
 export type ArtFormValues = z.infer<typeof artFormSchema>;
 
 export const artFieldsData = [
-  { name: "artist", label: "Artist", description: "Name of the artist." },
-  { name: "owner", label: "Owner", description: "Name of the current owner." },
-  { name: "title", label: "Title", description: "Title of the artwork." },
+  { name: 'artist', label: 'Artist', description: 'Name of the artist.' },
+  { name: 'owner', label: 'Owner', description: 'Name of the current owner.' },
+  { name: 'title', label: 'Title', description: 'Title of the artwork.' },
   {
-    name: "price",
-    label: "Price",
-    description: "Price of the artwork.",
-    type: "number",
+    name: 'price',
+    label: 'Price',
+    description: 'Price of the artwork.',
+    type: 'number',
   },
 ];
 
@@ -47,20 +47,17 @@ export function ArtForm() {
   const onSubmit = async (values: ArtFormValues) => {
     try {
       const artworkData: ArtworkData = {
-        clientAddress: account?.address || "",
+        clientAddress: account?.address || '',
         title: values.title,
         artist: values.artist,
         owner: values.owner,
         price: values.price,
       };
 
-      const pinataResponse = await pinJSONToIPFS(
-        artworkData,
-        `artwork-${values.title}`
-      );
+      const pinataResponse = await pinJSONToIPFS(artworkData, `artwork-${values.title}`);
 
       if (pinataResponse.IpfsHash) {
-        console.log("Pinned JSON to IPFS with hash:", pinataResponse.IpfsHash);
+        console.log('Pinned JSON to IPFS with hash:', pinataResponse.IpfsHash);
 
         const expertReport = {
           createdAt: Date.now(),
@@ -70,27 +67,9 @@ export function ArtForm() {
           owner: values.owner,
         };
 
-        const reportResponse = await pinJSONToIPFS(
-          expertReport,
-          `rapport-${values.title}`
-        );
+        const reportResponse = await pinJSONToIPFS(expertReport, `rapport-${values.title}`);
 
         if (reportResponse.IpfsHash) {
-          const hashDataResponse = await fetch("/api/addHashData", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              clientAddress: account?.address || "",
-              title: values.title,
-              hashReport: reportResponse.IpfsHash,
-              hashArtwork: pinataResponse.IpfsHash,
-            }),
-          });
-
-          if (!hashDataResponse.ok) {
-            throw new Error("Failed to add hash data to Firebase");
-          }
-
           const certificateResponse = await fetch('/api/generateCertificate', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -100,43 +79,57 @@ export function ArtForm() {
           const certificateData = await certificateResponse.json();
 
           if (!certificateResponse.ok) {
-            throw new Error(certificateData.error || "Failed to generate certificate");
+            throw new Error(certificateData.error || 'Failed to generate certificate');
           }
 
           const certificateBuffer = Buffer.from(certificateData.certificateBuffer, 'base64');
           const pinataCertificateResponse = await pinFileToIPFS(certificateBuffer, `certificate-${values.title}`);
 
           if (pinataCertificateResponse.IpfsHash) {
-            setSuccessMessage(
-              "Artwork added successfully! Expert report and certificate generated and stored."
-            );
+            const hashDataResponse = await fetch('/api/addHashData', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                clientAddress: account?.address || '',
+                title: values.title,
+                hashReport: reportResponse.IpfsHash,
+                hashArtwork: pinataResponse.IpfsHash,
+                hashCertificate: pinataCertificateResponse.IpfsHash, 
+              }),
+            });
+
+            if (!hashDataResponse.ok) {
+              throw new Error('Failed to add hash data to Firebase');
+            }
+
+            setSuccessMessage('Artwork added successfully! Expert report and certificate generated and stored.');
           } else {
-            throw new Error("Failed to pin certificate to IPFS");
+            throw new Error('Failed to pin certificate to IPFS');
           }
         } else {
-          throw new Error("Failed to pin expert report to IPFS");
+          throw new Error('Failed to pin expert report to IPFS');
         }
       } else {
-        throw new Error("Failed to pin JSON to IPFS");
+        throw new Error('Failed to pin JSON to IPFS');
       }
 
-      const response = await fetch("/api/addArtwork", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const response = await fetch('/api/addArtwork', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(artworkData),
       });
       const responseData = await response.json();
       if (response.ok) {
-        setSuccessMessage("Artwork added successfully!");
-        alert("Artwork added successfully");
+        setSuccessMessage('Artwork added successfully!');
+        alert('Artwork added successfully');
       } else {
-        alert("Failed to add artwork: " + responseData.error);
+        alert('Failed to add artwork: ' + responseData.error);
       }
     } catch (error) {
       if (error instanceof Error) {
-        alert("Failed to add artwork: " + error.message);
+        alert('Failed to add artwork: ' + error.message);
       } else {
-        alert("Failed to add artwork: Unknown error");
+        alert('Failed to add artwork: Unknown error');
       }
     }
   };
@@ -159,7 +152,7 @@ export function ArtForm() {
       ) : (
         <ReusableForm
           schema={artFormSchema}
-          defaultValues={{ artist: "", owner: "", title: "", price: 0 }}
+          defaultValues={{ artist: '', owner: '', title: '', price: 0 }}
           onSubmit={onSubmit}
           fields={artFieldsData}
         />
