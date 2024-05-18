@@ -66,7 +66,7 @@ export async function requestCertificateExtraction(args: string[]) {
       certificateExtractionRequest
     );
 
-    await updateArtworkStatus(args[0], "processing");
+    await updateArtworkStatus(args[0], "verification pending");
 
     return result;
   } catch (error) {

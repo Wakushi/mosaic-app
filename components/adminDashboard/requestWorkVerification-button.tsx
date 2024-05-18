@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Button } from "@/components/ui/button";
 import { Artwork } from "@/types/artwork";
 
 interface RequestWorkVerificationButtonProps {
@@ -18,7 +17,7 @@ export default function RequestWorkVerificationButton({ artwork }: RequestWorkVe
       const response = await fetch('/api/requestWorkVerification', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: artwork.title }), // Pass the title of the artwork
+        body: JSON.stringify({ title: artwork.title }), 
       });
 
       const result = await response.json();
