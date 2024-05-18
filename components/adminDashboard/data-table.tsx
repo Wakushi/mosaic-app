@@ -68,6 +68,7 @@ export function DataTable<TData, TValue>({
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuItem onClick={() => handleStatusFilter("pending")}>Pending</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleStatusFilter("processing")}>Processing</DropdownMenuItem>
             <DropdownMenuItem onClick={() => handleStatusFilter("approved")}>Approved</DropdownMenuItem>
             <DropdownMenuItem onClick={() => handleStatusFilter("rejeted")}>Rejeted</DropdownMenuItem>
             <DropdownMenuItem onClick={() => handleStatusFilter("")}>Clear Filter</DropdownMenuItem>

@@ -88,3 +88,59 @@ export const getAllArtworks = async (): Promise<Artwork[]> => {
     throw new Error("Failed to get all artworks");
   }
 };
+
+export const addHashData = async (
+  clientAddress: string,
+  title: string,
+  hashReport: string,
+  hashArtwork: string
+): Promise<void> => {
+  try {
+    await adminDb.collection("hash").add({
+      clientAddress,
+      title,
+      hashReport,
+      hashArtwork,
+      createdAt: Date.now(),
+    });
+    console.log("Hash data added successfully");
+  } catch (error) {
+    console.error("Error adding hash data:", error);
+    throw new Error("Failed to add hash data");
+  }
+};
+
+export const getHashesByTitle = async (title: string): Promise<{ hashArtwork: string, hashReport: string } | null> => {
+  try {
+    const snapshot = await adminDb.collection("hash").where("title", "==", title).limit(1).get();
+    if (snapshot.empty) {
+      return null;
+    }
+    const data = snapshot.docs[0].data();
+    return {
+      hashArtwork: data.hashArtwork,
+      hashReport: data.hashReport,
+    };
+  } catch (error) {
+    console.error("Error getting hashes:", error);
+    throw new Error("Failed to get hashes");
+  }
+};
+
+
+export const updateArtworkStatus = async (title: string, status: string): Promise<void> => {
+  try {
+    const snapshot = await adminDb.collection('artworks').where('title', '==', title).limit(1).get();
+    if (!snapshot.empty) {
+      const doc = snapshot.docs[0];
+      await adminDb.collection('artworks').doc(doc.id).update({ status });
+      console.log('Artwork status updated successfully');
+    } else {
+      console.error('Artwork not found');
+      throw new Error('Artwork not found');
+    }
+  } catch (error) {
+    console.error('Error updating artwork status:', error);
+    throw new Error('Failed to update artwork status');
+  }
+};

@@ -5,6 +5,7 @@ import { MoreHorizontal } from "lucide-react";
 import { Artwork } from "@/types/artwork";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import DeployWorkButton from "@/components/adminDashboard/deployWork-button";
 
 export const columns: ColumnDef<Artwork>[] = [
   {
@@ -45,7 +46,9 @@ export const columns: ColumnDef<Artwork>[] = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem>View</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Deploy</DropdownMenuItem>
+            <DropdownMenuItem>
+            <DeployWorkButton artwork={artwork} />
+            </DropdownMenuItem>
             <DropdownMenuItem>Delete</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
