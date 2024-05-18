@@ -1,7 +1,7 @@
 export type Artwork = {
   id: string;
   clientAddress: string;
-  status: "pending" | "approved" | "rejected";
+  status: "pending" | "processing" | "approved" | "rejected";
   createdAt: number;
   approvedAt?: number;
   title: string;
