@@ -1,9 +1,13 @@
 import { z } from "zod";
-import React from "react";
+import React, { useState } from "react";
+
 import { ReusableForm } from "./clientUi/form";
 import { useAccount } from "wagmi";
 import { pinJSONToIPFS } from "@/utils/pinata-data";
 import { ArtworkData } from "@/types/artwork";
+
+import { Button } from "./ui/button";
+import Link from "next/link";
 
 const stringToNumber = z
   .union([
@@ -38,9 +42,10 @@ export const artFieldsData = [
   },
 ];
 
-
 export function ArtForm() {
   const account = useAccount();
+
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const onSubmit = async (values: ArtFormValues) => {
     try {
@@ -67,6 +72,7 @@ export function ArtForm() {
       });
       const responseData = await response.json();
       if (response.ok) {
+        setSuccessMessage("Artwork added successfully!");
         alert("Artwork added successfully");
       } else {
         alert("Failed to add artwork: " + responseData.error);
@@ -81,11 +87,29 @@ export function ArtForm() {
   };
 
   return (
-    <ReusableForm
-      schema={artFormSchema}
-      defaultValues={{ artist: "", owner: "", title: "", price: 0 }}
-      onSubmit={onSubmit}
-      fields={artFieldsData}
-    />
+    <div>
+      {successMessage ? (
+        <div className="flex flex-col justify-center items-center p-10">
+          <p className="mb-4">{successMessage}</p>
+          <Button>
+            <Link
+              href="https://calendly.com/camillemtd95/artwork-authentication-consultation"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {" "}
+              Schedule an Appointment for Authentication
+            </Link>
+          </Button>
+        </div>
+      ) : (
+        <ReusableForm
+          schema={artFormSchema}
+          defaultValues={{ artist: "", owner: "", title: "", price: 0 }}
+          onSubmit={onSubmit}
+          fields={artFieldsData}
+        />
+      )}
+    </div>
   );
 }
