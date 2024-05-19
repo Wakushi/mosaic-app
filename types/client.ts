@@ -3,4 +3,5 @@ export type Client = {
 	name: string; // Name of the client
 	email: string; // Email of the client
 	role?: string;
+	types?: "Gallery" | "Investor";
   };

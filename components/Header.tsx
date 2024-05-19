@@ -1,6 +1,7 @@
 "use client";
+
 // React
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
 // Wagmi
@@ -21,55 +22,56 @@ import {
   DropdownMenuShortcut,
 } from "./ui/dropdown-menu";
 
+// Zustand store
+import { useUserStore } from "@/store/useStore"; 
+
 const checkUserRegistration = async (clientAddress: string) => {
-  const response = await fetch(
-    `/api/user/checkUserRegistration?clientAddress=${clientAddress}`
-  );
+  const response = await fetch(`/api/user/checkUserRegistration?clientAddress=${clientAddress}`);
   const data = await response.json();
   return data.isRegistered;
 };
 
-const checkUserRole = async (clientAddress: string) => {
-  const response = await fetch(
-    `/api/user/checkUserRole?clientAddress=${clientAddress}`
-  );
+const fetchUserData = async (clientAddress: string) => {
+  const response = await fetch(`/api/user?clientAddress=${clientAddress}`);
+  if (!response.ok) {
+    throw new Error("User not found");
+  }
   const data = await response.json();
-  return data.isAdmin;
+  return data;
 };
 
 export default function Header() {
   const account = useAccount();
   const [modalOpen, setModalOpen] = useState(false);
-  const [isRegistered, setIsRegistered] = useState(null);
-  const [isAdmin, setIsAdmin] = useState(false);
+
+  const { isRegistered, isAdmin, userType, setIsRegistered, setIsAdmin, setUserType } = useUserStore();
+
   const clientAddress = account.address;
+
   useEffect(() => {
-    async function fetchUserRegistration() {
+    async function checkAndFetchUser() {
       if (clientAddress) {
         try {
           const registered = await checkUserRegistration(clientAddress);
           setIsRegistered(registered);
+
+          if (registered) {
+            const user = await fetchUserData(clientAddress);
+            setIsAdmin(user.role === "admin");
+            setUserType(user.userType);
+          }
         } catch (error) {
-          console.error("Error checking user registration:", error);
+          console.error("Error checking user registration or fetching user data:", error);
+          setIsRegistered(false);
         }
       }
     }
 
-    fetchUserRegistration();
+    checkAndFetchUser();
   }, [clientAddress]);
 
   const toggleModal = () => setModalOpen(!modalOpen);
 
-  useEffect(() => {
-    const fetchUserRole = async () => {
-      if (account?.address) {
-        const adminStatus = await checkUserRole(account.address);
-        setIsAdmin(adminStatus);
-      }
-    };
-
-    fetchUserRole();
-  }, [account?.address]);
   return (
     <div className="flex justify-between py-3 z-30 w-screen fixed px-14 items-center">
       <Link href="/">
@@ -95,12 +97,14 @@ export default function Header() {
                 <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
               </DropdownMenuItem>
 
-              <Link href="/dashboard">
-                <DropdownMenuItem>
-                  Dashboard
-                  <DropdownMenuShortcut>⌘D</DropdownMenuShortcut>
-                </DropdownMenuItem>
-              </Link>
+              {userType === "Gallery" && (
+                <Link href="/dashboard">
+                  <DropdownMenuItem>
+                    Dashboard
+                    <DropdownMenuShortcut>⌘D</DropdownMenuShortcut>
+                  </DropdownMenuItem>
+                </Link>
+              )}
               {isAdmin && (
                 <Link href="/admin">
                   <DropdownMenuItem>
