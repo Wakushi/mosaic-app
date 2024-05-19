@@ -14,7 +14,7 @@ export default function DeployWorkButton({ artwork }: DeployWorkButtonProps) {
     setError(null);
 
     try {
-      const response = await fetch('/api/deployWork', {
+      const response = await fetch('/api/admin/deployWork', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

@@ -28,7 +28,7 @@ export function ProfileForm() {
   const account = useAccount()
   const onSubmit = async (values: FormValues) => {
     if (account?.address) {
-      const response = await fetch('/api/addClient', {
+      const response = await fetch('/api/user/addUser', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
