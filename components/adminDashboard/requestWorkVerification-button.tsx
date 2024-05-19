@@ -3,9 +3,10 @@ import { Artwork } from "@/types/artwork";
 
 interface RequestWorkVerificationButtonProps {
   artwork: Artwork;
+  refreshData: () => void;
 }
 
-export default function RequestWorkVerificationButton({ artwork }: RequestWorkVerificationButtonProps) {
+export default function RequestWorkVerificationButton({ artwork, refreshData }: RequestWorkVerificationButtonProps) {
   const [isRequesting, setIsRequesting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -27,9 +28,10 @@ export default function RequestWorkVerificationButton({ artwork }: RequestWorkVe
       }
 
       console.log('Work verification requested successfully:', result);
+      refreshData(); 
     } catch (err) {
       console.error(err);
-      setError('Failed to request work verification. See console for details.');
+      setError((err as Error).message);
     } finally {
       setIsRequesting(false);
     }
