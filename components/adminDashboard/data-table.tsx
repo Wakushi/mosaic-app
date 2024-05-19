@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { useState } from "react";
 import {
   ColumnDef,
   flexRender,
@@ -19,7 +18,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 
@@ -48,8 +46,6 @@ export function DataTable<TData, TValue>({
   const handleStatusFilter = (status: string) => {
     table.getColumn("status")?.setFilterValue(status);
   };
-  const [modalOpen, setModalOpen] = useState(false);
-  const toggleModal = () => setModalOpen(!modalOpen);
 
   return (
     <div className="w-full">
@@ -69,8 +65,9 @@ export function DataTable<TData, TValue>({
           <DropdownMenuContent>
             <DropdownMenuItem onClick={() => handleStatusFilter("pending")}>Pending</DropdownMenuItem>
             <DropdownMenuItem onClick={() => handleStatusFilter("processing")}>Processing</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleStatusFilter("approved")}>Approved</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleStatusFilter("rejeted")}>Rejeted</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleStatusFilter("certificate pending")}>Certificate pending</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleStatusFilter("accepted")}>Accepted</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleStatusFilter("rejected")}>Rejected</DropdownMenuItem>
             <DropdownMenuItem onClick={() => handleStatusFilter("")}>Clear Filter</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

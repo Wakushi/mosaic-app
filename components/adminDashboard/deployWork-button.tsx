@@ -3,9 +3,10 @@ import { Artwork } from '@/types/artwork';
 
 interface DeployWorkButtonProps {
   artwork: Artwork;
+  refreshData: () => void;
 }
 
-export default function DeployWorkButton({ artwork }: DeployWorkButtonProps) {
+export default function DeployWorkButton({ artwork, refreshData }: DeployWorkButtonProps) {
   const [isDeploying, setIsDeploying] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -33,9 +34,10 @@ export default function DeployWorkButton({ artwork }: DeployWorkButtonProps) {
       }
 
       console.log('Work deployed successfully', result);
+      refreshData(); 
     } catch (err) {
       console.error('Error deploying work:', err);
-      setError('Failed to deploy work. See console for details.');
+      setError((err as Error).message);
     } finally {
       setIsDeploying(false);
     }

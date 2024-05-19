@@ -3,9 +3,10 @@ import { Artwork } from "@/types/artwork";
 
 interface RequestCertificateExtractionButtonProps {
   artwork: Artwork;
+  refreshData: () => void;
 }
 
-export default function RequestCertificateExtractionButton({ artwork }: RequestCertificateExtractionButtonProps) {
+export default function RequestCertificateExtractionButton({ artwork, refreshData }: RequestCertificateExtractionButtonProps) {
   const [isRequesting, setIsRequesting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -27,9 +28,10 @@ export default function RequestCertificateExtractionButton({ artwork }: RequestC
       }
 
       console.log('Certificate extraction requested successfully:', result);
+      refreshData();
     } catch (err) {
       console.error(err);
-      setError('Failed to request certificate extraction. See console for details.');
+      setError((err as Error).message);
     } finally {
       setIsRequesting(false);
     }
