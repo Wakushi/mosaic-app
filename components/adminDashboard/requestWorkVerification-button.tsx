@@ -14,7 +14,7 @@ export default function RequestWorkVerificationButton({ artwork }: RequestWorkVe
     setError(null);
 
     try {
-      const response = await fetch('/api/requestWorkVerification', {
+      const response = await fetch('/api/admin/requestWorkVerification', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ title: artwork.title }), 

@@ -23,7 +23,7 @@ import {
 
 const checkUserRegistration = async (clientAddress: string) => {
   const response = await fetch(
-    `/api/checkUserRegistration?clientAddress=${clientAddress}`
+    `/api/user/checkUserRegistration?clientAddress=${clientAddress}`
   );
   const data = await response.json();
   return data.isRegistered;
@@ -31,7 +31,7 @@ const checkUserRegistration = async (clientAddress: string) => {
 
 const checkUserRole = async (clientAddress: string) => {
   const response = await fetch(
-    `/api/checkUserRole?clientAddress=${clientAddress}`
+    `/api/user/checkUserRole?clientAddress=${clientAddress}`
   );
   const data = await response.json();
   return data.isAdmin;

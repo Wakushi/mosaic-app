@@ -1,4 +1,4 @@
-export const DWORKFACTORY_ADRESS = "0x3e27c46Af3a01FA21984dd5a4d3A8b0bd0719a87";
+export const DWORKFACTORY_ADRESS = "0x960F9bFcCeC2ca1271482E95512F456D3d9F9890";
 
 export const DWORKFACTORY_ABI = [
   {
@@ -307,6 +307,58 @@ export const DWORK_ABI = [
   },
   {
     "type": "function",
+    "name": "bytes32ToAddress",
+    "inputs": [
+      { "name": "_address", "type": "bytes32", "internalType": "bytes32" }
+    ],
+    "outputs": [{ "name": "", "type": "address", "internalType": "address" }],
+    "stateMutability": "pure"
+  },
+  {
+    "type": "function",
+    "name": "checkLog",
+    "inputs": [
+      {
+        "name": "log",
+        "type": "tuple",
+        "internalType": "struct Log",
+        "components": [
+          { "name": "index", "type": "uint256", "internalType": "uint256" },
+          {
+            "name": "timestamp",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          { "name": "txHash", "type": "bytes32", "internalType": "bytes32" },
+          {
+            "name": "blockNumber",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "blockHash",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          { "name": "source", "type": "address", "internalType": "address" },
+          {
+            "name": "topics",
+            "type": "bytes32[]",
+            "internalType": "bytes32[]"
+          },
+          { "name": "data", "type": "bytes", "internalType": "bytes" }
+        ]
+      },
+      { "name": "", "type": "bytes", "internalType": "bytes" }
+    ],
+    "outputs": [
+      { "name": "upkeepNeeded", "type": "bool", "internalType": "bool" },
+      { "name": "performData", "type": "bytes", "internalType": "bytes" }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "fulfillCertificateExtractionRequest",
     "inputs": [
       { "name": "requestId", "type": "bytes32", "internalType": "bytes32" },
@@ -522,6 +574,15 @@ export const DWORK_ABI = [
     "inputs": [],
     "outputs": [{ "name": "", "type": "bool", "internalType": "bool" }],
     "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "performUpkeep",
+    "inputs": [
+      { "name": "performData", "type": "bytes", "internalType": "bytes" }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
     "type": "function",

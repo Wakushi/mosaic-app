@@ -11,7 +11,7 @@ export default function Admin() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/api/getAllArtworks")
+    fetch("/api/artwork")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to fetch artworks");
@@ -33,10 +33,11 @@ export default function Admin() {
   if (error) {
     return <div>Error: {error}</div>;
   }
+
   return (
     <div className="bg-gradient-to-r from-white to-gray-300 min-h-screen py-20 pl-14">
-		<h1 className="text-8xl">Admin</h1>
-     <div className="container mx-auto py-20">
+      <h1 className="text-8xl">Admin</h1>
+      <div className="container mx-auto py-20">
         <DataTable columns={columns} data={artworks} />
       </div>
     </div>

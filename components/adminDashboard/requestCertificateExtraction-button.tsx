@@ -14,7 +14,7 @@ export default function RequestCertificateExtractionButton({ artwork }: RequestC
     setError(null);
 
     try {
-      const response = await fetch('/api/requestCertificateExtraction', {
+      const response = await fetch('/api/admin/requestCertificateExtraction', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ args: [artwork.title] }), 
