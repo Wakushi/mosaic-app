@@ -5,13 +5,15 @@ import { z } from "zod";
 
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
 
 interface FormFieldData {
   name: string;
   label: string;
   description: string;
-  type?: string;
+  type?: string; 
+  options?: { id: string, label: string }[]; 
 }
 
 interface ReusableFormProps {
@@ -39,7 +41,24 @@ export const ReusableForm: React.FC<ReusableFormProps> = ({ schema, defaultValue
               <FormItem>
                 <FormLabel>{field.label}</FormLabel>
                 <FormControl>
-                  <Input type={field.type || 'text'} {...formField} />
+                  {field.type === 'radio' && field.options ? (
+                    <RadioGroup
+                      onValueChange={formField.onChange}
+                      defaultValue={formField.value}
+                      className="flex flex-col space-y-1"
+                    >
+                      {field.options.map(option => (
+                        <FormItem key={option.id} className="flex items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value={option.id} />
+                          </FormControl>
+                          <FormLabel className="font-normal">{option.label}</FormLabel>
+                        </FormItem>
+                      ))}
+                    </RadioGroup>
+                  ) : (
+                    <Input type={field.type || 'text'} {...formField} />
+                  )}
                 </FormControl>
                 <FormDescription>
                   {field.description}

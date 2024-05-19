@@ -12,6 +12,18 @@ export const addClient = async (clientData: Client): Promise<void> => {
   }
 };
 
+export const getUserByAddress = async (address: string) => {
+  const userRef = adminDb.collection('users').where('address', '==', address);
+  const snapshot = await userRef.get();
+
+  if (snapshot.empty) {
+    return null;
+  }
+
+  const user = snapshot.docs[0].data();
+  return user;
+};
+
 export const addArtwork = async (
   artworkData: Omit<Artwork, "id">
 ): Promise<void> => {
