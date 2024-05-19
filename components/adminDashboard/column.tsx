@@ -45,15 +45,21 @@ export function getColumns(refreshData: () => void): ColumnDef<Artwork>[] {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <DeployWorkButton artwork={artwork} refreshData={refreshData} />
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <RequestCertificateExtractionButton artwork={artwork} refreshData={refreshData} />
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <RequestWorkVerificationButton artwork={artwork} refreshData={refreshData} />
-              </DropdownMenuItem>
+              {artwork.status === "pending" && (
+                <DropdownMenuItem>
+                  <DeployWorkButton artwork={artwork} refreshData={refreshData} />
+                </DropdownMenuItem>
+              )}
+              {artwork.status === "processing" && (
+                <DropdownMenuItem>
+                  <RequestCertificateExtractionButton artwork={artwork} refreshData={refreshData} />
+                </DropdownMenuItem>
+              )}
+              {artwork.status === "certificate pending" && (
+                <DropdownMenuItem>
+                  <RequestWorkVerificationButton artwork={artwork} refreshData={refreshData} />
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         );
