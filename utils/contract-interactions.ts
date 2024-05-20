@@ -88,11 +88,32 @@ export async function requestWorkVerification(title: string) {
 
     const result = await walletClient.writeContract(workVerificationRequest);
 
-    await updateArtworkStatus(title, "accepted");
+    await updateArtworkStatus(title, "approved");
 
     return result;
   } catch (error) {
     console.error("Error requesting work verification:", error);
     throw new Error("Failed to request work verification");
+  }
+}
+
+export async function createWorkShares(contractAddress: string, totalShares: number) {
+  try {
+    const { request: createWorkSharesRequest } = await publicClient.simulateContract({
+      account: walletClient.account,
+      address: DWORK_ADRESS,
+      abi: DWORK_ABI,
+      functionName: "createWorkShares",
+      args: [contractAddress, totalShares],
+    });
+
+    const result = await walletClient.writeContract(createWorkSharesRequest);
+
+    await updateArtworkStatus(contractAddress, "fractioned");
+
+    return result;
+  } catch (error) {
+    console.error("Error creating work shares:", error);
+    throw new Error("Failed to create work shares");
   }
 }
