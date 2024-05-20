@@ -3,6 +3,7 @@ import { privateKeyToAccount } from "viem/accounts";
 import { polygonAmoy } from "viem/chains";
 import { DWORK_ADRESS, DWORK_ABI } from "@/lib/contract";
 import { updateArtworkStatus } from "@/utils/firebase-data";
+import { convertBigIntToString } from "./helpers";
 
 const account = privateKeyToAccount((process.env.PRIVATE_KEY as `0x`) || "");
 
@@ -25,7 +26,7 @@ export async function openTokenizationRequest(
   artworkTitle: string,
 ) {
   try {
-    const { request: tokenizationRequest } = await publicClient.simulateContract({
+    const { request: tokenizationRequest, result } = await publicClient.simulateContract({
       account: walletClient.account,
       address: DWORK_ADRESS,
       abi: DWORK_ABI,
@@ -33,11 +34,11 @@ export async function openTokenizationRequest(
       args: [customerSubmissionIPFSHash, appraiserReportIPFSHash, certificateIPFSHash, clientAddress],
     });
 
-    const result = await walletClient.writeContract(tokenizationRequest);
-
+    const response = await walletClient.writeContract(tokenizationRequest);
+    
     await updateArtworkStatus(artworkTitle, "processing");
-
-    return result;
+    
+    return convertBigIntToString(result);
   } catch (error) {
     console.error("Error opening tokenization request:", error);
     throw new Error("Failed to open tokenization request");

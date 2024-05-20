@@ -1,4 +1,4 @@
-export const DWORK_ADRESS = "0xC5e7A8f3699f1691B463651418556c5Af4124A7c";
+export const DWORK_ADRESS = "0xdC0C761c8fE6E430ab0FDE587c002c34038336dF";
 
 export const DWORK_ABI = [
   {
@@ -104,13 +104,6 @@ export const DWORK_ABI = [
       { "name": "upkeepNeeded", "type": "bool", "internalType": "bool" },
       { "name": "performData", "type": "bytes", "internalType": "bytes" }
     ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "counted",
-    "inputs": [],
-    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
     "stateMutability": "view"
   },
   {
@@ -464,7 +457,13 @@ export const DWORK_ABI = [
       },
       { "name": "_customer", "type": "address", "internalType": "address" }
     ],
-    "outputs": [],
+    "outputs": [
+      {
+        "name": "tokenizationRequestId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
     "stateMutability": "nonpayable"
   },
   {
@@ -518,13 +517,6 @@ export const DWORK_ABI = [
     ],
     "outputs": [],
     "stateMutability": "nonpayable"
-  },
-  {
-    "type": "function",
-    "name": "s_favoriteNumber",
-    "inputs": [],
-    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
-    "stateMutability": "view"
   },
   {
     "type": "function",

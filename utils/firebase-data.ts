@@ -128,3 +128,21 @@ export const updateArtworkStatus = async (title: string, status: string): Promis
     throw new Error('Failed to update artwork status');
   }
 };
+
+export const updateArtworkTokenizationRequest = async (artworkTitle: string, tokenizationRequestId: string) => {
+  try {
+    const artworkRef = adminDb.collection('artworks').where('title', '==', artworkTitle).limit(1);
+    const snapshot = await artworkRef.get();
+
+    if (snapshot.empty) {
+      throw new Error(`Artwork with title ${artworkTitle} not found`);
+    }
+
+    const artworkDoc = snapshot.docs[0];
+    await artworkDoc.ref.update({ tokenizationRequestId });
+    return true;
+  } catch (error) {
+    console.error("Error updating artwork:", error);
+    throw new Error("Failed to update artwork");
+  }
+};

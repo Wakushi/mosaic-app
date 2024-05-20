@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { openTokenizationRequest } from '@/utils/contract-interactions';
+import { updateArtworkTokenizationRequest } from '@/utils/firebase-data';
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
@@ -10,6 +11,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     }
 
     const result = await openTokenizationRequest(customerSubmissionIPFSHash, appraiserReportIPFSHash, certificateIPFSHash, clientAddress, artworkTitle);
+
+    await updateArtworkTokenizationRequest(artworkTitle, result.toString());
+
     return NextResponse.json({ message: 'Tokenization request opened successfully', result });
   } catch (error) {
     console.error('API error:', error);
@@ -20,5 +24,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     }
   }
 }
+
 
 
