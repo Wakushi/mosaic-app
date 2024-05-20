@@ -1,14 +1,25 @@
-import { useState } from 'react';
+import { useState, forwardRef } from 'react';
 import { Artwork } from "@/types/artwork";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface RequestCertificateExtractionButtonProps {
   artwork: Artwork;
   refreshData: () => void;
 }
 
-export default function RequestCertificateExtractionButton({ artwork, refreshData }: RequestCertificateExtractionButtonProps) {
+const RequestCertificateExtractionButton = forwardRef<HTMLDivElement, RequestCertificateExtractionButtonProps>(({ artwork, refreshData }, ref) => {
   const [isRequesting, setIsRequesting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [alertOpen, setAlertOpen] = useState(false);
 
   const handleRequest = async () => {
     setIsRequesting(true);
@@ -34,15 +45,34 @@ export default function RequestCertificateExtractionButton({ artwork, refreshDat
       setError((err as Error).message);
     } finally {
       setIsRequesting(false);
+      setAlertOpen(false); 
     }
   };
 
   return (
     <>
-      <div onClick={handleRequest} className='cursor-pointer'>
-        {isRequesting ? 'Requesting...' : 'Request Certificate Extraction'}
-      </div>
+      <div ref={ref} onClick={() => setAlertOpen(true)} className='p-1 text-sm cursor-pointer hover:background-black'>Request Certificate Extraction</div>
+      <AlertDialog open={alertOpen} onOpenChange={setAlertOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action will request the certificate extraction. It cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleRequest}>
+              {isRequesting ? 'Requesting...' : 'Continue'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
       {error && <p className="text-red-500">{error}</p>}
     </>
   );
-}
+});
+
+RequestCertificateExtractionButton.displayName = 'RequestCertificateExtractionButton';
+
+export default RequestCertificateExtractionButton;

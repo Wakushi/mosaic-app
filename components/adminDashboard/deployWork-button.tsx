@@ -1,14 +1,25 @@
-import { useState } from 'react';
+import { useState, forwardRef } from 'react';
 import { Artwork } from '@/types/artwork';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface DeployWorkButtonProps {
   artwork: Artwork;
   refreshData: () => void;
 }
 
-export default function DeployWorkButton({ artwork, refreshData }: DeployWorkButtonProps) {
+const DeployWorkButton = forwardRef<HTMLDivElement, DeployWorkButtonProps>(({ artwork, refreshData }, ref) => {
   const [isDeploying, setIsDeploying] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [alertOpen, setAlertOpen] = useState(false);
 
   const handleDeploy = async () => {
     setIsDeploying(true);
@@ -22,8 +33,8 @@ export default function DeployWorkButton({ artwork, refreshData }: DeployWorkBut
           clientAddress: artwork.clientAddress,
           workName: artwork.title,
           workSymbol: artwork.title.slice(0, 3).toUpperCase(),
-          customerSubmissionIPFSHash: 'hashes.hashArtwork', 
-          appraiserReportIPFSHash: 'hashes.hashReport' 
+          customerSubmissionIPFSHash: 'hashes.hashArtwork',
+          appraiserReportIPFSHash: 'hashes.hashReport'
         }),
       });
 
@@ -34,21 +45,41 @@ export default function DeployWorkButton({ artwork, refreshData }: DeployWorkBut
       }
 
       console.log('Work deployed successfully', result);
-      refreshData(); 
+      refreshData();
     } catch (err) {
       console.error('Error deploying work:', err);
       setError((err as Error).message);
     } finally {
       setIsDeploying(false);
+      setAlertOpen(false); 
     }
   };
 
   return (
     <>
-      <div onClick={handleDeploy} className='cursor-pointer'>
-        {isDeploying ? 'Deploying...' : 'Deploy'}
-      </div>
+      <div ref={ref} onClick={() => setAlertOpen(true)} className='p-1 text-sm cursor-pointer hover:background-black'>Deploy</div>
+      <AlertDialog open={alertOpen} onOpenChange={setAlertOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will deploy the work.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeploy}>
+              {isDeploying ? 'Deploying...' : 'Continue'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
       {error && <p className="text-red-500">{error}</p>}
     </>
   );
-}
+});
+
+DeployWorkButton.displayName = 'DeployWorkButton';
+
+export default DeployWorkButton;
+

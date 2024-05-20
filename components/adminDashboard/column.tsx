@@ -35,33 +35,35 @@ export function getColumns(refreshData: () => void): ColumnDef<Artwork>[] {
         const artwork = row.original;
 
         return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {artwork.status === "pending" && (
-                <DropdownMenuItem>
-                  <DeployWorkButton artwork={artwork} refreshData={refreshData} />
-                </DropdownMenuItem>
-              )}
-              {artwork.status === "processing" && (
-                <DropdownMenuItem>
-                  <RequestCertificateExtractionButton artwork={artwork} refreshData={refreshData} />
-                </DropdownMenuItem>
-              )}
-              {artwork.status === "certificate pending" && (
-                <DropdownMenuItem>
-                  <RequestWorkVerificationButton artwork={artwork} refreshData={refreshData} />
-                </DropdownMenuItem>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                  <span className="sr-only">Open menu</span>
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {artwork.status === "pending" && (
+                  <DropdownMenuItem asChild>
+                    <DeployWorkButton artwork={artwork} refreshData={refreshData} />
+                  </DropdownMenuItem>
+                )}
+                {artwork.status === "processing" && (
+                  <DropdownMenuItem asChild>
+                    <RequestCertificateExtractionButton artwork={artwork} refreshData={refreshData} />
+                  </DropdownMenuItem>
+                )}
+                {artwork.status === "verification pending" && (
+                  <DropdownMenuItem asChild>
+                    <RequestWorkVerificationButton artwork={artwork} refreshData={refreshData} />
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </>
         );
       },
     },
