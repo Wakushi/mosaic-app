@@ -1,6 +1,7 @@
 import { ReusableForm } from "./clientUi/form";
 import { z } from "zod";
 import { useAccount } from 'wagmi';
+import { useToast } from "@/components/ui/use-toast";
 
 const formSchema = z.object({
   username: z.string().min(2).max(50),
@@ -33,6 +34,7 @@ type FormValues = z.infer<typeof formSchema>;
 
 export function ProfileForm() {
   const account = useAccount();
+  const { toast } = useToast();
 
   const onSubmit = async (values: FormValues) => {
     if (account?.address) {
@@ -45,9 +47,15 @@ export function ProfileForm() {
         })
       });
       const responseData = await response.json();
-      alert(responseData.message);
+      toast({
+        title: "Profile Update",
+        description: responseData.message,
+      });
     } else {
-      alert('User is not connected');
+      toast({
+        title: "Connection Error",
+        description: "User is not connected",
+      });
     }
   };
 
@@ -60,3 +68,4 @@ export function ProfileForm() {
     />
   );
 }
+

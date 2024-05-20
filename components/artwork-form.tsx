@@ -6,6 +6,7 @@ import { pinJSONToIPFS, pinFileToIPFS } from "@/utils/pinata-data";
 import { ArtworkData } from "@/types/artwork";
 import { Button } from "./ui/button";
 import Link from "next/link";
+import { useToast } from "@/components/ui/use-toast";
 
 const stringToNumber = z
   .union([
@@ -43,6 +44,7 @@ export const artFieldsData = [
 export function ArtForm() {
   const account = useAccount();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const { toast } = useToast();
 
   const onSubmit = async (values: ArtFormValues) => {
     try {
@@ -122,6 +124,10 @@ export function ArtForm() {
             setSuccessMessage(
               "Artwork added successfully! Expert report and certificate generated and stored."
             );
+            toast({
+              title: "Success",
+              description: "Artwork added successfully! Expert report and certificate generated and stored.",
+            });
           } else {
             throw new Error("Failed to pin certificate to IPFS");
           }
@@ -140,15 +146,27 @@ export function ArtForm() {
       const responseData = await response.json();
       if (response.ok) {
         setSuccessMessage("Artwork added successfully!");
-        alert("Artwork added successfully");
+        toast({
+          title: "Success",
+          description: "Artwork added successfully",
+        });
       } else {
-        alert("Failed to add artwork: " + responseData.error);
+        toast({
+          title: "Error",
+          description: "Failed to add artwork: " + responseData.error,
+        });
       }
     } catch (error) {
       if (error instanceof Error) {
-        alert("Failed to add artwork: " + error.message);
+        toast({
+          title: "Error",
+          description: "Failed to add artwork: " + error.message,
+        });
       } else {
-        alert("Failed to add artwork: Unknown error");
+        toast({
+          title: "Error",
+          description: "Failed to add artwork: Unknown error",
+        });
       }
     }
   };
@@ -179,3 +197,4 @@ export function ArtForm() {
     </div>
   );
 }
+

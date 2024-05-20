@@ -10,6 +10,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { useToast } from "@/components/ui/use-toast";
 
 interface RequestCertificateExtractionButtonProps {
   artwork: Artwork;
@@ -20,6 +21,7 @@ const RequestCertificateExtractionButton = forwardRef<HTMLDivElement, RequestCer
   const [isRequesting, setIsRequesting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [alertOpen, setAlertOpen] = useState(false);
+  const { toast } = useToast();
 
   const handleRequest = async () => {
     setIsRequesting(true);
@@ -40,9 +42,19 @@ const RequestCertificateExtractionButton = forwardRef<HTMLDivElement, RequestCer
 
       console.log('Certificate extraction requested successfully:', result);
       refreshData();
+
+      toast({
+        title: "Success",
+        description: "Certificate extraction requested successfully",
+      });
     } catch (err) {
       console.error(err);
       setError((err as Error).message);
+
+      toast({
+        title: "Error",
+        description: "Failed to request certificate extraction: " + (err as Error).message,
+      });
     } finally {
       setIsRequesting(false);
       setAlertOpen(false); 
@@ -51,7 +63,7 @@ const RequestCertificateExtractionButton = forwardRef<HTMLDivElement, RequestCer
 
   return (
     <>
-      <div ref={ref} onClick={() => setAlertOpen(true)} className='p-1 text-sm cursor-pointer hover:background-black'>Request Certificate Extraction</div>
+      <div ref={ref} onClick={() => setAlertOpen(true)} className='p-1 text-sm cursor-pointer'>Request Certificate Extraction</div>
       <AlertDialog open={alertOpen} onOpenChange={setAlertOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -76,3 +88,4 @@ const RequestCertificateExtractionButton = forwardRef<HTMLDivElement, RequestCer
 RequestCertificateExtractionButton.displayName = 'RequestCertificateExtractionButton';
 
 export default RequestCertificateExtractionButton;
+

@@ -10,6 +10,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { useToast } from "@/components/ui/use-toast";
 
 interface DeployWorkButtonProps {
   artwork: Artwork;
@@ -20,6 +21,7 @@ const DeployWorkButton = forwardRef<HTMLDivElement, DeployWorkButtonProps>(({ ar
   const [isDeploying, setIsDeploying] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [alertOpen, setAlertOpen] = useState(false);
+  const { toast } = useToast();
 
   const handleDeploy = async () => {
     setIsDeploying(true);
@@ -46,9 +48,19 @@ const DeployWorkButton = forwardRef<HTMLDivElement, DeployWorkButtonProps>(({ ar
 
       console.log('Work deployed successfully', result);
       refreshData();
+
+      toast({
+        title: "Success",
+        description: "Work deployed successfully",
+      });
     } catch (err) {
       console.error('Error deploying work:', err);
       setError((err as Error).message);
+
+      toast({
+        title: "Error",
+        description: "Failed to deploy work: " + (err as Error).message,
+      });
     } finally {
       setIsDeploying(false);
       setAlertOpen(false); 
@@ -57,7 +69,7 @@ const DeployWorkButton = forwardRef<HTMLDivElement, DeployWorkButtonProps>(({ ar
 
   return (
     <>
-      <div ref={ref} onClick={() => setAlertOpen(true)} className='p-1 text-sm cursor-pointer hover:background-black'>Deploy</div>
+      <div ref={ref} onClick={() => setAlertOpen(true)} className='p-1 text-sm cursor-pointer'>Deploy</div>
       <AlertDialog open={alertOpen} onOpenChange={setAlertOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -82,4 +94,5 @@ const DeployWorkButton = forwardRef<HTMLDivElement, DeployWorkButtonProps>(({ ar
 DeployWorkButton.displayName = 'DeployWorkButton';
 
 export default DeployWorkButton;
+
 
