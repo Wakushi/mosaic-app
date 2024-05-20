@@ -1,287 +1,18 @@
-export const DWORKFACTORY_ADRESS = "0x960F9bFcCeC2ca1271482E95512F456D3d9F9890";
-
-export const DWORKFACTORY_ABI = [
-  {
-    "type": "constructor",
-    "inputs": [
-      { "name": "_priceFeed", "type": "address", "internalType": "address" },
-      {
-        "name": "_workVerifier",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "_workSharesManager",
-        "type": "address",
-        "internalType": "address"
-      }
-    ],
-    "stateMutability": "nonpayable"
-  },
-  {
-    "type": "function",
-    "name": "createWorkShares",
-    "inputs": [
-      {
-        "name": "_workContract",
-        "type": "address",
-        "internalType": "address"
-      },
-      { "name": "_shareSupply", "type": "uint256", "internalType": "uint256" }
-    ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
-  },
-  {
-    "type": "function",
-    "name": "deployWork",
-    "inputs": [
-      { "name": "_customer", "type": "address", "internalType": "address" },
-      { "name": "_workName", "type": "string", "internalType": "string" },
-      { "name": "_workSymbol", "type": "string", "internalType": "string" },
-      {
-        "name": "_customerSubmissionIPFSHash",
-        "type": "string",
-        "internalType": "string"
-      },
-      {
-        "name": "_appraiserReportIPFSHash",
-        "type": "string",
-        "internalType": "string"
-      }
-    ],
-    "outputs": [{ "name": "", "type": "address", "internalType": "address" }],
-    "stateMutability": "nonpayable"
-  },
-  {
-    "type": "function",
-    "name": "getCustomerWorks",
-    "inputs": [
-      { "name": "_customer", "type": "address", "internalType": "address" }
-    ],
-    "outputs": [
-      { "name": "", "type": "address[]", "internalType": "address[]" }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "getWorkSharesManager",
-    "inputs": [],
-    "outputs": [{ "name": "", "type": "address", "internalType": "address" }],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "getWorkSharesTokenId",
-    "inputs": [
-      {
-        "name": "_workContract",
-        "type": "address",
-        "internalType": "address"
-      }
-    ],
-    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "getWorkVerifier",
-    "inputs": [],
-    "outputs": [{ "name": "", "type": "address", "internalType": "address" }],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "isWorkContract",
-    "inputs": [
-      {
-        "name": "_workContract",
-        "type": "address",
-        "internalType": "address"
-      }
-    ],
-    "outputs": [{ "name": "", "type": "bool", "internalType": "bool" }],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "owner",
-    "inputs": [],
-    "outputs": [{ "name": "", "type": "address", "internalType": "address" }],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "renounceOwnership",
-    "inputs": [],
-    "outputs": [],
-    "stateMutability": "nonpayable"
-  },
-  {
-    "type": "function",
-    "name": "setWorkSharesManager",
-    "inputs": [
-      {
-        "name": "_workSharesManager",
-        "type": "address",
-        "internalType": "address"
-      }
-    ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
-  },
-  {
-    "type": "function",
-    "name": "setWorkVerifier",
-    "inputs": [
-      {
-        "name": "_workVerifier",
-        "type": "address",
-        "internalType": "address"
-      }
-    ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
-  },
-  {
-    "type": "function",
-    "name": "transferOwnership",
-    "inputs": [
-      { "name": "newOwner", "type": "address", "internalType": "address" }
-    ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
-  },
-  {
-    "type": "event",
-    "name": "OwnershipTransferred",
-    "inputs": [
-      {
-        "name": "previousOwner",
-        "type": "address",
-        "indexed": true,
-        "internalType": "address"
-      },
-      {
-        "name": "newOwner",
-        "type": "address",
-        "indexed": true,
-        "internalType": "address"
-      }
-    ],
-    "anonymous": false
-  },
-  {
-    "type": "event",
-    "name": "WorkDeployed",
-    "inputs": [
-      {
-        "name": "workAddress",
-        "type": "address",
-        "indexed": false,
-        "internalType": "address"
-      },
-      {
-        "name": "customer",
-        "type": "address",
-        "indexed": false,
-        "internalType": "address"
-      }
-    ],
-    "anonymous": false
-  },
-  {
-    "type": "event",
-    "name": "WorkSharesCreated",
-    "inputs": [
-      {
-        "name": "sharesTokenId",
-        "type": "uint256",
-        "indexed": false,
-        "internalType": "uint256"
-      },
-      {
-        "name": "workContract",
-        "type": "address",
-        "indexed": false,
-        "internalType": "address"
-      }
-    ],
-    "anonymous": false
-  },
-  {
-    "type": "error",
-    "name": "OwnableInvalidOwner",
-    "inputs": [
-      { "name": "owner", "type": "address", "internalType": "address" }
-    ]
-  },
-  {
-    "type": "error",
-    "name": "OwnableUnauthorizedAccount",
-    "inputs": [
-      { "name": "account", "type": "address", "internalType": "address" }
-    ]
-  },
-  {
-    "type": "error",
-    "name": "dWorkFactory__WorkAlreadyFractionalized",
-    "inputs": []
-  },
-  { "type": "error", "name": "dWorkFactory__WorkNotMinted", "inputs": [] },
-  { "type": "error", "name": "dWorkFactory__WrongWorkPrice", "inputs": [] }
-]
-
-export const DWORK_ADRESS = "0xCC05595F8EC6C2b9816675334127474124B22da0";
+export const DWORK_ADRESS = "0xC5e7A8f3699f1691B463651418556c5Af4124A7c";
 
 export const DWORK_ABI = [
   {
     "type": "constructor",
     "inputs": [
       {
-        "name": "_config",
-        "type": "tuple",
-        "internalType": "struct IDWorkConfig.dWorkConfig",
-        "components": [
-          { "name": "owner", "type": "address", "internalType": "address" },
-          {
-            "name": "customerSubmissionIPFSHash",
-            "type": "string",
-            "internalType": "string"
-          },
-          {
-            "name": "appraiserReportIPFSHash",
-            "type": "string",
-            "internalType": "string"
-          },
-          {
-            "name": "customer",
-            "type": "address",
-            "internalType": "address"
-          },
-          { "name": "workName", "type": "string", "internalType": "string" },
-          {
-            "name": "workSymbol",
-            "type": "string",
-            "internalType": "string"
-          },
-          {
-            "name": "factoryAddress",
-            "type": "address",
-            "internalType": "address"
-          },
-          {
-            "name": "workSharesManagerAddress",
-            "type": "address",
-            "internalType": "address"
-          },
-          {
-            "name": "workVerifierAddress",
-            "type": "address",
-            "internalType": "address"
-          }
-        ]
+        "name": "_workSharesManager",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "_workVerifier",
+        "type": "address",
+        "internalType": "address"
       }
     ],
     "stateMutability": "nonpayable"
@@ -307,11 +38,29 @@ export const DWORK_ABI = [
   },
   {
     "type": "function",
-    "name": "bytes32ToAddress",
+    "name": "burn",
     "inputs": [
-      { "name": "_address", "type": "bytes32", "internalType": "bytes32" }
+      { "name": "tokenId", "type": "uint256", "internalType": "uint256" }
     ],
-    "outputs": [{ "name": "", "type": "address", "internalType": "address" }],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "bytes32ToString",
+    "inputs": [
+      { "name": "_bytes32", "type": "bytes32", "internalType": "bytes32" }
+    ],
+    "outputs": [{ "name": "", "type": "string", "internalType": "string" }],
+    "stateMutability": "pure"
+  },
+  {
+    "type": "function",
+    "name": "bytes32ToUint256",
+    "inputs": [
+      { "name": "_uint", "type": "bytes32", "internalType": "bytes32" }
+    ],
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
     "stateMutability": "pure"
   },
   {
@@ -359,15 +108,29 @@ export const DWORK_ABI = [
   },
   {
     "type": "function",
-    "name": "fulfillCertificateExtractionRequest",
+    "name": "counted",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "createWorkShares",
     "inputs": [
-      { "name": "requestId", "type": "bytes32", "internalType": "bytes32" },
-      { "name": "response", "type": "bytes", "internalType": "bytes" },
-      { "name": "err", "type": "bytes", "internalType": "bytes" },
       {
-        "name": "certificateImageHash",
-        "type": "string",
-        "internalType": "string"
+        "name": "_tokenizationRequestId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "_shareSupply",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "_sharePriceUsd",
+        "type": "uint256",
+        "internalType": "uint256"
       }
     ],
     "outputs": [],
@@ -375,10 +138,14 @@ export const DWORK_ABI = [
   },
   {
     "type": "function",
-    "name": "fulfillWorkVerificationRequest",
-    "inputs": [],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    "name": "customerTokenizationRequests",
+    "inputs": [
+      { "name": "_customer", "type": "address", "internalType": "address" }
+    ],
+    "outputs": [
+      { "name": "", "type": "uint256[]", "internalType": "uint256[]" }
+    ],
+    "stateMutability": "view"
   },
   {
     "type": "function",
@@ -391,82 +158,126 @@ export const DWORK_ABI = [
   },
   {
     "type": "function",
-    "name": "getCertificate",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "tuple",
-        "internalType": "struct dWork.WorkCertificate",
-        "components": [
-          { "name": "artist", "type": "string", "internalType": "string" },
-          { "name": "work", "type": "string", "internalType": "string" },
-          { "name": "year", "type": "uint256", "internalType": "uint256" },
-          { "name": "imageURL", "type": "string", "internalType": "string" }
-        ]
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "getCustomerSubmissionIPFSHash",
-    "inputs": [],
-    "outputs": [{ "name": "", "type": "string", "internalType": "string" }],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "getLastAppraiserReportIPFSHash",
-    "inputs": [],
-    "outputs": [{ "name": "", "type": "string", "internalType": "string" }],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "getLastError",
-    "inputs": [],
-    "outputs": [{ "name": "", "type": "bytes", "internalType": "bytes" }],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "getLastResponse",
-    "inputs": [],
-    "outputs": [{ "name": "", "type": "bytes", "internalType": "bytes" }],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "getLastVerifiedAt",
+    "name": "getLastTokenId",
     "inputs": [],
     "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getLastTokenizationRequestId",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getLastVerifierError",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "bytes", "internalType": "bytes" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getLastVerifierResponse",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "bytes", "internalType": "bytes" }],
     "stateMutability": "view"
   },
   {
     "type": "function",
     "name": "getSharesTokenId",
-    "inputs": [],
+    "inputs": [
+      {
+        "name": "_tokenizationRequestId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
     "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
     "stateMutability": "view"
   },
   {
     "type": "function",
-    "name": "getTokenizedWork",
-    "inputs": [],
+    "name": "getTokenizationRequest",
+    "inputs": [
+      {
+        "name": "_tokenizationRequestId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
     "outputs": [
       {
         "name": "",
         "type": "tuple",
-        "internalType": "struct dWork.TokenizedWork",
+        "internalType": "struct dWork.TokenizationRequest",
         "components": [
-          { "name": "artist", "type": "string", "internalType": "string" },
-          { "name": "work", "type": "string", "internalType": "string" },
-          { "name": "ownerName", "type": "string", "internalType": "string" },
           {
-            "name": "workPriceUsd",
+            "name": "customerSubmissionIPFSHash",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "appraiserReportIPFSHash",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "certificateIPFSHash",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "customer",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "initialOwnerName",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "lastWorkPriceUsd",
             "type": "uint256",
             "internalType": "uint256"
+          },
+          { "name": "tokenId", "type": "uint256", "internalType": "uint256" },
+          {
+            "name": "sharesTokenId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          { "name": "isMinted", "type": "bool", "internalType": "bool" },
+          {
+            "name": "isFractionalized",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          { "name": "isPaused", "type": "bool", "internalType": "bool" },
+          {
+            "name": "lastVerifiedAt",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "verificationStep",
+            "type": "uint8",
+            "internalType": "enum dWork.VerificationStep"
+          },
+          {
+            "name": "certificate",
+            "type": "tuple",
+            "internalType": "struct dWork.WorkCertificate",
+            "components": [
+              {
+                "name": "artist",
+                "type": "string",
+                "internalType": "string"
+              },
+              { "name": "work", "type": "string", "internalType": "string" }
+            ]
           }
         ]
       }
@@ -475,8 +286,97 @@ export const DWORK_ABI = [
   },
   {
     "type": "function",
-    "name": "getVerificationStep",
-    "inputs": [],
+    "name": "getTokenizationRequestByWorkTokenId",
+    "inputs": [
+      { "name": "_workTokenId", "type": "uint256", "internalType": "uint256" }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "tuple",
+        "internalType": "struct dWork.TokenizationRequest",
+        "components": [
+          {
+            "name": "customerSubmissionIPFSHash",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "appraiserReportIPFSHash",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "certificateIPFSHash",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "customer",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "initialOwnerName",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "lastWorkPriceUsd",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          { "name": "tokenId", "type": "uint256", "internalType": "uint256" },
+          {
+            "name": "sharesTokenId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          { "name": "isMinted", "type": "bool", "internalType": "bool" },
+          {
+            "name": "isFractionalized",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          { "name": "isPaused", "type": "bool", "internalType": "bool" },
+          {
+            "name": "lastVerifiedAt",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "verificationStep",
+            "type": "uint8",
+            "internalType": "enum dWork.VerificationStep"
+          },
+          {
+            "name": "certificate",
+            "type": "tuple",
+            "internalType": "struct dWork.WorkCertificate",
+            "components": [
+              {
+                "name": "artist",
+                "type": "string",
+                "internalType": "string"
+              },
+              { "name": "work", "type": "string", "internalType": "string" }
+            ]
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getTokenizationRequestStatus",
+    "inputs": [
+      {
+        "name": "_tokenizationRequestId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
     "outputs": [
       {
         "name": "",
@@ -488,35 +388,14 @@ export const DWORK_ABI = [
   },
   {
     "type": "function",
-    "name": "getWorkFactoryAddress",
+    "name": "getWorkSharesManager",
     "inputs": [],
     "outputs": [{ "name": "", "type": "address", "internalType": "address" }],
     "stateMutability": "view"
   },
   {
     "type": "function",
-    "name": "getWorkOwner",
-    "inputs": [],
-    "outputs": [{ "name": "", "type": "address", "internalType": "address" }],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "getWorkPriceUsd",
-    "inputs": [],
-    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "getWorkSharesManagerAddress",
-    "inputs": [],
-    "outputs": [{ "name": "", "type": "address", "internalType": "address" }],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "getWorkVerifierAddress",
+    "name": "getWorkVerifier",
     "inputs": [],
     "outputs": [{ "name": "", "type": "address", "internalType": "address" }],
     "stateMutability": "view"
@@ -534,14 +413,26 @@ export const DWORK_ABI = [
   {
     "type": "function",
     "name": "isFractionalized",
-    "inputs": [],
+    "inputs": [
+      {
+        "name": "_tokenizationRequestId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
     "outputs": [{ "name": "", "type": "bool", "internalType": "bool" }],
     "stateMutability": "view"
   },
   {
     "type": "function",
     "name": "isMinted",
-    "inputs": [],
+    "inputs": [
+      {
+        "name": "_tokenizationRequestId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
     "outputs": [{ "name": "", "type": "bool", "internalType": "bool" }],
     "stateMutability": "view"
   },
@@ -551,6 +442,30 @@ export const DWORK_ABI = [
     "inputs": [],
     "outputs": [{ "name": "", "type": "string", "internalType": "string" }],
     "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "openTokenizationRequest",
+    "inputs": [
+      {
+        "name": "_customerSubmissionIPFSHash",
+        "type": "string",
+        "internalType": "string"
+      },
+      {
+        "name": "_appraiserReportIPFSHash",
+        "type": "string",
+        "internalType": "string"
+      },
+      {
+        "name": "_certificateIPFSHash",
+        "type": "string",
+        "internalType": "string"
+      },
+      { "name": "_customer", "type": "address", "internalType": "address" }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
     "type": "function",
@@ -593,19 +508,30 @@ export const DWORK_ABI = [
   },
   {
     "type": "function",
-    "name": "requestCertificateExtraction",
+    "name": "requestWorkVerification",
     "inputs": [
-      { "name": "_args", "type": "string[]", "internalType": "string[]" }
+      {
+        "name": "_tokenizationRequestId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
     "outputs": [],
     "stateMutability": "nonpayable"
   },
   {
     "type": "function",
-    "name": "requestWorkVerification",
+    "name": "s_favoriteNumber",
     "inputs": [],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "s_lastPerformData",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "bytes", "internalType": "bytes" }],
+    "stateMutability": "view"
   },
   {
     "type": "function",
@@ -642,12 +568,43 @@ export const DWORK_ABI = [
   },
   {
     "type": "function",
+    "name": "setWorkSharesManager",
+    "inputs": [
+      {
+        "name": "_workSharesManager",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
     "name": "setWorkSharesTokenId",
     "inputs": [
+      {
+        "name": "_tokenizationRequestId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
       {
         "name": "_sharesTokenId",
         "type": "uint256",
         "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "setWorkVerifier",
+    "inputs": [
+      {
+        "name": "_workVerifier",
+        "type": "address",
+        "internalType": "address"
       }
     ],
     "outputs": [],
@@ -668,6 +625,15 @@ export const DWORK_ABI = [
     "inputs": [],
     "outputs": [{ "name": "", "type": "string", "internalType": "string" }],
     "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "toBytes",
+    "inputs": [
+      { "name": "_data", "type": "bytes32", "internalType": "bytes32" }
+    ],
+    "outputs": [{ "name": "", "type": "bytes", "internalType": "bytes" }],
+    "stateMutability": "pure"
   },
   {
     "type": "function",
@@ -702,6 +668,11 @@ export const DWORK_ABI = [
     "type": "function",
     "name": "updateLastAppraiserReportIPFSHash",
     "inputs": [
+      {
+        "name": "_tokenizationRequestId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
       {
         "name": "_newAppraiserReportIPFSHash",
         "type": "string",
@@ -763,8 +734,33 @@ export const DWORK_ABI = [
   },
   {
     "type": "event",
+    "name": "BatchMetadataUpdate",
+    "inputs": [
+      {
+        "name": "_fromTokenId",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "_toTokenId",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
     "name": "CertificateExtracted",
     "inputs": [
+      {
+        "name": "tokenizationRequestId",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
       {
         "name": "certificate",
         "type": "tuple",
@@ -772,9 +768,7 @@ export const DWORK_ABI = [
         "internalType": "struct dWork.WorkCertificate",
         "components": [
           { "name": "artist", "type": "string", "internalType": "string" },
-          { "name": "work", "type": "string", "internalType": "string" },
-          { "name": "year", "type": "uint256", "internalType": "uint256" },
-          { "name": "imageURL", "type": "string", "internalType": "string" }
+          { "name": "work", "type": "string", "internalType": "string" }
         ]
       }
     ],
@@ -782,25 +776,13 @@ export const DWORK_ABI = [
   },
   {
     "type": "event",
-    "name": "ChainlinkResponse",
+    "name": "CertificateExtractionError",
     "inputs": [
       {
-        "name": "requestId",
-        "type": "bytes32",
-        "indexed": true,
-        "internalType": "bytes32"
-      },
-      {
-        "name": "response",
-        "type": "bytes",
+        "name": "tokenizationRequestId",
+        "type": "uint256",
         "indexed": false,
-        "internalType": "bytes"
-      },
-      {
-        "name": "err",
-        "type": "bytes",
-        "indexed": false,
-        "internalType": "bytes"
+        "internalType": "uint256"
       }
     ],
     "anonymous": false
@@ -829,6 +811,19 @@ export const DWORK_ABI = [
       },
       {
         "name": "newPrice",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "MetadataUpdate",
+    "inputs": [
+      {
+        "name": "_tokenId",
         "type": "uint256",
         "indexed": false,
         "internalType": "uint256"
@@ -911,6 +906,12 @@ export const DWORK_ABI = [
     "name": "VerificationProcess",
     "inputs": [
       {
+        "name": "tokenizationRequestId",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
         "name": "step",
         "type": "uint8",
         "indexed": false,
@@ -934,23 +935,51 @@ export const DWORK_ABI = [
   },
   {
     "type": "event",
+    "name": "WorkSharesCreated",
+    "inputs": [
+      {
+        "name": "sharesTokenId",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "workTokenId",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "shareSupply",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
     "name": "WorkTokenized",
     "inputs": [
       {
-        "name": "tokenizedWork",
-        "type": "tuple",
+        "name": "tokenizationRequestId",
+        "type": "uint256",
         "indexed": false,
-        "internalType": "struct dWork.TokenizedWork",
-        "components": [
-          { "name": "artist", "type": "string", "internalType": "string" },
-          { "name": "work", "type": "string", "internalType": "string" },
-          { "name": "ownerName", "type": "string", "internalType": "string" },
-          {
-            "name": "workPriceUsd",
-            "type": "uint256",
-            "internalType": "uint256"
-          }
-        ]
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "WorkVerificationError",
+    "inputs": [
+      {
+        "name": "tokenizationRequestId",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
       }
     ],
     "anonymous": false
@@ -1030,16 +1059,16 @@ export const DWORK_ABI = [
       { "name": "account", "type": "address", "internalType": "address" }
     ]
   },
-  { "type": "error", "name": "dWork__AlreadyMinted", "inputs": [] },
+  { "type": "error", "name": "dWork__AlreadyFractionalized", "inputs": [] },
   {
     "type": "error",
     "name": "dWork__NotEnoughTimePassedSinceLastVerification",
     "inputs": []
   },
-  { "type": "error", "name": "dWork__NotOwnerOrFactory", "inputs": [] },
-  { "type": "error", "name": "dWork__NotWorkOwner", "inputs": [] },
-  { "type": "error", "name": "dWork__NotWorkVerifier", "inputs": [] },
+  { "type": "error", "name": "dWork__NotZeroAddress", "inputs": [] },
   { "type": "error", "name": "dWork__ProcessOrderError", "inputs": [] },
+  { "type": "error", "name": "dWork__TokenPaused", "inputs": [] },
+  { "type": "error", "name": "dWork__WorkNotMinted", "inputs": [] },
   {
     "type": "error",
     "name": "dWork__WorkVerificationNotExpected",

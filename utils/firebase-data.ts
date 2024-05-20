@@ -92,7 +92,7 @@ export const addHashData = async (
   }
 };
 
-export const getHashesByTitle = async (title: string): Promise<{ hashArtwork: string, hashReport: string } | null> => {
+export const getHashesByTitle = async (title: string): Promise<{ hashArtwork: string, hashReport: string, hashCertificate: string } | null> => {
   try {
     const snapshot = await adminDb.collection("hash").where("title", "==", title).limit(1).get();
     if (snapshot.empty) {
@@ -102,12 +102,14 @@ export const getHashesByTitle = async (title: string): Promise<{ hashArtwork: st
     return {
       hashArtwork: data.hashArtwork,
       hashReport: data.hashReport,
+      hashCertificate: data.hashCertificate, 
     };
   } catch (error) {
     console.error("Error getting hashes:", error);
     throw new Error("Failed to get hashes");
   }
 };
+
 
 
 export const updateArtworkStatus = async (title: string, status: string): Promise<void> => {
