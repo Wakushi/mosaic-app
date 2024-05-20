@@ -55,38 +55,6 @@ export const getArtworksByClientAddress = async (
   }
 };
 
-export const isUserRegistered = async (clientAddress: string) => {
-  try {
-    const snapshot = await adminDb
-      .collection("users")
-      .where("address", "==", clientAddress)
-      .get();
-    return !snapshot.empty;
-  } catch (error) {
-    console.error("Error checking user registration:", error);
-    throw new Error("Failed to check user registration");
-  }
-};
-
-export const isUserAdmin = async (clientAddress: string): Promise<boolean> => {
-  try {
-    const snapshot = await adminDb
-      .collection("users")
-      .where("address", "==", clientAddress)
-      .limit(1)
-      .get();
-    if (snapshot.empty) {
-      return false;
-    }
-
-    const userData = snapshot.docs[0].data();
-    return userData.role === "admin";
-  } catch (error) {
-    console.error("Error checking user role:", error);
-    throw new Error("Failed to check user role");
-  }
-};
-
 export const getAllArtworks = async (): Promise<Artwork[]> => {
   try {
     const snapshot = await adminDb.collection("artworks").get();

@@ -25,18 +25,12 @@ import {
 // Zustand store
 import { useUserStore } from "@/store/useStore"; 
 
-const checkUserRegistration = async (clientAddress: string) => {
-  const response = await fetch(`/api/user/checkUserRegistration?clientAddress=${clientAddress}`);
-  const data = await response.json();
-  return data.isRegistered;
-};
-
 const fetchUserData = async (clientAddress: string) => {
   const response = await fetch(`/api/user?clientAddress=${clientAddress}`);
-  if (!response.ok) {
-    throw new Error("User not found");
-  }
   const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.error || 'Failed to fetch user data');
+  }
   return data;
 };
 
@@ -49,25 +43,25 @@ export default function Header() {
   const clientAddress = account.address;
 
   useEffect(() => {
-    async function checkAndFetchUser() {
+    async function checkUser() {
       if (clientAddress) {
         try {
-          const registered = await checkUserRegistration(clientAddress);
-          setIsRegistered(registered);
+          const data = await fetchUserData(clientAddress);
+          setIsRegistered(data.isRegistered);
 
-          if (registered) {
-            const user = await fetchUserData(clientAddress);
+          if (data.isRegistered) {
+            const user = data.user;
             setIsAdmin(user.role === "admin");
             setUserType(user.userType);
           }
         } catch (error) {
-          console.error("Error checking user registration or fetching user data:", error);
+          console.error("Error fetching user data:", error);
           setIsRegistered(false);
         }
       }
     }
 
-    checkAndFetchUser();
+    checkUser();
   }, [clientAddress]);
 
   const toggleModal = () => setModalOpen(!modalOpen);

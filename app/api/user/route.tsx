@@ -25,10 +25,10 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     const user = await getUserByAddress(clientAddress);
 
     if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      return NextResponse.json({ isRegistered: false }, { status: 404 });
     }
 
-    const response = NextResponse.json(user);
+    const response = NextResponse.json({ isRegistered: true, user });
 
     response.cookies.set('isAdmin', (user.role === 'admin').toString(), { httpOnly: true });
     response.cookies.set('userType', user.userType, { httpOnly: true });
@@ -43,3 +43,4 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     }
   }
 }
+
