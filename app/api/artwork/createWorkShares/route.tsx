@@ -3,13 +3,13 @@ import { createShares } from '@/utils/contract-interactions';
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
-    const { workTokenId, workOwner, shareSupply, sharePriceUsd, artworkTitle } = await req.json();
+    const { tokenizationRequestId , shareSupply, sharePriceUsd, artworkTitle } = await req.json();
 
-    if (!workTokenId || !workOwner || !shareSupply || !sharePriceUsd || !artworkTitle) {
+    if (!tokenizationRequestId || !shareSupply || !sharePriceUsd || !artworkTitle) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    const result = await createShares(workTokenId, workOwner, shareSupply, sharePriceUsd, artworkTitle);
+    const result = await createShares(tokenizationRequestId, shareSupply, sharePriceUsd, artworkTitle);
     return NextResponse.json({ message: 'Shares created successfully', result });
   } catch (error) {
     console.error('API error:', error);

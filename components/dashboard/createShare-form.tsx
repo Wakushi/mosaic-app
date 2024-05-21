@@ -52,7 +52,7 @@ export function CreateSharesForm({ artwork, closeModal}: CreateSharesFormProps) 
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          workTokenId: artwork.tokenizationRequestId,
+          tokenizationRequestId: artwork.tokenizationRequestId,
           workOwner: artwork.clientAddress,
           shareSupply: values.shareSupply,
           sharePriceUsd: values.sharePriceUsd,

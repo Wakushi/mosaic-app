@@ -84,8 +84,7 @@ export async function requestWorkVerification(
 // Share
 
 export async function createShares(
-  workTokenId: number,
-  workOwner: string,
+  tokenizationRequestId: number,
   shareSupply: number,
   sharePriceUsd: number,
   artworkTitle: string
@@ -94,10 +93,10 @@ export async function createShares(
     const { request: createSharesRequest } =
       await publicClient.simulateContract({
         account: walletClient.account,
-        address: DWORK_SHARES_ADDRESS,
-        abi: DWORK_SHARES_ABI,
-        functionName: "createShares",
-        args: [workTokenId, workOwner, shareSupply, sharePriceUsd],
+        address: DWORK_ADRESS,
+        abi: DWORK_ABI,
+        functionName: "createWorkShares",
+        args: [tokenizationRequestId, shareSupply, sharePriceUsd],
       })
 
     const result = await walletClient.writeContract(createSharesRequest)
