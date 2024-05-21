@@ -45,7 +45,7 @@ export async function openTokenizationRequest(
   }
 }
 
-export async function requestWorkVerification(title: string) {
+export async function requestWorkVerification(tokenizationRequestId: string, title: string) {
   try {
     const { request: workVerificationRequest } =
       await publicClient.simulateContract({
@@ -53,7 +53,7 @@ export async function requestWorkVerification(title: string) {
         address: DWORK_ADRESS,
         abi: DWORK_ABI,
         functionName: "requestWorkVerification",
-        args: [],
+        args: [tokenizationRequestId],
       });
 
     const result = await walletClient.writeContract(workVerificationRequest);

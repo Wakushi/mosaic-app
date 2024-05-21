@@ -3,13 +3,13 @@ import { requestWorkVerification } from '@/utils/contract-interactions';
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
-    const { title } = await req.json();
+    const { tokenizationRequestId, title } = await req.json();
 
-    if (!title) {
+    if (!tokenizationRequestId || !title) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    const result = await requestWorkVerification(title);
+    const result = await requestWorkVerification(tokenizationRequestId, title);
     return NextResponse.json({ message: 'Work verification requested successfully', result });
   } catch (error) {
     console.error('API error:', error);
@@ -20,4 +20,5 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     }
   }
 }
+
 
