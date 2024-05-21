@@ -92,7 +92,7 @@ export const addHashData = async (
   }
 };
 
-export const getHashesByTitle = async (title: string): Promise<{ hashArtwork: string, hashReport: string } | null> => {
+export const getHashesByTitle = async (title: string): Promise<{ hashArtwork: string, hashReport: string, hashCertificate: string } | null> => {
   try {
     const snapshot = await adminDb.collection("hash").where("title", "==", title).limit(1).get();
     if (snapshot.empty) {
@@ -102,12 +102,14 @@ export const getHashesByTitle = async (title: string): Promise<{ hashArtwork: st
     return {
       hashArtwork: data.hashArtwork,
       hashReport: data.hashReport,
+      hashCertificate: data.hashCertificate, 
     };
   } catch (error) {
     console.error("Error getting hashes:", error);
     throw new Error("Failed to get hashes");
   }
 };
+
 
 
 export const updateArtworkStatus = async (title: string, status: string): Promise<void> => {
@@ -124,5 +126,23 @@ export const updateArtworkStatus = async (title: string, status: string): Promis
   } catch (error) {
     console.error('Error updating artwork status:', error);
     throw new Error('Failed to update artwork status');
+  }
+};
+
+export const updateArtworkTokenizationRequest = async (artworkTitle: string, tokenizationRequestId: string) => {
+  try {
+    const artworkRef = adminDb.collection('artworks').where('title', '==', artworkTitle).limit(1);
+    const snapshot = await artworkRef.get();
+
+    if (snapshot.empty) {
+      throw new Error(`Artwork with title ${artworkTitle} not found`);
+    }
+
+    const artworkDoc = snapshot.docs[0];
+    await artworkDoc.ref.update({ tokenizationRequestId });
+    return true;
+  } catch (error) {
+    console.error("Error updating artwork:", error);
+    throw new Error("Failed to update artwork");
   }
 };

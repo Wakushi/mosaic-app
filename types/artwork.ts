@@ -8,6 +8,7 @@ export type Artwork = {
   artist: string;
   owner: string;
   price: number;
+  tokenizationRequestId?: string;
 };
 
 export type ArtworkData = {

@@ -31,7 +31,7 @@ const RequestWorkVerificationButton = forwardRef<HTMLDivElement, RequestWorkVeri
       const response = await fetch('/api/admin/requestWorkVerification', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: artwork.title }), 
+        body: JSON.stringify({ tokenizationRequestId: artwork.tokenizationRequestId, title: artwork.title }), 
       });
 
       const result = await response.json();
@@ -41,7 +41,7 @@ const RequestWorkVerificationButton = forwardRef<HTMLDivElement, RequestWorkVeri
       }
 
       console.log('Work verification requested successfully:', result);
-      refreshData();
+      refreshData(); 
 
       toast({
         title: "Success",
@@ -63,7 +63,7 @@ const RequestWorkVerificationButton = forwardRef<HTMLDivElement, RequestWorkVeri
 
   return (
     <>
-      <div ref={ref} onClick={() => setAlertOpen(true)} className='p-1 text-sm cursor-pointer'>Request Work Verification</div>
+      <div ref={ref} onClick={() => setAlertOpen(true)} className='p-1 text-sm cursor-pointer hover:background-black'>Request Work Verification</div>
       <AlertDialog open={alertOpen} onOpenChange={setAlertOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -80,7 +80,6 @@ const RequestWorkVerificationButton = forwardRef<HTMLDivElement, RequestWorkVeri
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-      {error && <p className="text-red-500">{error}</p>}
     </>
   );
 });
@@ -88,4 +87,5 @@ const RequestWorkVerificationButton = forwardRef<HTMLDivElement, RequestWorkVeri
 RequestWorkVerificationButton.displayName = 'RequestWorkVerificationButton';
 
 export default RequestWorkVerificationButton;
+
 
