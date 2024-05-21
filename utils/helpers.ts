@@ -4,7 +4,7 @@ import satori from 'satori';
 import React from 'react';
 
 async function getOptimizedFrame(frameComponent: React.ReactElement) {
-  const jerseyFontResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/fonts/PlayfairDisplay-Regular.ttf`);
+  const jerseyFontResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/fonts/Roboto-Regular.ttf`);
   const jerseyFont = await jerseyFontResponse.arrayBuffer();
 
   const svg = await satori(
@@ -44,3 +44,4 @@ export function convertBigIntToString(obj: any): any {
     return obj;
   }
 }
+

@@ -67,24 +67,48 @@ export async function requestWorkVerification(tokenizationRequestId: string, tit
   }
 }
 
-export async function createWorkShares(contractAddress: string, totalShares: number) {
+
+// Share
+
+export async function createShares(
+  workTokenId: number,
+  workOwner: string,
+  shareSupply: number,
+  sharePriceUsd: number,
+  artworkTitle: string
+) {
   try {
-    const { request: createWorkSharesRequest } = await publicClient.simulateContract({
+    const { request: createSharesRequest } = await publicClient.simulateContract({
       account: walletClient.account,
       address: DWORK_ADRESS,
       abi: DWORK_ABI,
-      functionName: "createWorkShares",
-      args: [contractAddress, totalShares],
+      functionName: "createShares",
+      args: [workTokenId, workOwner, shareSupply, sharePriceUsd],
     });
 
-    const result = await walletClient.writeContract(createWorkSharesRequest);
+    const result = await walletClient.writeContract(createSharesRequest);
 
-    await updateArtworkStatus(contractAddress, "fractioned");
+    await updateArtworkStatus(artworkTitle, "shares created");
 
     return result;
   } catch (error) {
-    console.error("Error creating work shares:", error);
-    throw new Error("Failed to create work shares");
+    console.error("Error creating shares:", error);
+    throw new Error("Failed to create shares");
   }
 }
 
+export async function getTokenizationRequestById(tokenizationRequestId: BigInt) {
+  try {
+    const result = await publicClient.readContract({
+      address: DWORK_ADRESS,
+      abi: DWORK_ABI,
+      functionName: "getTokenizationRequest",
+      args: [tokenizationRequestId],
+    });
+
+    return convertBigIntToString(result);
+  } catch (error) {
+    console.error("Error getting tokenization request:", error);
+    throw new Error("Failed to get tokenization request");
+  }
+}
