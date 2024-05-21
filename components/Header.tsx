@@ -72,6 +72,9 @@ export default function Header() {
         <div>Mosaic</div>
       </Link>
       <div className="flex gap-4">
+        <Link href="/marketplace">
+          <Button variant="outline">Marketplace</Button>
+        </Link>
         {isRegistered === false && (
           <>
             <Button onClick={toggleModal}>Complete your register</Button>

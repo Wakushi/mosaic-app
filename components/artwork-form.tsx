@@ -7,6 +7,7 @@ import { ArtworkData } from "@/types/artwork";
 import { Button } from "./ui/button";
 import Link from "next/link";
 import { useToast } from "@/components/ui/use-toast";
+import  Loader  from "@/components/Loader";
 
 const stringToNumber = z
   .union([
@@ -44,9 +45,11 @@ export const artFieldsData = [
 export function ArtForm() {
   const account = useAccount();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
   const onSubmit = async (values: ArtFormValues) => {
+    setLoading(true);
     try {
       const artworkData: ArtworkData = {
         clientAddress: account?.address || "",
@@ -168,14 +171,18 @@ export function ArtForm() {
           description: "Failed to add artwork: Unknown error",
         });
       }
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div>
-      {successMessage ? (
+      {loading ? (
+        <Loader />
+      ) : successMessage ? (
         <div className="flex flex-col justify-center items-center p-10">
-          <p className="mb-4">{successMessage}</p>
+          <h2 className="py-10">{successMessage}</h2>
           <Button>
             <Link
               href="https://calendly.com/camillemtd95/artwork-authentication-consultation"
