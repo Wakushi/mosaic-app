@@ -4,6 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import { Artwork } from "@/types/artwork";
 import { Button } from "@/components/ui/button";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import CreateWorkShare from "../createWorkShare";
+import CreateSharesButton from "./createShare-button";
 
 export const columns: ColumnDef<Artwork>[] = [
   {
@@ -51,8 +53,13 @@ export const columns: ColumnDef<Artwork>[] = [
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem>View</DropdownMenuItem>
               {artwork.status === "approved" && (
-                <DropdownMenuItem>
-                  <div onClick={toggleModal}>Create share</div>
+                <DropdownMenuItem asChild>
+                  <CreateSharesButton artwork={artwork}  />
+                </DropdownMenuItem>
+              )}
+              {artwork.status !== "approved" && (
+                <DropdownMenuItem asChild>
+                  <span>No actions available</span>
                 </DropdownMenuItem>
               )}
             </DropdownMenuContent>
