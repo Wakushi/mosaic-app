@@ -5,6 +5,7 @@ import { useAccount } from "wagmi";
 import { columns } from "@/components/dashboard/column";
 import { DataTable } from "@/components/dashboard/data-table";
 import { Artwork } from "@/types/artwork";
+import Loader from "@/components/Loader";
 
 export default function Dashboard() {
   const { address: clientAddress } = useAccount();
