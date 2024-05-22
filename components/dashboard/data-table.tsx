@@ -1,7 +1,7 @@
-"use client";
+"use client"
 
-import * as React from "react";
-import { useState } from "react";
+import * as React from "react"
+import { useState } from "react"
 import {
   ColumnDef,
   flexRender,
@@ -9,7 +9,7 @@ import {
   useReactTable,
   ColumnFiltersState,
   getFilteredRowModel,
-} from "@tanstack/react-table";
+} from "@tanstack/react-table"
 import {
   Table,
   TableBody,
@@ -17,15 +17,15 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Modal } from "@/components/clientUi/modal";
-import { ArtForm } from "../artwork-form";
+} from "@/components/ui/table"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { Modal } from "@/components/clientUi/modal"
+import { ArtForm } from "../artwork-form"
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+  columns: ColumnDef<TData, TValue>[]
+  data: TData[]
 }
 
 export function DataTable<TData, TValue>({
@@ -34,7 +34,7 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
-  );
+  )
   const table = useReactTable({
     data,
     columns,
@@ -44,9 +44,9 @@ export function DataTable<TData, TValue>({
     state: {
       columnFilters,
     },
-  });
-  const [modalOpen, setModalOpen] = useState(false);
-  const toggleModal = () => setModalOpen(!modalOpen);
+  })
+  const [modalOpen, setModalOpen] = useState(false)
+  const toggleModal = () => setModalOpen(!modalOpen)
 
   return (
     <div className="w-full">
@@ -79,7 +79,7 @@ export function DataTable<TData, TValue>({
                             header.getContext()
                           )}
                     </TableHead>
-                  );
+                  )
                 })}
               </TableRow>
             ))}
@@ -115,5 +115,5 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
     </div>
-  );
+  )
 }
