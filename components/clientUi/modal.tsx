@@ -21,7 +21,7 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, close, children }) => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-		zIndex: 1000,
+		    zIndex: 1000,
     
       }}
 
@@ -34,8 +34,8 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, close, children }) => {
           borderRadius: "8px",
           maxWidth: "500px",
           width: "100%",
+          minHeight: "50vh",
         }}
-        className="min-h-1/2-screen"
       >
         <button
           onClick={close}
