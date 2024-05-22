@@ -1,4 +1,4 @@
-import { createWalletClient, http, createPublicClient, Address } from "viem"
+import { createWalletClient, http, createPublicClient } from "viem"
 import { privateKeyToAccount } from "viem/accounts"
 import { polygonAmoy } from "viem/chains"
 import {
@@ -7,10 +7,12 @@ import {
   DWORK_SHARES_ADDRESS,
   DWORK_SHARES_ABI,
 } from "@/lib/contract"
+import { readContract } from "@wagmi/core"
 import { updateArtworkStatus } from "@/utils/firebase-data"
 import { convertBigIntToString } from "./helpers"
 import { MasterworksWorkData, ShareDetail, WorkShare } from "@/types/artwork"
 import { getMasterworksData } from "./external-data"
+import { chainConfig } from "./blockchain-config"
 
 const account = privateKeyToAccount((process.env.PRIVATE_KEY as `0x`) || "")
 
@@ -134,18 +136,17 @@ export async function createShares(
   }
 }
 
-
 export async function getAllSharesDetails() {
   try {
-    const result: any = await publicClient.readContract({
-      address: DWORK_SHARES_ADDRESS,
+    const result = await readContract(chainConfig, {
       abi: DWORK_SHARES_ABI,
+      address: DWORK_SHARES_ADDRESS,
       functionName: "getLastTokenId",
     })
     const shareLastTokenId = Number(result)
     const workShares: WorkShare[] = []
     for (let i = 1; i <= shareLastTokenId; i++) {
-      const share: any = await publicClient.readContract({
+      const share: any = await readContract(chainConfig, {
         address: DWORK_SHARES_ADDRESS,
         abi: DWORK_SHARES_ABI,
         functionName: "getWorkSharesByTokenId",
@@ -164,12 +165,13 @@ export async function getAllSharesDetails() {
     }
     const sharesDetailed: ShareDetail[] = []
     for (let workShare of workShares) {
-      const tokenizationRequest: any = await publicClient.readContract({
+      const tokenizationRequest: any = await readContract(chainConfig, {
         address: DWORK_ADRESS,
         abi: DWORK_ABI,
         functionName: "getTokenizationRequestByWorkTokenId",
         args: [workShare.workTokenId],
       })
+
       const masterworksData: MasterworksWorkData = await getMasterworksData(
         tokenizationRequest.certificate.artist,
         tokenizationRequest.certificate.work
