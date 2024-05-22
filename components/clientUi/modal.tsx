@@ -21,8 +21,10 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, close, children }) => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-		zIndex: 1000
+		zIndex: 1000,
+    
       }}
+
     >
       <div
         style={{
@@ -33,6 +35,7 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, close, children }) => {
           maxWidth: "500px",
           width: "100%",
         }}
+        className="min-h-1/2-screen"
       >
         <button
           onClick={close}

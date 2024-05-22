@@ -23,6 +23,8 @@ const walletClient = createWalletClient({
   transport: http(process.env.ALCHEMY_URL),
 })
 
+// Dwork contract
+
 export async function openTokenizationRequest(
   customerSubmissionIPFSHash: string,
   appraiserReportIPFSHash: string,
@@ -81,7 +83,23 @@ export async function requestWorkVerification(
   }
 }
 
-// Share
+export async function getTokenizationRequestById(
+  tokenizationRequestId: BigInt
+) {
+  try {
+    const result = await publicClient.readContract({
+      address: DWORK_ADRESS,
+      abi: DWORK_ABI,
+      functionName: "getTokenizationRequest",
+      args: [tokenizationRequestId],
+    })
+
+    return convertBigIntToString(result)
+  } catch (error) {
+    console.error("Error getting tokenization request:", error)
+    throw new Error("Failed to get tokenization request")
+  }
+}
 
 export async function createShares(
   tokenizationRequestId: number,
@@ -110,20 +128,22 @@ export async function createShares(
   }
 }
 
-export async function getTokenizationRequestById(
-  tokenizationRequestId: BigInt
-) {
-  try {
-    const result = await publicClient.readContract({
-      address: DWORK_ADRESS,
-      abi: DWORK_ABI,
-      functionName: "getTokenizationRequest",
-      args: [tokenizationRequestId],
-    })
 
-    return convertBigIntToString(result)
+// DworkShares contract
+
+export async function getLastTokenId() {
+  try {
+    const tokenId = await publicClient.readContract({
+      address: DWORK_SHARES_ADDRESS,
+      abi: DWORK_SHARES_ABI,
+      functionName: "getLastTokenId",
+      args: [],
+    });
+    return tokenId;
   } catch (error) {
-    console.error("Error getting tokenization request:", error)
-    throw new Error("Failed to get tokenization request")
+    console.error("Error getting last token ID:", error);
+    throw new Error("Failed to get last token ID");
   }
 }
+
+
