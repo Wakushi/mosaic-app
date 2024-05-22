@@ -29,6 +29,8 @@ const walletClient = createWalletClient({
   ),
 })
 
+// Dwork contract
+
 export async function openTokenizationRequest(
   customerSubmissionIPFSHash: string,
   appraiserReportIPFSHash: string,
@@ -87,7 +89,23 @@ export async function requestWorkVerification(
   }
 }
 
-// Share
+export async function getTokenizationRequestById(
+  tokenizationRequestId: BigInt
+) {
+  try {
+    const result = await publicClient.readContract({
+      address: DWORK_ADRESS,
+      abi: DWORK_ABI,
+      functionName: "getTokenizationRequest",
+      args: [tokenizationRequestId],
+    })
+
+    return convertBigIntToString(result)
+  } catch (error) {
+    console.error("Error getting tokenization request:", error)
+    throw new Error("Failed to get tokenization request")
+  }
+}
 
 export async function createShares(
   tokenizationRequestId: number,
@@ -116,23 +134,6 @@ export async function createShares(
   }
 }
 
-export async function getTokenizationRequestById(
-  tokenizationRequestId: BigInt
-) {
-  try {
-    const result = await publicClient.readContract({
-      address: DWORK_ADRESS,
-      abi: DWORK_ABI,
-      functionName: "getTokenizationRequest",
-      args: [tokenizationRequestId],
-    })
-
-    return convertBigIntToString(result)
-  } catch (error) {
-    console.error("Error getting tokenization request:", error)
-    throw new Error("Failed to get tokenization request")
-  }
-}
 
 export async function getAllSharesDetails() {
   try {

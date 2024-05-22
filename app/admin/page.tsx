@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Artwork } from "@/types/artwork";
 import { DataTable } from "@/components/adminDashboard/data-table";
 import { getColumns } from "@/components/adminDashboard/column";
+import Loader from "@/components/Loader";
 
 export default function Admin() {
   const [artworks, setArtworks] = useState<Artwork[]>([]);
@@ -31,20 +32,22 @@ export default function Admin() {
     fetchArtworks();
   }, []);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
   if (error) {
     return <div>Error: {error}</div>;
   }
 
   return (
-    <div className="bg-gradient-to-r from-white to-gray-300 min-h-screen py-20 pl-14">
-      <h1 className="text-8xl">Admin</h1>
-      <div className="container mx-auto py-20">
-        <DataTable columns={getColumns(fetchArtworks)} data={artworks} />
-      </div>
+    <div className="bg-gradient-to-r from-white to-gray-300 min-h-screen py-20 pl-14 flex justify-center items-center flex-col">
+      {loading ? (
+        <Loader />
+      ) : (
+        <>
+          <h1 className="text-8xl self-start">Admin</h1>
+          <div className="container mx-auto py-20">
+            <DataTable columns={getColumns(fetchArtworks)} data={artworks} />
+          </div>
+        </>
+      )}
     </div>
   );
 }

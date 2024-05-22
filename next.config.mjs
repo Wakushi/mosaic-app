@@ -1,4 +1,4 @@
-/** @type {import('next').NextConfig} */
+/ @type {import('next').NextConfig} */
 const nextConfig = {
   webpack: (config) => {
     config.externals.push("pino-pretty")
@@ -8,16 +8,9 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "static.masterworks.io",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "theredwindows.net",
-        pathname: "/**",
+        hostname: "**",
       },
     ],
   },
 }
-
 export default nextConfig

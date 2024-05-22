@@ -3,12 +3,14 @@
 import { ShareDetail } from "@/types/artwork"
 import Image from "next/image"
 import { useEffect, useState } from "react"
+import Loader from "@/components/Loader" // Assurez-vous que ce chemin est correct
 
 const IMAGE_FALLBACK =
   "https://theredwindows.net/wp-content/themes/koji/assets/images/default-fallback-image.png"
 
-export default function marketplace() {
+export default function Marketplace() {
   const [sharesData, setSharesData] = useState<ShareDetail[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function fetchSharesData() {
@@ -17,11 +19,20 @@ export default function marketplace() {
       console.log(data)
       if (data) {
         setSharesData(data)
+        setLoading(false)
       }
     }
 
     fetchSharesData()
   }, [])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader />
+      </div>
+    )
+  }
 
   return (
     <div className="bg-gradient-to-r from-white to-gray-300 min-h-screen py-20 px-14">
