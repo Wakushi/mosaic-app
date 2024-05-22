@@ -1,5 +1,5 @@
-export const DWORK_ADRESS = "0x3FFB6aA9997648F9BdB661AF86E085c955E41737"
-export const DWORK_SHARES_ADDRESS = "0xAaA9fBaFb9a8AbB649f8577065aaa42A4A90E567"
+export const DWORK_ADRESS = "0x42B7883F62C25e315caF276dD457D8B22338b710"
+export const DWORK_SHARES_ADDRESS = "0x1B19239bA6093f3bEC7c5488f8EEC5Baa1473C5E"
 
 export const DWORK_ABI = [
   {
@@ -1369,7 +1369,7 @@ export const DWORK_SHARES_ABI = [
       { name: "_amount", type: "uint256", internalType: "uint256" },
       { name: "_priceUsd", type: "uint256", internalType: "uint256" },
     ],
-    outputs: [],
+    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
     stateMutability: "nonpayable",
   },
   {
