@@ -8,9 +8,16 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "**",
+        hostname: "static.masterworks.io",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "theredwindows.net",
+        pathname: "/**",
       },
     ],
   },
 }
+
 export default nextConfig
