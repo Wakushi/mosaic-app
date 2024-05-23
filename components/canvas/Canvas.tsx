@@ -20,7 +20,7 @@ export default function Experience() {
     <>
       <ambientLight />
       <pointLight position={[10, 10, 10]} />
-      <group ref={groupRef} scale={1.3}>
+      <group ref={groupRef} scale={1.2}>
         <mesh rotation={[Math.PI * 0.5, 0, 0]}>
           <cylinderGeometry args={[1.5, 1.5, 0.2, 100, 1]} />
           <meshMatcapMaterial matcap={matcapTexture} />

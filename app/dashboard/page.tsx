@@ -31,19 +31,22 @@ export default function Dashboard() {
     }
   }, [clientAddress]);
 
+  if (loading) {
+    return (
+        <Loader />
+    )
+  }
+
   if (error) {
     return <div>Error: {error}</div>;
   }
 
   return (
-    <div className="bg-gradient-to-r from-white to-gray-300 min-h-screen flex flex-col justify-center items-center">
-      {loading ? (
-        <Loader />
-      ) : (
-        <div className="container mx-auto py-20">
+    <div className="bg-gradient-to-r from-white to-gray-300 min-h-screen px-14 py-20">
+      <h1 className="text-8xl self-start">Dashboard</h1>
+        <div className="mx-auto py-20">
           <DataTable columns={columns} data={data} />
         </div>
-      )}
     </div>
   );
 }

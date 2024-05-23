@@ -32,22 +32,24 @@ export default function Admin() {
     fetchArtworks();
   }, []);
 
+  if (loading) {
+    return (
+        <Loader />
+    );
+  }
+
   if (error) {
     return <div>Error: {error}</div>;
   }
 
   return (
-    <div className="bg-gradient-to-r from-white to-gray-300 min-h-screen py-20 pl-14 flex justify-center items-center flex-col">
-      {loading ? (
-        <Loader />
-      ) : (
-        <>
-          <h1 className="text-8xl self-start">Admin</h1>
-          <div className="container mx-auto py-20">
-            <DataTable columns={getColumns(fetchArtworks)} data={artworks} />
-          </div>
-        </>
-      )}
+    <div className="bg-gradient-to-r from-white to-gray-300 min-h-screen py-20 px-14">
+      <>
+        <h1 className="text-8xl self-start">Admin</h1>
+        <div className="mx-auto py-20">
+          <DataTable columns={getColumns(fetchArtworks)} data={artworks} />
+        </div>
+      </>
     </div>
   );
 }

@@ -209,3 +209,92 @@ export async function getAllSharesDetails() {
     throw new Error("Failed to get tokenization request")
   }
 }
+
+export async function getShareDetail(id: number): Promise<ShareDetail> {
+  try {
+    const share: any = await readContract(chainConfig, {
+      address: DWORK_SHARES_ADDRESS,
+      abi: DWORK_SHARES_ABI,
+      functionName: "getWorkSharesByTokenId",
+      args: [id],
+    });
+
+    const workShare: WorkShare = {
+      sharesTokenId: id,
+      maxShareSupply: Number(share.maxShareSupply),
+      sharePriceUsd: Number(share.sharePriceUsd),
+      workTokenId: Number(share.workTokenId),
+      totalShareBought: Number(share.totalShareBought),
+      totalSellValueUsd: Number(share.totalSellValueUsd),
+      workOwner: share.workOwner,
+      isPaused: share.isPaused,
+    };
+
+    const tokenizationRequest: any = await readContract(chainConfig, {
+      address: DWORK_ADRESS,
+      abi: DWORK_ABI,
+      functionName: "getTokenizationRequestByWorkTokenId",
+      args: [workShare.workTokenId],
+    });
+
+    const masterworksData = await getMasterworksData(
+      tokenizationRequest.certificate.artist,
+      tokenizationRequest.certificate.work
+    );
+
+    const shareDetail: ShareDetail = {
+      tokenizationRequest: {
+        customerSubmissionIPFSHash: tokenizationRequest.customerSubmissionIPFSHash,
+        appraiserReportIPFSHash: tokenizationRequest.appraiserReportIPFSHash,
+        certificateIPFSHash: tokenizationRequest.certificateIPFSHash,
+        owner: tokenizationRequest.owner,
+        initialOwnerName: tokenizationRequest.initialOwnerName,
+        lastWorkPriceUsd: Number(tokenizationRequest.lastWorkPriceUsd),
+        workTokenId: Number(tokenizationRequest.workTokenId),
+        sharesTokenId: Number(tokenizationRequest.sharesTokenId),
+        listingPriceUsd: Number(tokenizationRequest.listingPriceUsd),
+        isMinted: tokenizationRequest.isMinted,
+        isFractionalized: tokenizationRequest.isFractionalized,
+        isPaused: tokenizationRequest.isPaused,
+        isListed: tokenizationRequest.isListed,
+        lastVerifiedAt: Number(tokenizationRequest.lastVerifiedAt),
+        verificationStep: Number(tokenizationRequest.verificationStep),
+        certificate: {
+          artist: tokenizationRequest.certificate.artist,
+          work: tokenizationRequest.certificate.work,
+        },
+      },
+      workShare,
+      masterworksData,
+    };
+
+    return shareDetail;
+  } catch (error) {
+    console.error("Error getting share detail:", error);
+    throw new Error("Failed to get share detail");
+  }
+}
+
+export async function buyInitialShare(
+  sharesTokenId: number,
+  shareAmount: number,
+  value: bigint
+) {
+  try {
+    const { request: buyShareRequest } = await publicClient.simulateContract({
+      account: walletClient.account,
+      address: DWORK_SHARES_ADDRESS,
+      abi: DWORK_SHARES_ABI,
+      functionName: "buyInitialShare",
+      args: [sharesTokenId, shareAmount],
+      value, // ETH value to send with the transaction
+    });
+
+    const result = await walletClient.writeContract(buyShareRequest);
+
+    return result;
+  } catch (error) {
+    console.error("Error buying initial share:", error);
+    throw new Error("Failed to buy initial share");
+  }
+}
