@@ -12,6 +12,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card"
 import Autoplay from "embla-carousel-autoplay"
 import { Input } from "@/components/ui/input"
+import Link from "next/link"
 
 const IMAGE_FALLBACK =
   "https://theredwindows.net/wp-content/themes/koji/assets/images/default-fallback-image.png"
@@ -47,9 +48,7 @@ export default function Marketplace() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
         <Loader />
-      </div>
     )
   }
 
@@ -86,23 +85,23 @@ export default function Marketplace() {
           </CarouselContent>
         </Carousel>
       </div>
-      <div className="self-start px-14 py-10">
-        <div className="w-full max-w-4xl px-4 self-start">
+      <div className="self-start w-full py-10 px-24">
+        <div className="w-full px-4 ">
           <Input
             type="text"
             placeholder="Search by artist"
             value={searchTerm}
             onChange={handleSearchChange}
-            className="p-2 border border-gray-300 rounded-md mb-4 w-1/2"
+            className="p-2 border border-gray-300 rounded-md mb-4 w-1/4"
           />
         </div>
-        <div className="flex flex-wrap gap-2 mt-4 min-w-1/4 ">
+        <div className="flex flex-wrap grid grid-cols-3 gap-10 mt-4 justify-around">
           {filteredSharesData.map((share) => (
-            <div
+            <Link href={`/marketplace/artwork?id=${share.workShare.workTokenId}`} 
               key={share.workShare.workTokenId}
               className="border border-slate-100 flex flex-col gap-2 justify-center p-4 rounded-md shadow-md items-center bg-white"
             >
-              <div className="max-w-[400px] flex-1">
+              <div className="flex-1">
                 <CustomImage
                   src={share.masterworksData.imageURL || IMAGE_FALLBACK}
                   alt="work"
@@ -114,7 +113,8 @@ export default function Marketplace() {
                 <p>{share.tokenizationRequest.certificate.artist}</p>
                 <p>${share.workShare.sharePriceUsd}</p>
               </div>
-            </div>
+            </Link>
+            
           ))}
         </div>
       </div>

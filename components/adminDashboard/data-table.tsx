@@ -18,7 +18,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 
 interface DataTableProps<TData, TValue> {
@@ -63,12 +69,27 @@ export function DataTable<TData, TValue>({
             <Button variant="outline">Filter by Status</Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem onClick={() => handleStatusFilter("pending")}>Pending</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleStatusFilter("processing")}>Processing</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleStatusFilter("verification pending")}>Verification pending</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleStatusFilter("accepted")}>Accepted</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleStatusFilter("rejected")}>Rejected</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleStatusFilter("")}>Clear Filter</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleStatusFilter("pending")}>
+              Pending
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleStatusFilter("processing")}>
+              Processing
+            </DropdownMenuItem>
+
+            <DropdownMenuItem onClick={() => handleStatusFilter("approved")}>
+              approved
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => handleStatusFilter("shares created")}
+            >
+              Shares created
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleStatusFilter("rejected")}>
+              Rejected
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleStatusFilter("")}>
+              Clear Filter
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
