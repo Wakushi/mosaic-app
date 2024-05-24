@@ -7,7 +7,7 @@ import { ArtworkData } from "@/types/artwork";
 import { Button } from "./ui/button";
 import Link from "next/link";
 import { useToast } from "@/components/ui/use-toast";
-import  Loader  from "@/components/Loader";
+import Loader from "@/components/Loader";
 
 const stringToNumber = z
   .union([
@@ -42,7 +42,11 @@ export const artFieldsData = [
   },
 ];
 
-export function ArtForm() {
+interface ArtFormProps {
+  onArtworkAdded: () => void;
+}
+
+export function ArtForm({ onArtworkAdded }: ArtFormProps) {
   const account = useAccount();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -127,8 +131,11 @@ export function ArtForm() {
             );
             toast({
               title: "Success",
-              description: "Artwork added successfully! Expert report and certificate generated and stored.",
+              description:
+                "Artwork added successfully! Expert report and certificate generated and stored.",
             });
+
+            onArtworkAdded(); 
           } else {
             throw new Error("Failed to pin certificate to IPFS");
           }
@@ -178,8 +185,8 @@ export function ArtForm() {
     <div>
       {loading ? (
         <div className="min-h-[50vh] flex items-center justify-center">
-        <Loader />
-      </div>
+          <Loader />
+        </div>
       ) : successMessage ? (
         <div className="flex flex-col justify-center items-center p-10">
           <h2 className="py-10">{successMessage}</h2>
@@ -204,4 +211,3 @@ export function ArtForm() {
     </div>
   );
 }
-
