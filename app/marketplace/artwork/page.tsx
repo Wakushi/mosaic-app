@@ -5,7 +5,7 @@ import { ShareDetail } from "@/types/artwork";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import Loader from "@/components/Loader";
-import  BuyShareDialog  from "@/components/marketplace/BuyShareDialog";
+import BuyShareDialog from "@/components/marketplace/BuyShareDialog";
 
 const IMAGE_FALLBACK =
   "https://theredwindows.net/wp-content/themes/koji/assets/images/default-fallback-image.png";
@@ -47,7 +47,7 @@ const Artwork = () => {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-white to-gray-300">
         <Loader />
       </div>
-    )
+    );
   }
 
   if (error) {
@@ -59,34 +59,9 @@ const Artwork = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-white to-gray-300 flex py-20 px-14 ">
-      <div className="w-1/2 flex flex-col gap-4 h-[50vh]">
-        <h1 className="text-8xl self-start">
-          {shareDetail.tokenizationRequest.certificate.work}
-        </h1>
-        <p className="text-2xl">
-          {shareDetail.tokenizationRequest.certificate.artist}
-        </p>
-        <p>{shareDetail.masterworksData.medium}</p>
-
-        <p className="text-slate-400">
-          Owner: {shareDetail.tokenizationRequest.owner}
-        </p>
-        <p>Price: {shareDetail.workShare.sharePriceUsd} Usd</p>
-
-        <div className="mt-auto flex flex-col items-center gap-3 ">
-          <p>
-            {shareDetail.workShare.totalShareBought}/
-            {shareDetail.workShare.maxShareSupply}
-          </p>
-		  <BuyShareDialog
-            sharesTokenId={shareDetail.workShare.sharesTokenId}
-            sharePriceUsd={shareDetail.workShare.sharePriceUsd}
-          />
-        </div>
-      </div>
-      <div className="w-1/2 ">
-        <div className=" p-10 h-[50vh] bg-white">
+    <div className="min-h-screen bg-gradient-to-r from-white to-gray-300 flex pt-20 px-14 gap-5">
+      <div>
+        <div className=" p-10 w-[55vw] bg-white shadow-lg">
           <Image
             src={shareDetail.masterworksData.imageURL || IMAGE_FALLBACK}
             alt={shareDetail.tokenizationRequest.certificate.artist}
@@ -94,11 +69,36 @@ const Artwork = () => {
             height={0}
             style={{ width: "100%", height: "100%" }}
             sizes="100vw"
-            className=""
           />
         </div>
         <p className="text-center">{shareDetail.masterworksData.dimensions}</p>
       </div>
+      <div className="flex flex-col gap-4 h-[50vh] bg-white p-5 shadow-lg">
+        <h1 className="text-6xl self-start">
+          {shareDetail.tokenizationRequest.certificate.work}
+        </h1>
+        <p className="text-4xl text-slate-400">
+          {shareDetail.tokenizationRequest.certificate.artist}
+        </p>
+        <p className="text-lg">{shareDetail.masterworksData.medium}</p>
+
+        <p>
+          Owner: {shareDetail.tokenizationRequest.owner}
+        </p>
+        <p>Price: {shareDetail.workShare.sharePriceUsd} Usd</p>
+
+        <div className=" flex flex-col items-center gap-3 ">
+          <p>
+            {shareDetail.workShare.totalShareBought}/
+            {shareDetail.workShare.maxShareSupply}
+          </p>
+          <BuyShareDialog
+            sharesTokenId={shareDetail.workShare.sharesTokenId}
+            sharePriceUsd={shareDetail.workShare.sharePriceUsd}
+          />
+        </div>
+      </div>
+      
     </div>
   );
 };
