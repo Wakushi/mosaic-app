@@ -4,6 +4,7 @@ import "./globals.css"
 import Providers from "./provider"
 import Header from "@/components/Header"
 import { Toaster } from "@/components/ui/toaster"
+import Footer from "@/components/Footer"
 
 const playfairDisplay = Playfair_Display({ subsets: ["latin"] })
 
@@ -24,6 +25,7 @@ export default function RootLayout({
           <Header />
           <main>{children}</main>
           <Toaster />
+          <Footer/>
         </Providers>
       </body>
     </html>
