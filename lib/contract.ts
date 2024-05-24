@@ -1,7 +1,8 @@
+import { Abi } from "viem"
 export const DWORK_ADRESS = "0x42B7883F62C25e315caF276dD457D8B22338b710"
 export const DWORK_SHARES_ADDRESS = "0x1B19239bA6093f3bEC7c5488f8EEC5Baa1473C5E"
 
-export const DWORK_ABI = [
+export const DWORK_ABI: Abi = [
   {
     type: "constructor",
     inputs: [

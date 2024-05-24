@@ -11,6 +11,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/components/ui/use-toast";
+import { useWatchContractEvent } from 'wagmi';
+import { DWORK_ABI, DWORK_ADRESS } from "@/lib/contract";
 
 interface RequestWorkVerificationButtonProps {
   artwork: Artwork;
@@ -22,6 +24,21 @@ const RequestWorkVerificationButton = forwardRef<HTMLDivElement, RequestWorkVeri
   const [error, setError] = useState<string | null>(null);
   const [alertOpen, setAlertOpen] = useState(false);
   const { toast } = useToast();
+
+  useWatchContractEvent({
+    address: DWORK_ADRESS,
+    abi: DWORK_ABI,
+    eventName: "WorkVerificationRequested",
+    onLogs: () => {
+      refreshData();
+      toast({
+        title: "Success",
+        description: "Work verification requested successfully",
+      });
+      setIsRequesting(false);
+      setAlertOpen(false);
+    },
+  });
 
   const handleRequest = async () => {
     setIsRequesting(true);
@@ -40,12 +57,6 @@ const RequestWorkVerificationButton = forwardRef<HTMLDivElement, RequestWorkVeri
         throw new Error(result.error || 'Failed to request work verification');
       }
 
-      refreshData(); 
-
-      toast({
-        title: "Success",
-        description: "Work verification requested successfully",
-      });
     } catch (err) {
       console.error(err);
       setError((err as Error).message);
@@ -54,7 +65,6 @@ const RequestWorkVerificationButton = forwardRef<HTMLDivElement, RequestWorkVeri
         title: "Error",
         description: "Failed to request work verification: " + (err as Error).message,
       });
-    } finally {
       setIsRequesting(false);
       setAlertOpen(false); 
     }
@@ -62,7 +72,7 @@ const RequestWorkVerificationButton = forwardRef<HTMLDivElement, RequestWorkVeri
 
   return (
     <>
-      <div ref={ref} onClick={() => setAlertOpen(true)} className='p-1 text-sm cursor-pointer hover:background-black'>Request Work Verification</div>
+      <div ref={ref} onClick={() => setAlertOpen(true)} className='p-1 text-sm cursor-pointer'>Request Work Verification</div>
       <AlertDialog open={alertOpen} onOpenChange={setAlertOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>

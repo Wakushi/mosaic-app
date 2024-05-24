@@ -188,7 +188,7 @@ export function ArtForm({ onArtworkAdded }: ArtFormProps) {
           <Loader />
         </div>
       ) : successMessage ? (
-        <div className="flex flex-col justify-center items-center p-10">
+        <div className="flex flex-col justify-center items-center p-10 self-center justify-self-center">
           <h2 className="py-10">{successMessage}</h2>
           <Button>
             <Link

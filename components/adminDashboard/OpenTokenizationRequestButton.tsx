@@ -1,5 +1,5 @@
-import { useState, forwardRef } from "react"
-import { Artwork } from "@/types/artwork"
+import { useState, forwardRef } from "react";
+import { Artwork } from "@/types/artwork";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -9,42 +9,59 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
-import { useToast } from "@/components/ui/use-toast"
+} from "@/components/ui/alert-dialog";
+import { useToast } from "@/components/ui/use-toast";
+import { useContractEvent } from "@/utils/useContractEvent";
+import { DWORK_ABI, DWORK_ADRESS } from "@/lib/contract";
 
 interface OpenTokenizationRequestButtonProps {
-  artwork: Artwork
-  refreshData: () => void
+  artwork: Artwork;
+  refreshData: () => void;
 }
 
 const OpenTokenizationRequestButton = forwardRef<
   HTMLDivElement,
   OpenTokenizationRequestButtonProps
 >(({ artwork, refreshData }, ref) => {
-  const [isRequesting, setIsRequesting] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [alertOpen, setAlertOpen] = useState(false)
-  const { toast } = useToast()
+  const [isRequesting, setIsRequesting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [alertOpen, setAlertOpen] = useState(false);
+  const { toast } = useToast();
+
+  useContractEvent({
+    contractAddress: DWORK_ADRESS,
+    abi: DWORK_ABI,
+    eventName: "TokenizationRequestOpened",
+    eventCallback: () => {
+      refreshData();
+      toast({
+        title: "Success",
+        description: "Tokenization request opened successfully",
+      });
+      setIsRequesting(false);
+      setAlertOpen(false);
+    },
+  });
 
   const handleRequest = async () => {
-    setIsRequesting(true)
-    setError(null)
+    setIsRequesting(true);
+    setError(null);
 
     try {
       const hashResponse = await fetch(
         `/api/artwork/getHashesByTitle?title=${encodeURIComponent(
           artwork.title
         )}`
-      )
+      );
       if (!hashResponse.ok) {
-        throw new Error("Failed to retrieve hash data")
+        throw new Error("Failed to retrieve hash data");
       }
 
-      const hashData = await hashResponse.json()
-      const { hashArtwork, hashReport, hashCertificate } = hashData
+      const hashData = await hashResponse.json();
+      const { hashArtwork, hashReport, hashCertificate } = hashData;
 
       if (!hashArtwork || !hashReport || !hashCertificate) {
-        throw new Error("Missing required hash fields")
+        throw new Error("Missing required hash fields");
       }
 
       const response = await fetch("/api/admin/openTokenizationRequest", {
@@ -57,34 +74,27 @@ const OpenTokenizationRequestButton = forwardRef<
           clientAddress: artwork.clientAddress,
           artworkTitle: artwork.title,
         }),
-      })
+      });
 
-      const result = await response.json()
+      const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || "Failed to open tokenization request")
+        throw new Error(result.error || "Failed to open tokenization request");
       }
 
-      refreshData()
 
-      toast({
-        title: "Success",
-        description: "Tokenization request opened successfully",
-      })
     } catch (err) {
-      console.error("Error opening tokenization request:", err)
-      setError((err as Error).message)
+      console.error("Error opening tokenization request:", err);
+      setError((err as Error).message);
 
       toast({
         title: "Error",
-        description:
-          "Failed to open tokenization request: " + (err as Error).message,
-      })
-    } finally {
-      setIsRequesting(false)
-      setAlertOpen(false)
+        description: "Failed to open tokenization request: " + (err as Error).message,
+      });
+      setIsRequesting(false);
+      setAlertOpen(false);
     }
-  }
+  };
 
   return (
     <>
@@ -100,8 +110,7 @@ const OpenTokenizationRequestButton = forwardRef<
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will open the tokenization
-              request.
+              This action cannot be undone. This will open the tokenization request.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -113,9 +122,11 @@ const OpenTokenizationRequestButton = forwardRef<
         </AlertDialogContent>
       </AlertDialog>
     </>
-  )
-})
+  );
+});
 
-OpenTokenizationRequestButton.displayName = "OpenTokenizationRequestButton"
+OpenTokenizationRequestButton.displayName = "OpenTokenizationRequestButton";
 
-export default OpenTokenizationRequestButton
+export default OpenTokenizationRequestButton;
+
+
