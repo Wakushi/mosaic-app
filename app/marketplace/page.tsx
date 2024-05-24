@@ -26,7 +26,6 @@ export default function Marketplace() {
     async function fetchSharesData() {
       const shareRequest = await fetch("/api/shares")
       const data = await shareRequest.json()
-      console.log(data)
       if (data) {
         setSharesData(data)
         setLoading(false)
@@ -47,13 +46,11 @@ export default function Marketplace() {
   )
 
   if (loading) {
-    return (
-        <Loader />
-    )
+    return <Loader />
   }
 
   return (
-    <div className="bg-gradient-to-r from-white to-gray-300 min-h-screen flex flex-col items-center">
+    <div className=" min-h-screen flex flex-col items-center">
       <div className="w-screen flex flex-col justify-center items-center bg-white p-24 gap-4">
         <h2 className="self-start text-4xl ">New Arrivals</h2>
         <Carousel
@@ -97,7 +94,8 @@ export default function Marketplace() {
         </div>
         <div className="flex flex-wrap grid grid-cols-3 gap-10 mt-4 justify-around">
           {filteredSharesData.map((share) => (
-            <Link href={`/marketplace/artwork?id=${share.workShare.workTokenId}`} 
+            <Link
+              href={`/marketplace/artwork?id=${share.workShare.workTokenId}`}
               key={share.workShare.workTokenId}
               className="border border-slate-100 flex flex-col gap-2 justify-center p-4 rounded-md shadow-md items-center bg-white"
             >
@@ -114,7 +112,6 @@ export default function Marketplace() {
                 <p>${share.workShare.sharePriceUsd}</p>
               </div>
             </Link>
-            
           ))}
         </div>
       </div>

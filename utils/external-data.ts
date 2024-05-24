@@ -21,7 +21,6 @@ export async function getArtistData(artistId: string): Promise<any> {
 }
 
 export async function getWorkDetails(permalink: string): Promise<any> {
-  console.log("permalink: ", permalink)
   const response = await fetch("https://pricedb.ms.masterworks.io/graphql", {
     method: "POST",
     headers: {

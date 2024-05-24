@@ -65,8 +65,6 @@ export function ArtForm() {
       );
 
       if (pinataResponse.IpfsHash) {
-        console.log("Pinned JSON to IPFS with hash:", pinataResponse.IpfsHash);
-
         const expertReport = {
           createdAt: Date.now(),
           artist: values.artist,

@@ -75,7 +75,7 @@ export default function Header() {
   const toggleModal = () => setModalOpen(!modalOpen)
 
   return (
-    <div className="flex justify-between py-3 z-30 w-screen fixed px-14 items-center">
+    <header className="flex justify-between py-3 z-30 w-screen fixed px-14 items-center bg-white bg-opacity-[0.02] shadow-sm backdrop-blur-sm">
       <Link href="/">
         <div className="w-[200px]">
           <Image
@@ -143,6 +143,6 @@ export default function Header() {
           chainStatus="none"
         />
       </div>
-    </div>
+    </header>
   )
 }

@@ -1,10 +1,10 @@
-"use client";
-import Experience from "@/components/canvas/Canvas";
-import { Canvas } from "@react-three/fiber";
+"use client"
+import Experience from "@/components/canvas/Canvas"
+import { Canvas } from "@react-three/fiber"
 
 export default function Home() {
   return (
-    <div className="flex pl-14 pb-20 border-b min-h-screen justify-center bg-gradient-to-r from-white to-gray-300">
+    <div className="flex pl-14 pb-20 border-b min-h-screen justify-center ">
       <div className="w-1/2 flex flex-col mt-24 justify-center">
         <div className="flex flex-col gap-5">
           <h1 className="text-9xl pb-20">Mosaic</h1>
@@ -25,5 +25,5 @@ export default function Home() {
         </Canvas>
       </div>
     </div>
-  );
+  )
 }
