@@ -179,7 +179,9 @@ export function ArtForm() {
   return (
     <div>
       {loading ? (
+        <div className="min-h-[50vh] flex items-center justify-center">
         <Loader />
+      </div>
       ) : successMessage ? (
         <div className="flex flex-col justify-center items-center p-10">
           <h2 className="py-10">{successMessage}</h2>
