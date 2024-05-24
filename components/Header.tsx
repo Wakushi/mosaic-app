@@ -1,18 +1,11 @@
 "use client";
 
-// React
 import { useEffect, useState } from "react";
 import Link from "next/link";
-
-// Wagmi
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
-
-// Components
 import { Modal } from "@/components/clientUi/modal";
 import { ProfileForm } from "./profile-form";
-
-// Shadcn
 import { Button } from "./ui/button";
 import {
   DropdownMenu,
@@ -21,9 +14,7 @@ import {
   DropdownMenuItem,
   DropdownMenuShortcut,
 } from "./ui/dropdown-menu";
-
-// Zustand store
-import { useUserStore } from "@/store/useStore"; 
+import { useUserStore } from "@/store/useStore";
 
 const fetchUserData = async (clientAddress: string) => {
   const response = await fetch(`/api/user?clientAddress=${clientAddress}`);
@@ -37,6 +28,7 @@ const fetchUserData = async (clientAddress: string) => {
 export default function Header() {
   const account = useAccount();
   const [modalOpen, setModalOpen] = useState(false);
+  const [scroll, setScroll] = useState(false);
 
   const { isRegistered, isAdmin, userType, setIsRegistered, setIsAdmin, setUserType } = useUserStore();
 
@@ -66,8 +58,19 @@ export default function Header() {
 
   const toggleModal = () => setModalOpen(!modalOpen);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setScroll(window.scrollY > 0);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
-    <div className="flex justify-between py-3 z-30 w-screen fixed px-14 items-center">
+    <div className={`flex justify-between py-3 z-30 w-screen fixed px-14 items-center transition-colors duration-300 ${scroll ? 'bg-white shadow-lg' : 'bg-transparent'}`}>
       <Link href="/">
         <div>Mosaic</div>
       </Link>
