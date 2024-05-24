@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import { useEffect, useState } from "react";
 import { ShareDetail } from "@/types/artwork";
@@ -8,39 +8,39 @@ import Loader from "@/components/Loader";
 import BuyShareDialog from "@/components/marketplace/BuyShareDialog";
 
 const IMAGE_FALLBACK =
-  "https://theredwindows.net/wp-content/themes/koji/assets/images/default-fallback-image.png";
+  "https://theredwindows.net/wp-content/themes/koji/assets/images/default-fallback-image.png"
 
 const Artwork = () => {
-  const searchParams = useSearchParams();
-  const id = searchParams.get("id");
-  const [shareDetail, setShareDetail] = useState<ShareDetail | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const searchParams = useSearchParams()
+  const id = searchParams.get("id")
+  const [shareDetail, setShareDetail] = useState<ShareDetail | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     if (id) {
       const fetchShareDetail = async () => {
         try {
-          const response = await fetch(`/api/shares?id=${id}`);
+          const response = await fetch(`/api/shares?id=${id}`)
           if (!response.ok) {
-            throw new Error("Failed to fetch share details");
+            throw new Error("Failed to fetch share details")
           }
-          const data: ShareDetail = await response.json();
-          setShareDetail(data);
-          setLoading(false);
+          const data: ShareDetail = await response.json()
+          setShareDetail(data)
+          setLoading(false)
         } catch (err) {
           if (err instanceof Error) {
-            setError(err.message);
+            setError(err.message)
           } else {
-            setError("An unknown error occurred");
+            setError("An unknown error occurred")
           }
-          setLoading(false);
+          setLoading(false)
         }
-      };
+      }
 
-      fetchShareDetail();
+      fetchShareDetail()
     }
-  }, [id]);
+  }, [id])
 
   if (loading) {
     return (
@@ -51,11 +51,11 @@ const Artwork = () => {
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <div>Error: {error}</div>
   }
 
   if (!shareDetail) {
-    return <div>No details available</div>;
+    return <div>No details available</div>
   }
 
   return (
@@ -100,7 +100,7 @@ const Artwork = () => {
       </div>
       
     </div>
-  );
-};
+  )
+}
 
-export default Artwork;
+export default Artwork

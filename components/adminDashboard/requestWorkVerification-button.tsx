@@ -40,7 +40,6 @@ const RequestWorkVerificationButton = forwardRef<HTMLDivElement, RequestWorkVeri
         throw new Error(result.error || 'Failed to request work verification');
       }
 
-      console.log('Work verification requested successfully:', result);
       refreshData(); 
 
       toast({
