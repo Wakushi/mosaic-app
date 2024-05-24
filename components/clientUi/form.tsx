@@ -45,9 +45,9 @@ export const ReusableForm: React.FC<ReusableFormProps> = ({ schema, defaultValue
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
         {loading ? (
-          <div className="flex justify-center items-center h-full">
-            <Loader />
-          </div>
+          <div className="min-h-[50vh] flex items-center justify-center">
+          <Loader />
+        </div>
         ) : (
           <>
             {fields.map((field) => (

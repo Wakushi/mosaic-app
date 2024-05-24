@@ -36,8 +36,9 @@ const fetchUserData = async (clientAddress: string) => {
 }
 
 export default function Header() {
-  const account = useAccount()
-  const [modalOpen, setModalOpen] = useState(false)
+  const account = useAccount();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [scroll, setScroll] = useState(false);
 
   const {
     isRegistered,
@@ -73,6 +74,17 @@ export default function Header() {
   }, [clientAddress])
 
   const toggleModal = () => setModalOpen(!modalOpen)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScroll(window.scrollY > 0);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   return (
     <header className="flex justify-between py-3 z-30 w-screen fixed px-14 items-center bg-white bg-opacity-[0.02] shadow-sm backdrop-blur-sm">

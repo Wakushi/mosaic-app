@@ -33,7 +33,11 @@ export default function Admin() {
   }, [])
 
   if (loading) {
-    return <Loader />
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-white to-gray-300">
+        <Loader />
+      </div>
+    )
   }
 
   if (error) {
