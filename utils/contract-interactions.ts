@@ -2,13 +2,12 @@ import { createWalletClient, http, createPublicClient } from "viem"
 import { privateKeyToAccount } from "viem/accounts"
 import { polygonAmoy } from "viem/chains"
 import {
-  DWORK_ADRESS,
+  DWORK_ADDRESS,
   DWORK_ABI,
   DWORK_SHARES_ADDRESS,
   DWORK_SHARES_ABI,
 } from "@/lib/contract"
 import { readContract } from "@wagmi/core"
-import { updateArtworkStatus } from "@/utils/firebase-data"
 import { convertBigIntToString } from "./helpers"
 import { MasterworksWorkData, ShareDetail, WorkShare } from "@/types/artwork"
 import { getMasterworksData } from "./external-data"
@@ -37,27 +36,26 @@ export async function openTokenizationRequest(
   customerSubmissionIPFSHash: string,
   appraiserReportIPFSHash: string,
   certificateIPFSHash: string,
-  clientAddress: string,
-  artworkTitle: string
+  clientAddress: string
 ) {
   try {
+    const args = [
+      customerSubmissionIPFSHash,
+      appraiserReportIPFSHash,
+      certificateIPFSHash,
+      clientAddress,
+    ]
+    console.log("args", args)
     const { request: tokenizationRequest, result } =
       await publicClient.simulateContract({
         account: walletClient.account,
-        address: DWORK_ADRESS,
+        address: DWORK_ADDRESS,
         abi: DWORK_ABI,
         functionName: "openTokenizationRequest",
-        args: [
-          customerSubmissionIPFSHash,
-          appraiserReportIPFSHash,
-          certificateIPFSHash,
-          clientAddress,
-        ],
+        args,
       })
 
     const response = await walletClient.writeContract(tokenizationRequest)
-
-    await updateArtworkStatus(artworkTitle, "processing")
 
     return convertBigIntToString(result)
   } catch (error) {
@@ -66,23 +64,18 @@ export async function openTokenizationRequest(
   }
 }
 
-export async function requestWorkVerification(
-  tokenizationRequestId: string,
-  title: string
-) {
+export async function requestWorkVerification(tokenizationRequestId: string) {
   try {
     const { request: workVerificationRequest } =
       await publicClient.simulateContract({
         account: walletClient.account,
-        address: DWORK_ADRESS,
+        address: DWORK_ADDRESS,
         abi: DWORK_ABI,
         functionName: "requestWorkVerification",
         args: [tokenizationRequestId],
       })
 
     const result = await walletClient.writeContract(workVerificationRequest)
-
-    await updateArtworkStatus(title, "approved")
 
     return result
   } catch (error) {
@@ -92,11 +85,11 @@ export async function requestWorkVerification(
 }
 
 export async function getTokenizationRequestById(
-  tokenizationRequestId: BigInt
+  tokenizationRequestId: string
 ) {
   try {
     const result = await publicClient.readContract({
-      address: DWORK_ADRESS,
+      address: DWORK_ADDRESS,
       abi: DWORK_ABI,
       functionName: "getTokenizationRequest",
       args: [tokenizationRequestId],
@@ -112,23 +105,19 @@ export async function getTokenizationRequestById(
 export async function createShares(
   tokenizationRequestId: number,
   shareSupply: number,
-  sharePriceUsd: number,
-  artworkTitle: string
+  sharePriceUsd: number
 ) {
   try {
     const { request: createSharesRequest } =
       await publicClient.simulateContract({
         account: walletClient.account,
-        address: DWORK_ADRESS,
+        address: DWORK_ADDRESS,
         abi: DWORK_ABI,
         functionName: "createWorkShares",
         args: [tokenizationRequestId, shareSupply, sharePriceUsd],
       })
 
     const result = await walletClient.writeContract(createSharesRequest)
-
-    await updateArtworkStatus(artworkTitle, "shares created")
-
     return result
   } catch (error) {
     console.error("Error creating shares:", error)
@@ -166,7 +155,7 @@ export async function getAllSharesDetails() {
     const sharesDetailed: ShareDetail[] = []
     for (let workShare of workShares) {
       const tokenizationRequest: any = await readContract(chainConfig, {
-        address: DWORK_ADRESS,
+        address: DWORK_ADDRESS,
         abi: DWORK_ABI,
         functionName: "getTokenizationRequestByWorkTokenId",
         args: [workShare.workTokenId],
@@ -217,7 +206,7 @@ export async function getShareDetail(id: number): Promise<ShareDetail> {
       abi: DWORK_SHARES_ABI,
       functionName: "getWorkSharesByTokenId",
       args: [id],
-    });
+    })
 
     const workShare: WorkShare = {
       sharesTokenId: id,
@@ -228,23 +217,24 @@ export async function getShareDetail(id: number): Promise<ShareDetail> {
       totalSellValueUsd: Number(share.totalSellValueUsd),
       workOwner: share.workOwner,
       isPaused: share.isPaused,
-    };
+    }
 
     const tokenizationRequest: any = await readContract(chainConfig, {
-      address: DWORK_ADRESS,
+      address: DWORK_ADDRESS,
       abi: DWORK_ABI,
       functionName: "getTokenizationRequestByWorkTokenId",
       args: [workShare.workTokenId],
-    });
+    })
 
     const masterworksData = await getMasterworksData(
       tokenizationRequest.certificate.artist,
       tokenizationRequest.certificate.work
-    );
+    )
 
     const shareDetail: ShareDetail = {
       tokenizationRequest: {
-        customerSubmissionIPFSHash: tokenizationRequest.customerSubmissionIPFSHash,
+        customerSubmissionIPFSHash:
+          tokenizationRequest.customerSubmissionIPFSHash,
         appraiserReportIPFSHash: tokenizationRequest.appraiserReportIPFSHash,
         certificateIPFSHash: tokenizationRequest.certificateIPFSHash,
         owner: tokenizationRequest.owner,
@@ -266,12 +256,12 @@ export async function getShareDetail(id: number): Promise<ShareDetail> {
       },
       workShare,
       masterworksData,
-    };
+    }
 
-    return shareDetail;
+    return shareDetail
   } catch (error) {
-    console.error("Error getting share detail:", error);
-    throw new Error("Failed to get share detail");
+    console.error("Error getting share detail:", error)
+    throw new Error("Failed to get share detail")
   }
 }
 
@@ -288,13 +278,13 @@ export async function buyInitialShare(
       functionName: "buyInitialShare",
       args: [sharesTokenId, shareAmount],
       value, // ETH value to send with the transaction
-    });
+    })
 
-    const result = await walletClient.writeContract(buyShareRequest);
+    const result = await walletClient.writeContract(buyShareRequest)
 
-    return result;
+    return result
   } catch (error) {
-    console.error("Error buying initial share:", error);
-    throw new Error("Failed to buy initial share");
+    console.error("Error buying initial share:", error)
+    throw new Error("Failed to buy initial share")
   }
 }

@@ -1,9 +1,9 @@
-"use client";
-import { useState } from "react";
-import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
-import { Artwork } from "@/types/artwork";
-import { Button } from "@/components/ui/button";
+"use client"
+import { useState } from "react"
+import { ColumnDef } from "@tanstack/react-table"
+import { MoreHorizontal } from "lucide-react"
+import { Artwork } from "@/types/artwork"
+import { Button } from "@/components/ui/button"
 
 import {
   DropdownMenu,
@@ -12,9 +12,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import CreateWorkShare from "../createWorkShare";
-import CreateSharesButton from "./createShare-button";
+} from "@/components/ui/dropdown-menu"
+import CreateWorkShare from "../createWorkShare"
+import CreateSharesButton from "./createShare-button"
 
 export const columns: ColumnDef<Artwork>[] = [
   {
@@ -32,14 +32,35 @@ export const columns: ColumnDef<Artwork>[] = [
   {
     accessorKey: "status",
     header: "Status",
+    cell: ({ row }) => {
+      const getFormattedStatus = (status: string) => {
+        switch (status) {
+          case "submitted":
+            return "Submitted"
+          case "pending certificate extraction":
+            return "Pending certificate extraction"
+          case "certificate extracted":
+          case "pending verification":
+            return "Pending verification"
+          case "work verified":
+          case "pending tokenization":
+            return "Pending tokenization"
+          case "tokenized":
+            return "Tokenized"
+          default:
+            return "Unknown"
+        }
+      }
+      return <div>{getFormattedStatus(row.original.status)}</div>
+    },
   },
 
   {
     id: "actions",
     cell: ({ row }) => {
-      const artwork = row.original;
-      const [modalOpen, setModalOpen] = useState(false);
-      const toggleModal = () => setModalOpen(!modalOpen);
+      const artwork = row.original
+      const [modalOpen, setModalOpen] = useState(false)
+      const toggleModal = () => setModalOpen(!modalOpen)
       return (
         <>
           <DropdownMenu>
@@ -52,12 +73,12 @@ export const columns: ColumnDef<Artwork>[] = [
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem>View</DropdownMenuItem>
-              {artwork.status === "approved" && (
+              {artwork.status === "tokenized" && (
                 <DropdownMenuItem asChild>
-                  <CreateSharesButton artwork={artwork}  />
+                  <CreateSharesButton artwork={artwork} />
                 </DropdownMenuItem>
               )}
-              {artwork.status !== "approved" && (
+              {artwork.status !== "tokenized" && (
                 <DropdownMenuItem asChild>
                   <span>No actions available</span>
                 </DropdownMenuItem>
@@ -66,7 +87,7 @@ export const columns: ColumnDef<Artwork>[] = [
           </DropdownMenu>
           <CreateWorkShare modalOpen={modalOpen} toggleModal={toggleModal} />
         </>
-      );
+      )
     },
   },
-];
+]

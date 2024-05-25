@@ -3,12 +3,7 @@ import { Address } from "viem"
 export type Artwork = {
   id: string
   clientAddress: string
-  status:
-    | "pending"
-    | "processing"
-    | "verification pending"
-    | "approved"
-    | "rejected"
+  status: WorkStatus
   createdAt: number
   approvedAt?: number
   title: string
@@ -16,6 +11,7 @@ export type Artwork = {
   owner: string
   price: number
   tokenizationRequestId?: string
+  tokenizationRequest?: TokenizationRequest
 }
 
 export type ArtworkData = {
@@ -77,3 +73,11 @@ export type MasterworksWorkData = {
   moic: number
   imageURL: string
 }
+
+export type WorkStatus =
+  | "submitted"
+  | "pending certificate extraction"
+  | "certificate extracted"
+  | "pending verification"
+  | "work verified"
+  | "tokenized"

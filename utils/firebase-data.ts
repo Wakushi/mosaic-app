@@ -117,29 +117,6 @@ export const getHashesByTitle = async (
   }
 }
 
-export const updateArtworkStatus = async (
-  title: string,
-  status: string
-): Promise<void> => {
-  try {
-    const snapshot = await adminDb
-      .collection("artworks")
-      .where("title", "==", title)
-      .limit(1)
-      .get()
-    if (!snapshot.empty) {
-      const doc = snapshot.docs[0]
-      await adminDb.collection("artworks").doc(doc.id).update({ status })
-    } else {
-      console.error("Artwork not found")
-      throw new Error("Artwork not found")
-    }
-  } catch (error) {
-    console.error("Error updating artwork status:", error)
-    throw new Error("Failed to update artwork status")
-  }
-}
-
 export const updateArtworkTokenizationRequest = async (
   artworkTitle: string,
   tokenizationRequestId: string
