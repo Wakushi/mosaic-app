@@ -99,8 +99,8 @@ export default function Marketplace() {
         <div className="flex flex-wrap grid grid-cols-3 gap-10 mt-4 justify-around">
           {filteredSharesData.map((share) => (
             <Link
-              href={`/marketplace/artwork?id=${share.workShare.workTokenId}`}
-              key={share.workShare.workTokenId}
+              href={`/marketplace/artwork?id=${share.workShare.sharesTokenId}`}
+              key={share.workShare.sharesTokenId}
               className="border border-slate-100 flex flex-col gap-2 justify-center p-4 rounded-md shadow-md items-center bg-white"
             >
               <div className="flex-1">
