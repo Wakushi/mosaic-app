@@ -27,7 +27,7 @@ export default function RootLayout({
           <ContractEventListener />
           <PageRefresher /> 
           <Header />
-          <main>{children}</main>
+          <main className="flex-grow">{children}</main>
           <Toaster />
           <Footer />
         </Providers>

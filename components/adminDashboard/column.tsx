@@ -10,12 +10,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useUserStore } from "@/store/useStore"; // Importez le store
+import { useUserStore } from "@/store/useStore"; 
 import OpenTokenizationRequestButton from "@/components/adminDashboard/OpenTokenizationRequestButton";
 import RequestWorkVerificationButton from "@/components/adminDashboard/requestWorkVerification-button";
 
 export function getColumns(refreshData: () => void): ColumnDef<Artwork>[] {
-  const listening = useUserStore.getState().listening; // Obtenez l'état d'écoute directement
+  const listening = useUserStore.getState().listening; 
 
   return [
     {
