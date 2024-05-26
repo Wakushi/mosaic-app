@@ -1,7 +1,7 @@
-import { ColumnDef } from "@tanstack/react-table"
-import { MoreHorizontal } from "lucide-react"
-import { Artwork } from "@/types/artwork"
-import { Button } from "@/components/ui/button"
+import { ColumnDef } from "@tanstack/react-table";
+import { MoreHorizontal } from "lucide-react";
+import { Artwork } from "@/types/artwork";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,11 +9,14 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import RequestWorkVerificationButton from "@/components/adminDashboard/requestWorkVerification-button"
-import OpenTokenizationRequestButton from "@/components/adminDashboard/OpenTokenizationRequestButton"
+} from "@/components/ui/dropdown-menu";
+import { useUserStore } from "@/store/useStore"; // Importez le store
+import OpenTokenizationRequestButton from "@/components/adminDashboard/OpenTokenizationRequestButton";
+import RequestWorkVerificationButton from "@/components/adminDashboard/requestWorkVerification-button";
 
 export function getColumns(refreshData: () => void): ColumnDef<Artwork>[] {
+  const listening = useUserStore.getState().listening; // Obtenez l'état d'écoute directement
+
   return [
     {
       accessorKey: "owner",
@@ -38,28 +41,28 @@ export function getColumns(refreshData: () => void): ColumnDef<Artwork>[] {
         const getFormattedStatus = (status: string) => {
           switch (status) {
             case "submitted":
-              return "Submitted"
+              return "Submitted";
             case "pending certificate extraction":
-              return "Pending certificate extraction"
+              return "Pending certificate extraction";
             case "certificate extracted":
-              return "Certificate extracted"
+              return "Certificate extracted";
             case "pending verification":
-              return "Pending verification"
+              return "Pending verification";
             case "work verified":
-              return "Work verified"
+              return "Work verified";
             case "tokenized":
-              return "Tokenized"
+              return "Tokenized";
             default:
-              return "Unknown"
+              return "Unknown";
           }
-        }
-        return <div>{getFormattedStatus(row.original.status)}</div>
+        };
+        return <div>{getFormattedStatus(row.original.status)}</div>;
       },
     },
     {
       id: "actions",
       cell: ({ row }) => {
-        const artwork = row.original
+        const artwork = row.original;
 
         return (
           <DropdownMenu>
@@ -72,33 +75,39 @@ export function getColumns(refreshData: () => void): ColumnDef<Artwork>[] {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              {artwork.status === "submitted" && (
-                <DropdownMenuItem asChild>
-                  <OpenTokenizationRequestButton
-                    artwork={artwork}
-                    refreshData={refreshData}
-                  />
-                </DropdownMenuItem>
-              )}
-              {(artwork.status === "certificate extracted" ||
-                artwork.status === "tokenized") && (
-                <DropdownMenuItem asChild>
-                  <RequestWorkVerificationButton
-                    artwork={artwork}
-                    refreshData={refreshData}
-                  />
-                </DropdownMenuItem>
-              )}
-              {(artwork.status === "pending certificate extraction" ||
-                artwork.status === "pending verification") && (
-                <DropdownMenuItem disabled>
-                  No actions available
-                </DropdownMenuItem>
+              {listening ? (
+                <DropdownMenuItem disabled>Event is in progress</DropdownMenuItem>
+              ) : (
+                <>
+                  {artwork.status === "submitted" && (
+                    <DropdownMenuItem asChild>
+                      <OpenTokenizationRequestButton
+                        artwork={artwork}
+                        refreshData={refreshData}
+                      />
+                    </DropdownMenuItem>
+                  )}
+                  {(artwork.status === "certificate extracted" ||
+                    artwork.status === "tokenized") && (
+                    <DropdownMenuItem asChild>
+                      <RequestWorkVerificationButton
+                        artwork={artwork}
+                        refreshData={refreshData}
+                      />
+                    </DropdownMenuItem>
+                  )}
+                  {(artwork.status === "pending certificate extraction" ||
+                    artwork.status === "pending verification") && (
+                    <DropdownMenuItem disabled>
+                      No actions available
+                    </DropdownMenuItem>
+                  )}
+                </>
               )}
             </DropdownMenuContent>
           </DropdownMenu>
-        )
+        );
       },
     },
-  ]
+  ];
 }

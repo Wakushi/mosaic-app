@@ -47,7 +47,7 @@ const BuyShareDialog: React.FC<BuyShareDialogProps> = ({ sharesTokenId, sharePri
 
   return (
     <>
-      <Button onClick={() => setOpen(true)}>Buy</Button>
+      <Button onClick={() => setOpen(true)} className="w-full">Buy</Button>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <DialogHeader>
