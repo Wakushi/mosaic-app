@@ -54,7 +54,7 @@ export default function Marketplace() {
   }
 
   return (
-    <div className=" min-h-screen flex flex-col items-center">
+    <div className="min-h-screen flex flex-col items-center">
       <div className="w-screen flex flex-col justify-center items-center bg-white p-24 gap-4">
         <h2 className="self-start text-4xl ">New Arrivals</h2>
         <Carousel
