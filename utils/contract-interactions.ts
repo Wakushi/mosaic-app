@@ -7,13 +7,12 @@ import {
   DWORK_SHARES_ADDRESS,
   DWORK_SHARES_ABI,
 } from "@/lib/contract"
-import { readContract } from "@wagmi/core"
-import { convertBigIntToString } from "./helpers"
 import { MasterworksWorkData, ShareDetail, WorkShare } from "@/types/artwork"
 import { getMasterworksData } from "./external-data"
 import { chainConfig } from "./blockchain-config"
+import { readContract } from "@wagmi/core"
 
-const account = privateKeyToAccount((process.env.PRIVATE_KEY as `0x`) || "")
+const account = privateKeyToAccount(process.env.PRIVATE_KEY as `0x`)
 
 const publicClient = createPublicClient({
   chain: polygonAmoy,
@@ -45,7 +44,6 @@ export async function openTokenizationRequest(
       certificateIPFSHash,
       clientAddress,
     ]
-    console.log("args", args)
     const { request: tokenizationRequest, result } =
       await publicClient.simulateContract({
         account: walletClient.account,
@@ -265,26 +263,19 @@ export async function getShareDetail(id: number): Promise<ShareDetail> {
   }
 }
 
-export async function buyInitialShare(
-  sharesTokenId: number,
-  shareAmount: number,
-  value: bigint
-) {
-  try {
-    const { request: buyShareRequest } = await publicClient.simulateContract({
-      account: walletClient.account,
-      address: DWORK_SHARES_ADDRESS,
-      abi: DWORK_SHARES_ABI,
-      functionName: "buyInitialShare",
-      args: [sharesTokenId, shareAmount],
-      value, // ETH value to send with the transaction
-    })
-
-    const result = await walletClient.writeContract(buyShareRequest)
-
-    return result
-  } catch (error) {
-    console.error("Error buying initial share:", error)
-    throw new Error("Failed to buy initial share")
+export function convertBigIntToString(obj: any): any {
+  if (typeof obj === "bigint") {
+    return obj.toString()
+  } else if (Array.isArray(obj)) {
+    return obj.map(convertBigIntToString)
+  } else if (typeof obj === "object" && obj !== null) {
+    return Object.fromEntries(
+      Object.entries(obj).map(([key, value]) => [
+        key,
+        convertBigIntToString(value),
+      ])
+    )
+  } else {
+    return obj
   }
 }

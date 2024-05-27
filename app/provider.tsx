@@ -15,7 +15,7 @@ if (!process.env.NEXT_PUBLIC_PROJECT_ID) {
   throw new Error("NEXT_PUBLIC_PROJECT_ID is not defined")
 }
 
-const config = getDefaultConfig({
+export const config = getDefaultConfig({
   appName: "Mosaic",
   projectId: process.env.NEXT_PUBLIC_PROJECT_ID,
   chains: [polygonAmoy],

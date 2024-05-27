@@ -1,65 +1,62 @@
-import React, { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useForm } from "react-hook-form";
-import Loader from "@/components/clientUi/Loader";
-import { useToast } from "@/components/ui/use-toast"; 
+import React, { useState } from "react"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { useForm } from "react-hook-form"
+import Loader from "@/components/clientUi/Loader"
+import { useToast } from "@/components/ui/use-toast"
+import { parseEther } from "viem"
+import { buyInitialShare } from "@/utils/user-contract-interactions"
 
 interface BuyShareDialogProps {
-  sharesTokenId: number;
-  sharePriceUsd: number;
+  sharesTokenId: number
+  sharePriceUsd: number
 }
 
-const BuyShareDialog: React.FC<BuyShareDialogProps> = ({ sharesTokenId, sharePriceUsd }) => {
-  const [open, setOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const { register, handleSubmit, reset } = useForm();
-  const { toast } = useToast(); 
+const BuyShareDialog: React.FC<BuyShareDialogProps> = ({
+  sharesTokenId,
+  sharePriceUsd,
+}) => {
+  const [open, setOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const { register, handleSubmit, reset } = useForm()
+  const { toast } = useToast()
 
   const onSubmit = async (data: any) => {
-    const { shareAmount } = data;
-    const value = shareAmount * sharePriceUsd * 1e18;
+    const { shareAmount } = data
+    const value = parseEther((shareAmount * sharePriceUsd).toString())
 
-    setIsLoading(true);
+    setIsLoading(true)
     try {
-      const response = await fetch('/api/shares', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          sharesTokenId,
-          shareAmount: parseInt(shareAmount),
-          value: value.toString(),
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to buy share');
-      }
-
+      await buyInitialShare(sharesTokenId, shareAmount, value)
       toast({
         title: "Success",
         description: "Share purchased successfully!",
-      });
+      })
 
-      reset();
-      setOpen(false);
+      reset()
+      setOpen(false)
     } catch (error) {
-      console.error('Error buying share:', error);
+      console.error("Error buying share:", error)
       toast({
         title: "Error",
         description: "Error buying share. Please try again.",
-      });
+      })
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
     <>
-      <Button onClick={() => setOpen(true)} className="w-full">Buy</Button>
+      <Button onClick={() => setOpen(true)} className="w-full">
+        Buy
+      </Button>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <DialogHeader>
@@ -73,7 +70,10 @@ const BuyShareDialog: React.FC<BuyShareDialogProps> = ({ sharesTokenId, sharePri
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="space-y-4">
                 <div className="flex flex-col gap-5">
-                  <label htmlFor="shareAmount" className="block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="shareAmount"
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     Share Amount
                   </label>
                   <Input
@@ -82,14 +82,16 @@ const BuyShareDialog: React.FC<BuyShareDialogProps> = ({ sharesTokenId, sharePri
                     {...register("shareAmount", { required: true, min: 1 })}
                   />
                 </div>
-                <Button type="submit" className="left-0">Submit</Button>
+                <Button type="submit" className="left-0">
+                  Submit
+                </Button>
               </div>
             </form>
           )}
         </DialogContent>
       </Dialog>
     </>
-  );
-};
+  )
+}
 
-export default BuyShareDialog;
+export default BuyShareDialog
