@@ -1,4 +1,4 @@
-import { createWalletClient, http, createPublicClient } from "viem"
+import { createWalletClient, http, createPublicClient, parseUnits } from "viem"
 import { privateKeyToAccount } from "viem/accounts"
 import { polygonAmoy } from "viem/chains"
 import {
@@ -112,7 +112,11 @@ export async function createShares(
         address: DWORK_ADDRESS,
         abi: DWORK_ABI,
         functionName: "createWorkShares",
-        args: [tokenizationRequestId, shareSupply, sharePriceUsd],
+        args: [
+          tokenizationRequestId,
+          shareSupply,
+          parseUnits(sharePriceUsd.toString(), 18),
+        ],
       })
 
     const result = await walletClient.writeContract(createSharesRequest)
