@@ -1,5 +1,5 @@
-import { Modal } from "./clientUi/modal";
-import { ReusableForm } from "./clientUi/form";
+import { Modal } from "../clientUi/modal";
+import { ReusableForm } from "../clientUi/form";
 import { string, z } from "zod";
 import { useState } from "react";
 

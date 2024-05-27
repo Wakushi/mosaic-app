@@ -1,13 +1,13 @@
 import { z } from "zod";
 import React, { useState } from "react";
-import { ReusableForm } from "./clientUi/form";
+import { ReusableForm } from "../clientUi/form";
 import { useAccount } from "wagmi";
 import { pinJSONToIPFS, pinFileToIPFS } from "@/utils/pinata-data";
 import { ArtworkData } from "@/types/artwork";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import Link from "next/link";
 import { useToast } from "@/components/ui/use-toast";
-import Loader from "@/components/Loader";
+import Loader from "@/components/clientUi/Loader";
 
 const stringToNumber = z
   .union([

@@ -1,8 +1,9 @@
 "use client";
-import Experience from "@/components/canvas/Canvas";
-import { Canvas } from "@react-three/fiber";
+
+import { useQuery } from '@tanstack/react-query';
 import { ShareDetail } from "@/types/artwork";
-import { useEffect, useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
 import {
   Carousel,
   CarouselContent,
@@ -10,36 +11,38 @@ import {
 } from "@/components/ui/carousel";
 import { Card, CardContent } from "@/components/ui/card";
 import Autoplay from "embla-carousel-autoplay";
-import Image from "next/image";
-import Link from "next/link";
-import Loader from "@/components/Loader";
+import { Canvas } from "@react-three/fiber";
+import Experience from "@/components/canvas/Canvas";
+import Loader from "@/components/clientUi/Loader";
+import { useState } from "react";
 
 const IMAGE_FALLBACK =
   "https://theredwindows.net/wp-content/themes/koji/assets/images/default-fallback-image.png";
 
+const fetchSharesData = async (): Promise<ShareDetail[]> => {
+  const response = await fetch("/api/shares");
+  if (!response.ok) {
+    throw new Error("Failed to fetch shares data");
+  }
+  return response.json();
+};
+
 export default function Home() {
-  const [sharesData, setSharesData] = useState<ShareDetail[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: sharesData, error, isLoading } = useQuery<ShareDetail[], Error>({
+    queryKey: ['sharesData'],
+    queryFn: fetchSharesData,
+  });
 
-  useEffect(() => {
-    async function fetchSharesData() {
-      const shareRequest = await fetch("/api/shares");
-      const data = await shareRequest.json();
-      if (data) {
-        setSharesData(data);
-        setLoading(false);
-      }
-    }
-
-    fetchSharesData();
-  }, []);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-white to-gray-300">
         <Loader />
       </div>
     );
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
   }
 
   return (
@@ -64,91 +67,89 @@ export default function Home() {
         </div>
       </div>
 
-      <div>
-        <Section title="How Our Art Tokenization and Fractionalization Works" animate={false}>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <Step
-              stepNumber="1"
-              title="Consultation"
-              description="Engage with Us: Begin by reaching out through our platform. We'll discuss your specific needs, the artwork you wish to tokenize, and how our service can benefit you."
-            />
-            <Step
-              stepNumber="2"
-              title="Legal Setup"
-              description="Form an LLC: For each artwork, we help you establish a Limited Liability Company (LLC) that legally owns the art. Transfer Art Ownership: You transfer ownership of the artwork to the newly formed LLC."
-            />
-            <Step
-              stepNumber="3"
-              title="Tokenization"
-              description="Mint an NFT: We mint a Non-Fungible Token (NFT) representing ownership of the LLC. Tokenize the Artwork: Fractional ownership tokens (ERC-20) are minted to represent shares in the LLC."
-            />
-            <Step
-              stepNumber="4"
-              title="Control and Management"
-              description="Maintain Control: Holding the NFT allows you to retain control over the LLC. Distribute Shares: Sell fractional shares to investors, providing them with a stake in the artwork's future financial returns."
-            />
-            <Step
-              stepNumber="5"
-              title="Marketplace Integration"
-              description="Trading Platform Access: Both the NFT and fractional shares are listed on our secure trading platform, allowing for open trading and liquidity."
-            />
-            <Step
-              stepNumber="6"
-              title="Revenue and Reporting"
-              description="Profit Sharing: Any profits from the sale or leasing of the artwork are distributed to the shareholders. Transparent Reporting: Regular reports and updates are provided to all stakeholders."
-            />
-            <Step
-              stepNumber="7"
-              title="Long-term Management"
-              description="Ongoing Support: We continue to offer support and advice, helping you manage the LLC, adjust to market conditions, and plan future steps for your tokenized artwork."
-            />
-          </div>
-        </Section>
+      <Section title="How Our Art Tokenization and Fractionalization Works" animate={false}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <Step
+            stepNumber="1"
+            title="Consultation"
+            description="Engage with Us: Begin by reaching out through our platform. We'll discuss your specific needs, the artwork you wish to tokenize, and how our service can benefit you."
+          />
+          <Step
+            stepNumber="2"
+            title="Legal Setup"
+            description="Form an LLC: For each artwork, we help you establish a Limited Liability Company (LLC) that legally owns the art. Transfer Art Ownership: You transfer ownership of the artwork to the newly formed LLC."
+          />
+          <Step
+            stepNumber="3"
+            title="Tokenization"
+            description="Mint an NFT: We mint a Non-Fungible Token (NFT) representing ownership of the LLC. Tokenize the Artwork: Fractional ownership tokens (ERC-20) are minted to represent shares in the LLC."
+          />
+          <Step
+            stepNumber="4"
+            title="Control and Management"
+            description="Maintain Control: Holding the NFT allows you to retain control over the LLC. Distribute Shares: Sell fractional shares to investors, providing them with a stake in the artwork's future financial returns."
+          />
+          <Step
+            stepNumber="5"
+            title="Marketplace Integration"
+            description="Trading Platform Access: Both the NFT and fractional shares are listed on our secure trading platform, allowing for open trading and liquidity."
+          />
+          <Step
+            stepNumber="6"
+            title="Revenue and Reporting"
+            description="Profit Sharing: Any profits from the sale or leasing of the artwork are distributed to the shareholders. Transparent Reporting: Regular reports and updates are provided to all stakeholders."
+          />
+          <Step
+            stepNumber="7"
+            title="Long-term Management"
+            description="Ongoing Support: We continue to offer support and advice, helping you manage the LLC, adjust to market conditions, and plan future steps for your tokenized artwork."
+          />
+        </div>
+      </Section>
 
-        <Section title="Simplifying Art Investment" animate={false}>
-          <p className="text-xl text-center px-4 text-gray-700">
-            Our platform democratizes art investment, making it accessible to a broader audience while providing galleries with a novel way to manage and monetize their collections. By leveraging blockchain technology, we ensure security, transparency, and efficiency in all transactions.
-          </p>
-        </Section>
+      <Section title="Simplifying Art Investment" animate={false}>
+        <p className="text-xl text-center px-4 text-gray-700">
+          Our platform democratizes art investment, making it accessible to a broader audience while providing galleries with a novel way to manage and monetize their collections. By leveraging blockchain technology, we ensure security, transparency, and efficiency in all transactions.
+        </p>
+      </Section>
 
-        <Section title="" animate={false}>
-          <Link className="self-start" href={"/marketplace"}>
-            <h2 className="self-start text-4xl font-semibold text-gray-800">Marketplace</h2>
-          </Link>
-          <h3 className="text-2xl text-center text-gray-700 mb-8">New Arrivals</h3>
-          <Carousel
-            className="w-full"
-            plugins={[
-              Autoplay({
-                delay: 5000,
-              }),
-            ]}
-            opts={{
-              align: "start",
-              loop: true,
-            }}
-          >
-            <CarouselContent className="w-full p-0">
-              {sharesData.map((share, index) => (
-                <CarouselItem
-                  key={index}
-                  className="w-full flex justify-center"
-                >
-                  <Card className="w-full h-[50vh] flex items-center justify-center shadow-xl rounded-lg">
-                    <CardContent className="w-full h-full flex items-center justify-center p-0">
-                      <CustomImage
-                        src={share.masterworksData.imageURL || IMAGE_FALLBACK}
-                        alt="work"
-                        fallbackSrc={IMAGE_FALLBACK}
-                      />
-                    </CardContent>
-                  </Card>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-          </Carousel>
-        </Section>
-      </div>
+      <Section title="Marketplace" animate={false}>
+        <Link className="self-start" href={"/marketplace"}>
+          <h2 className="self-start text-4xl font-semibold text-gray-800">Marketplace</h2>
+        </Link>
+        <h3 className="text-2xl text-center text-gray-700 mb-8">New Arrivals</h3>
+        <Carousel
+          className="w-full"
+          plugins={[
+            Autoplay({
+              delay: 5000,
+            }),
+          ]}
+          opts={{
+            align: "start",
+            loop: true,
+          }}
+        >
+          <CarouselContent className="w-full p-0">
+            {sharesData?.map((share, index) => (
+              <CarouselItem
+                key={index}
+                className="w-full flex justify-center"
+              >
+                <Card className="w-full h-[50vh] flex items-center justify-center shadow-xl rounded-lg">
+                  <CardContent className="w-full h-full flex items-center justify-center p-0">
+                    <CustomImage
+                      src={share.masterworksData.imageURL || IMAGE_FALLBACK}
+                      alt="work"
+                      fallbackSrc={IMAGE_FALLBACK}
+                    />
+                  </CardContent>
+                </Card>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+        </Carousel>
+      </Section>
     </div>
   );
 }
@@ -160,7 +161,7 @@ interface SectionProps {
 }
 
 const Section: React.FC<SectionProps> = ({ title, children, animate = true }) => (
-  <section className={`w-screen flex flex-col justify-center items-center bg-gradient-to-r from-gray-50 to-gray-200 p-24 gap-4 shadow-lg ${animate ? 'transform transition duration-500' : ''}`}>
+  <section className={`w-screen flex flex-col justify-center items-center bg-gradient-to-r from-gray-50 to-gray-200 p-24 gap-4 ${animate ? 'transform transition duration-500' : ''}`}>
     <h2 className="text-4xl font-semibold text-gray-800 mb-8">{title}</h2>
     {children}
   </section>

@@ -13,7 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import CreateWorkShare from "../createWorkShare"
+import CreateWorkShare from "./createWorkShare"
 import CreateSharesButton from "./createShare-button"
 
 export const columns: ColumnDef<Artwork>[] = [
