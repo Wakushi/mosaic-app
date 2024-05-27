@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import Loader from "@/components/Loader";
+import { useToast } from "@/components/ui/use-toast"; 
 
 interface BuyShareDialogProps {
   sharesTokenId: number;
@@ -14,11 +15,13 @@ const BuyShareDialog: React.FC<BuyShareDialogProps> = ({ sharesTokenId, sharePri
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { register, handleSubmit, reset } = useForm();
+  const { toast } = useToast(); 
 
   const onSubmit = async (data: any) => {
     const { shareAmount } = data;
-    const value = shareAmount * sharePriceUsd * 1e18; 
+    const value = shareAmount * sharePriceUsd * 1e18;
 
+    setIsLoading(true);
     try {
       const response = await fetch('/api/shares', {
         method: 'POST',
@@ -36,12 +39,21 @@ const BuyShareDialog: React.FC<BuyShareDialogProps> = ({ sharesTokenId, sharePri
         throw new Error('Failed to buy share');
       }
 
-      alert('Share purchased successfully!');
+      toast({
+        title: "Success",
+        description: "Share purchased successfully!",
+      });
+
       reset();
       setOpen(false);
     } catch (error) {
       console.error('Error buying share:', error);
-      alert('Error buying share. Please try again.');
+      toast({
+        title: "Error",
+        description: "Error buying share. Please try again.",
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -52,9 +64,8 @@ const BuyShareDialog: React.FC<BuyShareDialogProps> = ({ sharesTokenId, sharePri
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Buy Share</DialogTitle>
-           
           </DialogHeader>
-		  {isLoading ? (
+          {isLoading ? (
             <div className="flex justify-center items-center h-40">
               <Loader />
             </div>
@@ -75,7 +86,6 @@ const BuyShareDialog: React.FC<BuyShareDialogProps> = ({ sharesTokenId, sharePri
               </div>
             </form>
           )}
-
         </DialogContent>
       </Dialog>
     </>

@@ -1,6 +1,9 @@
 'use client';
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
+import Loader from "@/components/Loader";
+
+import { DWORK_SHARES_ADDRESS } from "@/lib/contract";
 
 export default function Profil() {
   const { address: clientAddress } = useAccount();
@@ -17,8 +20,10 @@ export default function Profil() {
       )
         .then((response) => response.json())
         .then((response) => {
-          console.log(response);
-          setNfts(response.ownedNfts || []);
+          const filteredNfts = response.ownedNfts.filter(
+            (nft: any) => nft.contract.address.toLowerCase() === DWORK_SHARES_ADDRESS.toLowerCase()
+          );
+          setNfts(filteredNfts);
           setLoading(false);
         })
         .catch((err) => {
@@ -27,13 +32,20 @@ export default function Profil() {
         });
     }
   }, [clientAddress]);
+  console.log(nfts);
+  
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-white to-gray-300">
+        <Loader />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen p-24">
       <h1>Profil</h1>
-      {loading ? (
-        <p>Loading...</p>
-      ) : (
         <div>
           <h2>Address: {clientAddress}</h2>
           {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -49,7 +61,6 @@ export default function Profil() {
             ))}
           </div> */}
         </div>
-      )}
     </div>
   );
 }
