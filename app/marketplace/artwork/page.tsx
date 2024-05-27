@@ -1,48 +1,34 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react";
+import { useQuery } from '@tanstack/react-query';
 import { ShareDetail } from "@/types/artwork";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
-import Loader from "@/components/Loader";
+import Loader from "@/components/clientUi/Loader";
 import BuyShareDialog from "@/components/marketplace/BuyShareDialog";
 
 const IMAGE_FALLBACK =
-  "https://theredwindows.net/wp-content/themes/koji/assets/images/default-fallback-image.png"
+  "https://theredwindows.net/wp-content/themes/koji/assets/images/default-fallback-image.png";
+
+const fetchShareDetail = async (id: string): Promise<ShareDetail> => {
+  const response = await fetch(`/api/shares?id=${id}`);
+  if (!response.ok) {
+    throw new Error("Failed to fetch share details");
+  }
+  return response.json();
+};
 
 const Artwork = () => {
-  const searchParams = useSearchParams()
-  const id = searchParams.get("id")
-  const [shareDetail, setShareDetail] = useState<ShareDetail | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id");
 
-  useEffect(() => {
-    if (id) {
-      const fetchShareDetail = async () => {
-        try {
-          const response = await fetch(`/api/shares?id=${id}`)
-          if (!response.ok) {
-            throw new Error("Failed to fetch share details")
-          }
-          const data: ShareDetail = await response.json()
-          setShareDetail(data)
-          setLoading(false)
-        } catch (err) {
-          if (err instanceof Error) {
-            setError(err.message)
-          } else {
-            setError("An unknown error occurred")
-          }
-          setLoading(false)
-        }
-      }
+  const { data: shareDetail, error, isLoading } = useQuery<ShareDetail, Error>({
+    queryKey: ['shareDetail', id],
+    queryFn: () => fetchShareDetail(id!),
+    enabled: !!id,
+  });
 
-      fetchShareDetail()
-    }
-  }, [id])
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-white to-gray-300">
         <Loader />
@@ -51,17 +37,17 @@ const Artwork = () => {
   }
 
   if (error) {
-    return <div>Error: {error}</div>
+    return <div>Error: {error.message}</div>;
   }
 
   if (!shareDetail) {
-    return <div>No details available</div>
+    return <div>No details available</div>;
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-white to-gray-300 flex pt-28 px-14 gap-5">
       <div>
-        <div className=" p-10 w-[55vw] bg-white shadow-lg">
+        <div className="p-10 w-[55vw] bg-white shadow-lg">
           <Image
             src={shareDetail.masterworksData.imageURL || IMAGE_FALLBACK}
             alt={shareDetail.tokenizationRequest.certificate.artist}
@@ -81,13 +67,9 @@ const Artwork = () => {
           {shareDetail.tokenizationRequest.certificate.artist}
         </p>
         <p className="text-lg">{shareDetail.masterworksData.medium}</p>
-
-        <p>
-          Owner: {shareDetail.tokenizationRequest.owner}
-        </p>
-        <p>Price: {shareDetail.workShare.sharePriceUsd} Usd</p>
-
-        <div className=" flex flex-col items-center gap-3 ">
+        <p>Owner: {shareDetail.tokenizationRequest.owner}</p>
+        <p>Price: {shareDetail.workShare.sharePriceUsd} USD</p>
+        <div className="flex flex-col items-center gap-3">
           <p>
             {shareDetail.workShare.totalShareBought}/
             {shareDetail.workShare.maxShareSupply}
@@ -98,9 +80,8 @@ const Artwork = () => {
           />
         </div>
       </div>
-      
     </div>
-  )
-}
+  );
+};
 
-export default Artwork
+export default Artwork;

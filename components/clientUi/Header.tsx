@@ -10,17 +10,17 @@ import { useAccount } from "wagmi";
 
 // Components
 import { Modal } from "@/components/clientUi/modal";
-import { ProfileForm } from "./profile-form";
+import { ProfileForm } from "../profile-form";
 
 // Shadcn
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuShortcut,
-} from "./ui/dropdown-menu";
+} from "../ui/dropdown-menu";
 
 // Zustand store
 import { useUserStore } from "@/store/useStore";

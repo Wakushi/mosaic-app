@@ -21,7 +21,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/clientUi/modal";
-import { ArtForm } from "../artwork-form";
+import { ArtForm } from "./artwork-form";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];

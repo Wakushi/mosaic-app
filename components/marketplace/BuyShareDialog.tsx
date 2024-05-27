@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
-import Loader from "@/components/Loader";
+import Loader from "@/components/clientUi/Loader";
 import { useToast } from "@/components/ui/use-toast"; 
 
 interface BuyShareDialogProps {

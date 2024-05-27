@@ -1,55 +1,43 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { Artwork } from "@/types/artwork"
-import { DataTable } from "@/components/adminDashboard/data-table"
-import { getColumns } from "@/components/adminDashboard/column"
-import Loader from "@/components/Loader"
+import { useQuery } from '@tanstack/react-query';
+import { Artwork } from "@/types/artwork";
+import { DataTable } from "@/components/adminDashboard/data-table";
+import { getColumns } from "@/components/adminDashboard/column";
+import Loader from "@/components/clientUi/Loader";
+
+const fetchArtworks = async (): Promise<Artwork[]> => {
+  const response = await fetch("/api/artwork");
+  if (!response.ok) {
+    throw new Error("Failed to fetch artworks");
+  }
+  return response.json();
+};
 
 export default function Admin() {
-  const [artworks, setArtworks] = useState<Artwork[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const { data: artworks, error, isLoading, refetch } = useQuery<Artwork[], Error>({
+    queryKey: ['artworks'],
+    queryFn: fetchArtworks
+  });
 
-  const fetchArtworks = async () => {
-    setLoading(true)
-    try {
-      const response = await fetch("/api/artwork")
-      if (!response.ok) {
-        throw new Error("Failed to fetch artworks")
-      }
-      const data = await response.json()
-      setArtworks(data)
-    } catch (err) {
-      console.error("Error fetching artworks:", err)
-      setError((err as Error).message)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    fetchArtworks()
-  }, [])
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-white to-gray-300">
         <Loader />
       </div>
-    )
+    );
   }
 
   if (error) {
-    return <div>Error: {error}</div>
+    return <div>Error: {error.message}</div>;
   }
 
   return (
-    <div className=" min-h-screen px-14 pt-[8rem]">
+    <div className="min-h-screen px-14 pt-[8rem]">
       <h1 className="text-4xl self-start">Admin</h1>
       <div className="mx-auto py-10">
-        <DataTable columns={getColumns(fetchArtworks)} data={artworks} />
+        <DataTable columns={getColumns(refetch)} data={artworks || []} />
       </div>
     </div>
-  )
+  );
 }

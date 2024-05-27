@@ -1,54 +1,47 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { useAccount } from "wagmi"
-import { columns } from "@/components/dashboard/column"
-import { DataTable } from "@/components/dashboard/data-table"
-import { Artwork } from "@/types/artwork"
-import Loader from "@/components/Loader"
+import { useQuery } from '@tanstack/react-query';
+import { useAccount } from "wagmi";
+import { columns } from "@/components/dashboard/column";
+import { DataTable } from "@/components/dashboard/data-table";
+import { Artwork } from "@/types/artwork";
+import Loader from "@/components/clientUi/Loader";
+
+const fetchArtworks = async (clientAddress: string): Promise<Artwork[]> => {
+  const response = await fetch(`/api/artwork?clientAddress=${clientAddress}`);
+  if (!response.ok) {
+    throw new Error("Failed to fetch artworks");
+  }
+  return response.json();
+};
 
 export default function Dashboard() {
-  const { address: clientAddress } = useAccount()
-  const [data, setData] = useState<Artwork[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const { address: clientAddress } = useAccount();
 
-  useEffect(() => {
-    if (clientAddress) {
-      fetch(`/api/artwork?clientAddress=${clientAddress}`)
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Failed to fetch artworks")
-          }
-          return response.json()
-        })
-        .then((data) => setData(data))
-        .catch((error) => {
-          console.error("Error fetching artworks:", error)
-          setError(error.message)
-        })
-        .finally(() => setLoading(false))
-    }
-  }, [clientAddress])
+  const { data, error, isLoading } = useQuery<Artwork[], Error>({
+    queryKey: ['artworks', clientAddress],
+    queryFn: () => fetchArtworks(clientAddress!),
+    enabled: !!clientAddress,
+  });
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-white to-gray-300">
         <Loader />
       </div>
-    )
+    );
   }
 
   if (error) {
-    return <div>Error: {error}</div>
+    return <div>Error: {error.message}</div>;
   }
 
   return (
-    <div className=" min-h-screen px-14 pt-[8rem]">
+    <div className="min-h-screen px-14 pt-[8rem]">
       <h1 className="text-4xl self-start">Dashboard</h1>
       <div className="mx-auto py-10">
-        <DataTable columns={columns} data={data} />
+        <DataTable columns={columns} data={data || []} />
       </div>
     </div>
-  )
+  );
 }

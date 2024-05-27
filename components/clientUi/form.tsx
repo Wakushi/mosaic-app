@@ -7,7 +7,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
-import Loader from "@/components/Loader";
+import Loader from "@/components/clientUi/Loader";
 
 interface FormFieldData {
   name: string;

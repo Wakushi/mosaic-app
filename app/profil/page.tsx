@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
-import Loader from "@/components/Loader";
+import Loader from "@/components/clientUi/Loader";
 
 import { DWORK_SHARES_ADDRESS } from "@/lib/contract";
 
