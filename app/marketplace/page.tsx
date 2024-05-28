@@ -1,59 +1,65 @@
-"use client";
+"use client"
 
-import { useQuery } from '@tanstack/react-query';
-import { ShareDetail } from "@/types/artwork";
-import Image from "next/image";
-import { useState } from "react";
-import Loader from "@/components/clientUi/Loader";
+import { useQuery } from "@tanstack/react-query"
+import { ShareDetail } from "@/types/artwork"
+import Image from "next/image"
+import { useState } from "react"
+import Loader from "@/components/clientUi/Loader"
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
-} from "@/components/ui/carousel";
-import { Card, CardContent } from "@/components/ui/card";
-import Autoplay from "embla-carousel-autoplay";
-import { Input } from "@/components/ui/input";
-import Link from "next/link";
+} from "@/components/ui/carousel"
+import { Card, CardContent } from "@/components/ui/card"
+import Autoplay from "embla-carousel-autoplay"
+import { Input } from "@/components/ui/input"
+import Link from "next/link"
+import { formatUnits } from "viem"
 
 const IMAGE_FALLBACK =
-  "https://theredwindows.net/wp-content/themes/koji/assets/images/default-fallback-image.png";
+  "https://theredwindows.net/wp-content/themes/koji/assets/images/default-fallback-image.png"
 
 const fetchSharesData = async (): Promise<ShareDetail[]> => {
-  const response = await fetch("/api/shares");
+  const response = await fetch("/api/shares")
   if (!response.ok) {
-    throw new Error("Failed to fetch shares data");
+    throw new Error("Failed to fetch shares data")
   }
-  return response.json();
-};
+  return response.json()
+}
 
 export default function Marketplace() {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState("")
 
-  const { data: sharesData, error, isLoading } = useQuery<ShareDetail[], Error>({
-    queryKey: ['sharesData'],
+  const {
+    data: sharesData,
+    error,
+    isLoading,
+  } = useQuery<ShareDetail[], Error>({
+    queryKey: ["sharesData"],
     queryFn: fetchSharesData,
-  });
+  })
 
   const handleSearchChange = (e: any) => {
-    setSearchTerm(e.target.value);
-  };
+    setSearchTerm(e.target.value)
+  }
 
-  const filteredSharesData = sharesData?.filter((share) =>
-    share.tokenizationRequest.certificate.artist
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase())
-  ) || [];
+  const filteredSharesData =
+    sharesData?.filter((share) =>
+      share.tokenizationRequest.certificate.artist
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
+    ) || []
 
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-white to-gray-300">
         <Loader />
       </div>
-    );
+    )
   }
 
   if (error) {
-    return <div>Error: {error.message}</div>;
+    return <div>Error: {error.message}</div>
   }
 
   return (
@@ -116,14 +122,14 @@ export default function Marketplace() {
               <div className="flex flex-col gap-1 justify-center items-center flex-1">
                 <h2>{share.tokenizationRequest.certificate.work}</h2>
                 <p>{share.tokenizationRequest.certificate.artist}</p>
-                <p>${share.workShare.sharePriceUsd}</p>
+                <p>${formatUnits(share.workShare.sharePriceUsd, 18)}</p>
               </div>
             </Link>
           ))}
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 const CustomImage = ({
@@ -132,15 +138,15 @@ const CustomImage = ({
   fallbackSrc,
   ...props
 }: {
-  src: string;
-  alt: string;
-  fallbackSrc: string;
+  src: string
+  alt: string
+  fallbackSrc: string
 }) => {
-  const [imgSrc, setImgSrc] = useState(src);
+  const [imgSrc, setImgSrc] = useState(src)
 
   const handleError = () => {
-    setImgSrc(fallbackSrc);
-  };
+    setImgSrc(fallbackSrc)
+  }
 
   return (
     <Image
@@ -154,5 +160,5 @@ const CustomImage = ({
       className="object-cover"
       {...props}
     />
-  );
-};
+  )
+}
