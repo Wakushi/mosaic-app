@@ -1,11 +1,10 @@
 import { config } from "@/app/provider"
 import { DWORK_SHARES_ABI, DWORK_SHARES_ADDRESS } from "@/lib/contract"
 import { readContract, simulateContract, writeContract } from "@wagmi/core"
-import { chainConfig } from "./blockchain-config"
 import { parseEther } from "viem"
 
 export async function getNativeTokenPriceUsd(): Promise<number> {
-  const price: any = await readContract(chainConfig, {
+  const price: any = await readContract(config, {
     address: DWORK_SHARES_ADDRESS,
     abi: DWORK_SHARES_ABI,
     functionName: "getNativeTokenPriceUsd",
