@@ -22,9 +22,8 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, close, children }) => {
         alignItems: "center",
         justifyContent: "center",
 		    zIndex: 1000,
-        minHeight: "50vh",
       }}
-      className="min-h-[50vh]"
+      className="min-h-[100vh]"
 
     >
       <div

@@ -107,7 +107,7 @@ export default function Header() {
         </Link>
         {isRegistered === false && (
           <>
-            <Button onClick={toggleModal}>Complete your register</Button>
+            <Button onClick={toggleModal}>Signup</Button>
             <Modal isOpen={modalOpen} close={toggleModal}>
               <ProfileForm />
             </Modal>
