@@ -99,14 +99,14 @@ export default function Marketplace() {
             className="p-2 border border-gray-300 rounded-md mb-4 w-1/4"
           />
         </div>
-        <div className="flex flex-wrap grid grid-cols-3 gap-10 mt-4 justify-around">
+        <div className="grid grid-cols-3 gap-10 mt-4 justify-around">
           {filteredSharesData.map((share) => (
             <Link
               href={`/marketplace/artwork?id=${share.workShare.sharesTokenId}`}
               key={share.workShare.sharesTokenId}
-              className="border border-slate-100 flex flex-col gap-2 justify-center p-4 rounded-md shadow-md items-center bg-white"
+              className="border border-slate-100 flex flex-col gap-2 justify-center p-4 rounded-md shadow-md items-center bg-white max-h-[350px]"
             >
-              <div className="flex-1">
+              <div className="flex-1 w-full h-[200px]">
                 <CustomImage
                   src={share.masterworksData.imageURL || IMAGE_FALLBACK}
                   alt="work"
