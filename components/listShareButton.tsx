@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Loader from "@/components/clientUi/Loader";
 import { useToast } from "@/components/ui/use-toast";
+import { listMarketShareItem } from "@/utils/user-contract-interactions"
 
 interface ListShareDialogProps {
   sharesTokenId: number;
@@ -40,24 +41,7 @@ const ListShareDialog: React.FC<ListShareDialogProps> = ({
 
     setIsLoading(true);
     try {
-      const response = await fetch('/api/listShare', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          sharesTokenId,
-          amount: shareAmount,
-          priceUsd,
-          value: shareAmount * priceUsd, 
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to list shares');
-      }
-
-      const result = await response.json();
+      await listMarketShareItem(sharesTokenId, shareAmount, priceUsd)
       toast({
         title: "Success",
         description: "Shares listed successfully!",
@@ -101,7 +85,7 @@ const ListShareDialog: React.FC<ListShareDialogProps> = ({
               <div>
                 <Input
                   {...register("priceUsd", { valueAsNumber: true })}
-                  placeholder="Price USD"
+                  placeholder="Total Price (USD)"
                   type="number"
                 />
                 {errors.priceUsd && typeof errors.priceUsd.message === "string" && (

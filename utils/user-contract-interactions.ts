@@ -39,19 +39,17 @@ export async function buyInitialShare(
   }
 }
 
-export async function listMarketShareitem(
+export async function listMarketShareItem(
   sharesTokenId: number,
   amount: number,
-  priceUsd: number,
-  value: bigint
+  totalPriceUsd: number
 ) {
   try {
     const { request: listShareRequest } = await simulateContract(config, {
       address: DWORK_SHARES_ADDRESS,
       abi: DWORK_SHARES_ABI,
       functionName: "listMarketShareItem",
-      args: [sharesTokenId, amount, priceUsd],
-      value,
+      args: [sharesTokenId, amount, parseEther(totalPriceUsd.toString())],
     })
 
     const result = await writeContract(config, listShareRequest)
