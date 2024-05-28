@@ -40,7 +40,7 @@ export default function Dashboard() {
     <div className="min-h-screen px-14 pt-[8rem]">
       <h1 className="text-4xl self-start">Dashboard</h1>
       <div className="mx-auto py-10">
-        <DataTable columns={columns} data={data || []} />
+        <DataTable columns={columns} data={data || []} clientAddress={clientAddress} />
       </div>
     </div>
   );

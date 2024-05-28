@@ -41,27 +41,26 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   try {
     const { searchParams } = new URL(req.url)
     const clientAddress = searchParams.get("clientAddress")
-
+    let artworks: Artwork[]
     if (clientAddress) {
-      const artworks = await getArtworksByClientAddress(clientAddress)
-      return NextResponse.json(artworks)
+      artworks = await getArtworksByClientAddress(clientAddress)
     } else {
-      const artworks = await getAllArtworks()
-      await Promise.all(
-        artworks.map(async (artwork) => {
-          // If the tokenization request was opened, we grab the real status and the tokenization request data
-          if (artwork.tokenizationRequestId) {
-            const tokenizedWork: TokenizationRequest =
-              await getTokenizationRequestById(artwork.tokenizationRequestId)
-            artwork.status = getVerificationStepStatus(
-              tokenizedWork.verificationStep
-            )
-            artwork.tokenizationRequest = tokenizedWork
-          }
-        })
-      )
-      return NextResponse.json(artworks)
+      artworks = await getAllArtworks()
     }
+    await Promise.all(
+      artworks.map(async (artwork) => {
+        // If the tokenization request was opened, we grab the real status and the tokenization request data
+        if (artwork.tokenizationRequestId) {
+          const tokenizedWork: TokenizationRequest =
+            await getTokenizationRequestById(artwork.tokenizationRequestId)
+          artwork.status = getVerificationStepStatus(
+            tokenizedWork.verificationStep
+          )
+          artwork.tokenizationRequest = tokenizedWork
+        }
+      })
+    )
+    return NextResponse.json(artworks)
   } catch (error) {
     console.error("API error:", error)
     if (error instanceof Error) {

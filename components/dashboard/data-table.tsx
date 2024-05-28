@@ -25,16 +25,18 @@ import { ArtForm } from "./artwork-form";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
+  clientAddress?: string;
 }
 
-const fetchArtworks = async () => {
-  const response = await fetch("/api/artwork");
+const fetchArtworks = async (clientAddress:string) => {
+  const response = await fetch("/api/artwork" + (clientAddress ? `?clientAddress=${clientAddress}` : ""))
   const data = await response.json();
   return data;
 };
 
 export function DataTable<TData, TValue>({
   columns,
+  clientAddress
 }: DataTableProps<TData, TValue>) {
   const [data, setData] = useState<TData[]>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -54,11 +56,12 @@ export function DataTable<TData, TValue>({
   const toggleModal = () => setModalOpen(!modalOpen);
 
   const loadArtworks = async () => {
-    const artworks = await fetchArtworks();
+    const artworks = await fetchArtworks(clientAddress ?? "");
     setData(artworks);
   };
 
   useEffect(() => {
+    console.log("loading data")
     loadArtworks();
   }, []);
 
