@@ -67,6 +67,28 @@ export default function Home() {
         </div>
       </div>
 
+      <Section title="Problem: Art Traceability" animate={false}>
+        <div className="flex flex-col lg:flex-row items-center gap-8">
+          <div className="lg:w-1/2 h-[50vh] relative">
+            <Image
+              src="/problem.webp"
+              alt="Art Traceability Problem"
+              layout="fill"
+              objectFit="cover"
+              className="rounded-lg"
+            />
+          </div>
+          <div className="lg:w-1/2 flex flex-col justify-center">
+            <p className="text-lg text-gray-600">
+              Art traceability has always been a significant concern for gallery owners, collectors, and investors. The difficulty in tracking the history of transactions and ownership of a piece of art often leads to issues of forgery, theft, and disputes over ownership. Moreover, the lack of transparency and accurate documentation can discourage potential investors and compromise the value and reputation of art collections.
+            </p>
+            <p className="text-lg text-gray-600 mt-4">
+              By leveraging blockchain technology, we provide an innovative solution to this problem, offering a secure and transparent method for tracking the provenance and transactions of artworks.
+            </p>
+          </div>
+        </div>
+      </Section>
+
       <Section title="How Our Art Tokenization and Fractionalization Works" animate={false}>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <Step
@@ -113,7 +135,7 @@ export default function Home() {
         </p>
       </Section>
 
-      <Section title="Marketplace" animate={false}>
+      <Section title="" animate={false}>
         <Link className="self-start" href={"/marketplace"}>
           <h2 className="self-start text-4xl font-semibold text-gray-800">Marketplace</h2>
         </Link>
