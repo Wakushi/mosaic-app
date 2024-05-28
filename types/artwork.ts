@@ -75,7 +75,7 @@ export type MasterworksWorkData = {
 }
 
 export type WorkStatus =
-  | "submitted"
+  | "submitted" // Submitted is the status when the client submits the work (when data is only on firebase, not on the blockchain)
   | "pending certificate extraction"
   | "certificate extracted"
   | "pending verification"

@@ -85,8 +85,6 @@ export function getVerificationStepStatus(
     case 3:
       return "work verified"
     case 4:
-      return "pending tokenization"
-    case 5:
       return "tokenized"
     default:
       return "submitted"
