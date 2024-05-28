@@ -129,7 +129,7 @@ export async function createShares(
 
 export async function getAllSharesDetails() {
   try {
-    const result = await readContract(chainConfig, {
+    const result: any = await readContract(chainConfig, {
       abi: DWORK_SHARES_ABI,
       address: DWORK_SHARES_ADDRESS,
       functionName: "getLastTokenId",
@@ -156,11 +156,17 @@ export async function getAllSharesDetails() {
     }
     const sharesDetailed: ShareDetail[] = []
     for (let workShare of workShares) {
+      const tokenizationRequestId: any = await readContract(chainConfig, {
+        address: DWORK_ADDRESS,
+        abi: DWORK_ABI,
+        functionName: "getTokenizationRequestIdByWorkTokenId",
+        args: [workShare.workTokenId],
+      })
       const tokenizationRequest: any = await readContract(chainConfig, {
         address: DWORK_ADDRESS,
         abi: DWORK_ABI,
-        functionName: "getTokenizationRequestByWorkTokenId",
-        args: [workShare.workTokenId],
+        functionName: "getTokenizationRequest",
+        args: [tokenizationRequestId],
       })
 
       const masterworksData: MasterworksWorkData = await getMasterworksData(
@@ -221,11 +227,17 @@ export async function getShareDetail(id: number): Promise<ShareDetail> {
       isPaused: share.isPaused,
     }
 
+    const tokenizationRequestId: any = await readContract(chainConfig, {
+      address: DWORK_ADDRESS,
+      abi: DWORK_ABI,
+      functionName: "getTokenizationRequestIdByWorkTokenId",
+      args: [workShare.workTokenId],
+    })
     const tokenizationRequest: any = await readContract(chainConfig, {
       address: DWORK_ADDRESS,
       abi: DWORK_ABI,
-      functionName: "getTokenizationRequestByWorkTokenId",
-      args: [workShare.workTokenId],
+      functionName: "getTokenizationRequest",
+      args: [tokenizationRequestId],
     })
 
     const masterworksData = await getMasterworksData(
