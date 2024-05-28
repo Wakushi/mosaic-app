@@ -45,13 +45,13 @@ export async function getMasterworksData(
   title: string
 ): Promise<any> {
   const artist = await getArtistData(formatArtistNameMW(artistName))
-  const externalWork = artist.works.find(
-    (workMW: any) => workMW.workTitle === title
-  )
+  const externalWork = artist.works.find((work: any) => {
+    return work.workTitle.replace(/^"|"$/g, "") === title
+  })
   const { permalink } = externalWork
   const marketData = await getWorkDetails(permalink)
   return {
-    title: marketData.workTitle,
+    title: marketData.workTitle.replace(/^"|"$/g, ""),
     artist: artist.artistName,
     medium: marketData.medium,
     dimensions: `${marketData.heightCM} x ${marketData.widthCM} cm`,

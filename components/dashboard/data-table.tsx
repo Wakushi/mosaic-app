@@ -61,7 +61,6 @@ export function DataTable<TData, TValue>({
   };
 
   useEffect(() => {
-    console.log("loading data")
     loadArtworks();
   }, []);
 
