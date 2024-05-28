@@ -1,35 +1,37 @@
-'use client'
-import { useEffect, useState } from "react";
-import { useAccount } from "wagmi";
-import Loader from "@/components/clientUi/Loader";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { DWORK_SHARES_ADDRESS } from "@/lib/contract";
-import Image from "next/image";
-import ListShareDialog from "@/components/listShareButton";
+"use client"
+import { useEffect, useState } from "react"
+import { useAccount } from "wagmi"
+import Loader from "@/components/clientUi/Loader"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { DWORK_SHARES_ADDRESS } from "@/lib/contract"
+import Image from "next/image"
+import ListShareDialog from "@/components/listShareButton"
 
 const IMAGE_FALLBACK =
-  "https://theredwindows.net/wp-content/themes/koji/assets/images/default-fallback-image.png";
+  "https://theredwindows.net/wp-content/themes/koji/assets/images/default-fallback-image.png"
 
 const fetchShareData = async (tokenId: string) => {
-  const response = await fetch(`/api/shares?id=${tokenId}`);
+  const response = await fetch(`/api/shares?id=${tokenId}`)
   if (!response.ok) {
-    throw new Error("Failed to fetch share data");
+    throw new Error("Failed to fetch share data")
   }
-  return response.json();
-};
+  return response.json()
+}
 
 export default function Profil() {
-  const { address: clientAddress } = useAccount();
-  const [nfts, setNfts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [sharesData, setSharesData] = useState<any[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [openDialogTokenId, setOpenDialogTokenId] = useState<number | null>(null);
+  const { address: clientAddress } = useAccount()
+  const [nfts, setNfts] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [sharesData, setSharesData] = useState<any[]>([])
+  const [searchTerm, setSearchTerm] = useState("")
+  const [openDialogTokenId, setOpenDialogTokenId] = useState<number | null>(
+    null
+  )
 
   useEffect(() => {
     if (clientAddress) {
-      const options = { method: "GET", headers: { accept: "application/json" } };
+      const options = { method: "GET", headers: { accept: "application/json" } }
 
       fetch(
         `https://polygon-amoy.g.alchemy.com/nft/v3/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}/getNFTsForOwner?owner=${clientAddress}`,
@@ -38,54 +40,62 @@ export default function Profil() {
         .then((response) => response.json())
         .then((response) => {
           const filteredNfts = response.ownedNfts.filter(
-            (nft: any) => nft.contract.address.toLowerCase() === DWORK_SHARES_ADDRESS.toLowerCase()
-          );
-          setNfts(filteredNfts);
-          setLoading(false);
+            (nft: any) =>
+              nft.contract.address.toLowerCase() ===
+              DWORK_SHARES_ADDRESS.toLowerCase()
+          )
+          console.log("filteredNfts", filteredNfts)
+          setNfts(filteredNfts)
+          setLoading(false)
         })
         .catch((err) => {
-          console.error(err);
-          setLoading(false);
-        });
+          console.error(err)
+          setLoading(false)
+        })
     }
-  }, [clientAddress]);
+  }, [clientAddress])
 
   useEffect(() => {
     if (nfts.length > 0) {
+      console.log("nft", nfts)
       const fetchAllSharesData = async () => {
         const sharesPromises = nfts.map((nft) =>
           fetchShareData(nft.tokenId)
-            .then((data) => ({ ...data, tokenId: nft.tokenId }))
+            .then((data) => ({
+              ...data,
+              tokenId: nft.tokenId,
+              balance: nft.balance,
+            }))
             .catch((err) => {
-              console.error(err);
-              return null;
+              console.error(err)
+              return null
             })
-        );
+        )
 
-        const sharesResults = await Promise.all(sharesPromises);
-        setSharesData(sharesResults.filter((data) => data !== null));
-      };
+        const sharesResults = await Promise.all(sharesPromises)
+        setSharesData(sharesResults.filter((data) => data !== null))
+      }
 
-      fetchAllSharesData();
+      fetchAllSharesData()
     }
-  }, [nfts]);
+  }, [nfts])
 
   const handleSearchChange = (e: any) => {
-    setSearchTerm(e.target.value);
-  };
+    setSearchTerm(e.target.value)
+  }
 
   const filteredSharesData = sharesData.filter((share) =>
     share.tokenizationRequest.certificate.artist
       .toLowerCase()
       .includes(searchTerm.toLowerCase())
-  );
+  )
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-white to-gray-300">
         <Loader />
       </div>
-    );
+    )
   }
 
   return (
@@ -119,8 +129,11 @@ export default function Profil() {
               <div className="flex flex-col gap-1 justify-center items-center flex-1">
                 <h2>{share.tokenizationRequest.certificate.work}</h2>
                 <p>{share.tokenizationRequest.certificate.artist}</p>
-                <p>${share.workShare.sharePriceUsd}</p>
-                <Button className="w-full" onClick={() => setOpenDialogTokenId(share.tokenId)}>
+                <p>x{share.balance}</p>
+                <Button
+                  className="w-full"
+                  onClick={() => setOpenDialogTokenId(share.tokenId)}
+                >
                   List share
                 </Button>
               </div>
@@ -136,6 +149,5 @@ export default function Profil() {
         </div>
       </div>
     </div>
-  );
+  )
 }
-
