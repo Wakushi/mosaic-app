@@ -1,6 +1,6 @@
 import { Abi } from "viem"
-export const DWORK_ADDRESS = "0x42B7883F62C25e315caF276dD457D8B22338b710"
-export const DWORK_SHARES_ADDRESS = "0x1B19239bA6093f3bEC7c5488f8EEC5Baa1473C5E"
+export const DWORK_ADDRESS = "0xBd6aB2b831DE66dd0f7460F480f44cF73b13ef1C"
+export const DWORK_SHARES_ADDRESS = "0xD833F9BB42eAA9166Ed38e059FDb0091529aDAE7"
 
 export const DWORK_ABI: Abi = [
   {
@@ -16,7 +16,22 @@ export const DWORK_ABI: Abi = [
         type: "address",
         internalType: "address",
       },
-      { name: "_priceFeed", type: "address", internalType: "address" },
+      {
+        name: "_uscdUsdpriceFeed",
+        type: "address",
+        internalType: "address",
+      },
+      {
+        name: "_ccipRouterAddress",
+        type: "address",
+        internalType: "address",
+      },
+      {
+        name: "_linkTokenAddress",
+        type: "address",
+        internalType: "address",
+      },
+      { name: "_usdcAddress", type: "address", internalType: "address" },
     ],
     stateMutability: "nonpayable",
   },
@@ -51,21 +66,51 @@ export const DWORK_ABI: Abi = [
       { name: "_workTokenId", type: "uint256", internalType: "uint256" },
     ],
     outputs: [],
-    stateMutability: "payable",
+    stateMutability: "nonpayable",
   },
   {
     type: "function",
-    name: "bytes32ToString",
-    inputs: [{ name: "_bytes32", type: "bytes32", internalType: "bytes32" }],
-    outputs: [{ name: "", type: "string", internalType: "string" }],
-    stateMutability: "pure",
-  },
-  {
-    type: "function",
-    name: "bytes32ToUint256",
-    inputs: [{ name: "_uint", type: "bytes32", internalType: "bytes32" }],
-    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
-    stateMutability: "pure",
+    name: "ccipReceive",
+    inputs: [
+      {
+        name: "message",
+        type: "tuple",
+        internalType: "struct Client.Any2EVMMessage",
+        components: [
+          {
+            name: "messageId",
+            type: "bytes32",
+            internalType: "bytes32",
+          },
+          {
+            name: "sourceChainSelector",
+            type: "uint64",
+            internalType: "uint64",
+          },
+          { name: "sender", type: "bytes", internalType: "bytes" },
+          { name: "data", type: "bytes", internalType: "bytes" },
+          {
+            name: "destTokenAmounts",
+            type: "tuple[]",
+            internalType: "struct Client.EVMTokenAmount[]",
+            components: [
+              {
+                name: "token",
+                type: "address",
+                internalType: "address",
+              },
+              {
+                name: "amount",
+                type: "uint256",
+                internalType: "uint256",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
   },
   {
     type: "function",
@@ -135,23 +180,27 @@ export const DWORK_ABI: Abi = [
   },
   {
     type: "function",
-    name: "customerTokenizationRequests",
-    inputs: [{ name: "_customer", type: "address", internalType: "address" }],
-    outputs: [{ name: "", type: "uint256[]", internalType: "uint256[]" }],
-    stateMutability: "view",
+    name: "enableChain",
+    inputs: [
+      {
+        name: "_chainSelector",
+        type: "uint64",
+        internalType: "uint64",
+      },
+      {
+        name: "_xWorkAddress",
+        type: "address",
+        internalType: "address",
+      },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
   },
   {
     type: "function",
     name: "getApproved",
     inputs: [{ name: "tokenId", type: "uint256", internalType: "uint256" }],
     outputs: [{ name: "", type: "address", internalType: "address" }],
-    stateMutability: "view",
-  },
-  {
-    type: "function",
-    name: "getLastPerformData",
-    inputs: [],
-    outputs: [{ name: "", type: "bytes", internalType: "bytes" }],
     stateMutability: "view",
   },
   {
@@ -170,33 +219,6 @@ export const DWORK_ABI: Abi = [
   },
   {
     type: "function",
-    name: "getLastVerifierError",
-    inputs: [],
-    outputs: [{ name: "", type: "bytes", internalType: "bytes" }],
-    stateMutability: "view",
-  },
-  {
-    type: "function",
-    name: "getLastVerifierResponse",
-    inputs: [],
-    outputs: [{ name: "", type: "bytes", internalType: "bytes" }],
-    stateMutability: "view",
-  },
-  {
-    type: "function",
-    name: "getSharesTokenId",
-    inputs: [
-      {
-        name: "_tokenizationRequestId",
-        type: "uint256",
-        internalType: "uint256",
-      },
-    ],
-    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
-    stateMutability: "view",
-  },
-  {
-    type: "function",
     name: "getTokenizationRequest",
     inputs: [
       {
@@ -209,7 +231,7 @@ export const DWORK_ABI: Abi = [
       {
         name: "",
         type: "tuple",
-        internalType: "struct dWork.TokenizedWork",
+        internalType: "struct TokenizedAsset.TokenizedWork",
         components: [
           {
             name: "customerSubmissionIPFSHash",
@@ -227,11 +249,7 @@ export const DWORK_ABI: Abi = [
             internalType: "string",
           },
           { name: "owner", type: "address", internalType: "address" },
-          {
-            name: "initialOwnerName",
-            type: "string",
-            internalType: "string",
-          },
+          { name: "ownerName", type: "string", internalType: "string" },
           {
             name: "lastWorkPriceUsd",
             type: "uint256",
@@ -268,12 +286,12 @@ export const DWORK_ABI: Abi = [
           {
             name: "verificationStep",
             type: "uint8",
-            internalType: "enum dWork.VerificationStep",
+            internalType: "enum TokenizedAsset.VerificationStep",
           },
           {
             name: "certificate",
             type: "tuple",
-            internalType: "struct dWork.WorkCertificate",
+            internalType: "struct TokenizedAsset.WorkCertificate",
             components: [
               {
                 name: "artist",
@@ -290,15 +308,13 @@ export const DWORK_ABI: Abi = [
   },
   {
     type: "function",
-    name: "getTokenizationRequestByWorkTokenId",
-    inputs: [
-      { name: "_workTokenId", type: "uint256", internalType: "uint256" },
-    ],
+    name: "getTokenizationRequestByWorkId",
+    inputs: [{ name: "_workId", type: "uint256", internalType: "uint256" }],
     outputs: [
       {
         name: "",
         type: "tuple",
-        internalType: "struct dWork.TokenizedWork",
+        internalType: "struct TokenizedAsset.TokenizedWork",
         components: [
           {
             name: "customerSubmissionIPFSHash",
@@ -316,11 +332,7 @@ export const DWORK_ABI: Abi = [
             internalType: "string",
           },
           { name: "owner", type: "address", internalType: "address" },
-          {
-            name: "initialOwnerName",
-            type: "string",
-            internalType: "string",
-          },
+          { name: "ownerName", type: "string", internalType: "string" },
           {
             name: "lastWorkPriceUsd",
             type: "uint256",
@@ -357,12 +369,12 @@ export const DWORK_ABI: Abi = [
           {
             name: "verificationStep",
             type: "uint8",
-            internalType: "enum dWork.VerificationStep",
+            internalType: "enum TokenizedAsset.VerificationStep",
           },
           {
             name: "certificate",
             type: "tuple",
-            internalType: "struct dWork.WorkCertificate",
+            internalType: "struct TokenizedAsset.WorkCertificate",
             components: [
               {
                 name: "artist",
@@ -379,35 +391,25 @@ export const DWORK_ABI: Abi = [
   },
   {
     type: "function",
-    name: "getTokenizationRequestStatus",
+    name: "getTokenizationRequestIdByWorkTokenId",
     inputs: [
-      {
-        name: "_tokenizationRequestId",
-        type: "uint256",
-        internalType: "uint256",
-      },
+      { name: "_workTokenId", type: "uint256", internalType: "uint256" },
     ],
-    outputs: [
-      {
-        name: "",
-        type: "uint8",
-        internalType: "enum dWork.VerificationStep",
-      },
-    ],
+    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
     stateMutability: "view",
   },
   {
     type: "function",
-    name: "getWorkSharesManager",
+    name: "getUsdcPrice",
     inputs: [],
-    outputs: [{ name: "", type: "address", internalType: "address" }],
+    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
     stateMutability: "view",
   },
   {
     type: "function",
-    name: "getWorkVerifier",
-    inputs: [],
-    outputs: [{ name: "", type: "address", internalType: "address" }],
+    name: "getUsdcValueOfUsd",
+    inputs: [{ name: "usdAmount", type: "uint256", internalType: "uint256" }],
+    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
     stateMutability: "view",
   },
   {
@@ -422,40 +424,18 @@ export const DWORK_ABI: Abi = [
   },
   {
     type: "function",
-    name: "isFractionalized",
-    inputs: [
-      {
-        name: "_tokenizationRequestId",
-        type: "uint256",
-        internalType: "uint256",
-      },
-    ],
-    outputs: [{ name: "", type: "bool", internalType: "bool" }],
-    stateMutability: "view",
-  },
-  {
-    type: "function",
-    name: "isMinted",
-    inputs: [
-      {
-        name: "_tokenizationRequestId",
-        type: "uint256",
-        internalType: "uint256",
-      },
-    ],
-    outputs: [{ name: "", type: "bool", internalType: "bool" }],
-    stateMutability: "view",
-  },
-  {
-    type: "function",
     name: "listWorkToken",
     inputs: [
+      {
+        name: "_workTokenId",
+        type: "uint256",
+        internalType: "uint256",
+      },
       {
         name: "_listPriceUsd",
         type: "uint256",
         internalType: "uint256",
       },
-      { name: "_workTokenId", type: "uint256", internalType: "uint256" },
     ],
     outputs: [],
     stateMutability: "nonpayable",
@@ -466,6 +446,18 @@ export const DWORK_ABI: Abi = [
     inputs: [],
     outputs: [{ name: "", type: "string", internalType: "string" }],
     stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "onERC721Received",
+    inputs: [
+      { name: "operator", type: "address", internalType: "address" },
+      { name: "from", type: "address", internalType: "address" },
+      { name: "tokenId", type: "uint256", internalType: "uint256" },
+      { name: "data", type: "bytes", internalType: "bytes" },
+    ],
+    outputs: [{ name: "", type: "bytes4", internalType: "bytes4" }],
+    stateMutability: "nonpayable",
   },
   {
     type: "function",
@@ -513,13 +505,6 @@ export const DWORK_ABI: Abi = [
   },
   {
     type: "function",
-    name: "paused",
-    inputs: [],
-    outputs: [{ name: "", type: "bool", internalType: "bool" }],
-    stateMutability: "view",
-  },
-  {
-    type: "function",
     name: "performUpkeep",
     inputs: [{ name: "performData", type: "bytes", internalType: "bytes" }],
     outputs: [],
@@ -544,13 +529,6 @@ export const DWORK_ABI: Abi = [
     ],
     outputs: [],
     stateMutability: "nonpayable",
-  },
-  {
-    type: "function",
-    name: "s_lastPerformData",
-    inputs: [],
-    outputs: [{ name: "", type: "bytes", internalType: "bytes" }],
-    stateMutability: "view",
   },
   {
     type: "function",
@@ -587,10 +565,43 @@ export const DWORK_ABI: Abi = [
   },
   {
     type: "function",
-    name: "setWorkSharesManager",
+    name: "setCertificateIPFSHash",
     inputs: [
       {
-        name: "_workSharesManager",
+        name: "_tokenizationRequestId",
+        type: "uint256",
+        internalType: "uint256",
+      },
+      {
+        name: "_certificateIPFSHash",
+        type: "string",
+        internalType: "string",
+      },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "setChainSelector",
+    inputs: [
+      { name: "_chainId", type: "uint256", internalType: "uint256" },
+      { name: "_chainSelector", type: "uint64", internalType: "uint64" },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "setChainSharesManager",
+    inputs: [
+      {
+        name: "_chainSelector",
+        type: "uint64",
+        internalType: "uint64",
+      },
+      {
+        name: "_sharesManagerAddress",
         type: "address",
         internalType: "address",
       },
@@ -600,7 +611,7 @@ export const DWORK_ABI: Abi = [
   },
   {
     type: "function",
-    name: "setWorkSharesTokenId",
+    name: "setCustomerSubmissionIPFSHash",
     inputs: [
       {
         name: "_tokenizationRequestId",
@@ -608,9 +619,22 @@ export const DWORK_ABI: Abi = [
         internalType: "uint256",
       },
       {
-        name: "_sharesTokenId",
-        type: "uint256",
-        internalType: "uint256",
+        name: "_customerSubmissionIPFSHash",
+        type: "string",
+        internalType: "string",
+      },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "setWorkSharesManager",
+    inputs: [
+      {
+        name: "_workSharesManager",
+        type: "address",
+        internalType: "address",
       },
     ],
     outputs: [],
@@ -642,13 +666,6 @@ export const DWORK_ABI: Abi = [
     inputs: [],
     outputs: [{ name: "", type: "string", internalType: "string" }],
     stateMutability: "view",
-  },
-  {
-    type: "function",
-    name: "toBytes",
-    inputs: [{ name: "_data", type: "bytes32", internalType: "bytes32" }],
-    outputs: [{ name: "", type: "bytes", internalType: "bytes" }],
-    stateMutability: "pure",
   },
   {
     type: "function",
@@ -703,6 +720,32 @@ export const DWORK_ABI: Abi = [
     stateMutability: "nonpayable",
   },
   {
+    type: "function",
+    name: "xChainWorkTokenTransfer",
+    inputs: [
+      { name: "_to", type: "address", internalType: "address" },
+      { name: "_newOwnerName", type: "string", internalType: "string" },
+      {
+        name: "_tokenizationRequestId",
+        type: "uint256",
+        internalType: "uint256",
+      },
+      {
+        name: "_destinationChainSelector",
+        type: "uint64",
+        internalType: "uint64",
+      },
+      {
+        name: "_payFeesIn",
+        type: "uint8",
+        internalType: "enum IDWorkConfig.PayFeesIn",
+      },
+      { name: "_gasLimit", type: "uint256", internalType: "uint256" },
+    ],
+    outputs: [{ name: "messageId", type: "bytes32", internalType: "bytes32" }],
+    stateMutability: "nonpayable",
+  },
+  {
     type: "event",
     name: "Approval",
     inputs: [
@@ -754,48 +797,6 @@ export const DWORK_ABI: Abi = [
   },
   {
     type: "event",
-    name: "BatchMetadataUpdate",
-    inputs: [
-      {
-        name: "_fromTokenId",
-        type: "uint256",
-        indexed: false,
-        internalType: "uint256",
-      },
-      {
-        name: "_toTokenId",
-        type: "uint256",
-        indexed: false,
-        internalType: "uint256",
-      },
-    ],
-    anonymous: false,
-  },
-  {
-    type: "event",
-    name: "CertificateExtracted",
-    inputs: [
-      {
-        name: "tokenizationRequestId",
-        type: "uint256",
-        indexed: false,
-        internalType: "uint256",
-      },
-      {
-        name: "certificate",
-        type: "tuple",
-        indexed: false,
-        internalType: "struct dWork.WorkCertificate",
-        components: [
-          { name: "artist", type: "string", internalType: "string" },
-          { name: "work", type: "string", internalType: "string" },
-        ],
-      },
-    ],
-    anonymous: false,
-  },
-  {
-    type: "event",
     name: "CertificateExtractionError",
     inputs: [
       {
@@ -804,17 +805,55 @@ export const DWORK_ABI: Abi = [
         indexed: true,
         internalType: "uint256",
       },
+    ],
+    anonymous: false,
+  },
+  {
+    type: "event",
+    name: "CrossChainReceived",
+    inputs: [
       {
-        name: "errorTitle",
-        type: "string",
-        indexed: true,
-        internalType: "string",
+        name: "to",
+        type: "address",
+        indexed: false,
+        internalType: "address",
       },
       {
-        name: "errorMessage",
-        type: "string",
-        indexed: true,
-        internalType: "string",
+        name: "tokenId",
+        type: "uint256",
+        indexed: false,
+        internalType: "uint256",
+      },
+      {
+        name: "sourceChainSelector",
+        type: "uint64",
+        indexed: false,
+        internalType: "uint64",
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: "event",
+    name: "CrossChainSent",
+    inputs: [
+      {
+        name: "to",
+        type: "address",
+        indexed: false,
+        internalType: "address",
+      },
+      {
+        name: "tokenId",
+        type: "uint256",
+        indexed: false,
+        internalType: "uint256",
+      },
+      {
+        name: "destinationChainSelector",
+        type: "uint64",
+        indexed: false,
+        internalType: "uint64",
       },
     ],
     anonymous: false,
@@ -852,19 +891,6 @@ export const DWORK_ABI: Abi = [
   },
   {
     type: "event",
-    name: "MetadataUpdate",
-    inputs: [
-      {
-        name: "_tokenId",
-        type: "uint256",
-        indexed: false,
-        internalType: "uint256",
-      },
-    ],
-    anonymous: false,
-  },
-  {
-    type: "event",
     name: "OwnershipTransferred",
     inputs: [
       {
@@ -877,19 +903,6 @@ export const DWORK_ABI: Abi = [
         name: "newOwner",
         type: "address",
         indexed: true,
-        internalType: "address",
-      },
-    ],
-    anonymous: false,
-  },
-  {
-    type: "event",
-    name: "Paused",
-    inputs: [
-      {
-        name: "account",
-        type: "address",
-        indexed: false,
         internalType: "address",
       },
     ],
@@ -922,19 +935,6 @@ export const DWORK_ABI: Abi = [
   },
   {
     type: "event",
-    name: "Unpaused",
-    inputs: [
-      {
-        name: "account",
-        type: "address",
-        indexed: false,
-        internalType: "address",
-      },
-    ],
-    anonymous: false,
-  },
-  {
-    type: "event",
     name: "VerificationProcess",
     inputs: [
       {
@@ -947,20 +947,7 @@ export const DWORK_ABI: Abi = [
         name: "step",
         type: "uint8",
         indexed: false,
-        internalType: "enum dWork.VerificationStep",
-      },
-    ],
-    anonymous: false,
-  },
-  {
-    type: "event",
-    name: "WorkFractionalized",
-    inputs: [
-      {
-        name: "sharesTokenId",
-        type: "uint256",
-        indexed: false,
-        internalType: "uint256",
+        internalType: "enum TokenizedAsset.VerificationStep",
       },
     ],
     anonymous: false,
@@ -992,19 +979,6 @@ export const DWORK_ABI: Abi = [
   },
   {
     type: "event",
-    name: "WorkTokenized",
-    inputs: [
-      {
-        name: "tokenizationRequestId",
-        type: "uint256",
-        indexed: false,
-        internalType: "uint256",
-      },
-    ],
-    anonymous: false,
-  },
-  {
-    type: "event",
     name: "WorkVerificationError",
     inputs: [
       {
@@ -1012,12 +986,6 @@ export const DWORK_ABI: Abi = [
         type: "uint256",
         indexed: false,
         internalType: "uint256",
-      },
-      {
-        name: "errorMessage",
-        type: "string",
-        indexed: true,
-        internalType: "string",
       },
     ],
     anonymous: false,
@@ -1069,8 +1037,6 @@ export const DWORK_ABI: Abi = [
     name: "ERC721NonexistentToken",
     inputs: [{ name: "tokenId", type: "uint256", internalType: "uint256" }],
   },
-  { type: "error", name: "EnforcedPause", inputs: [] },
-  { type: "error", name: "ExpectedPause", inputs: [] },
   {
     type: "error",
     name: "OwnableInvalidOwner",
@@ -1081,7 +1047,12 @@ export const DWORK_ABI: Abi = [
     name: "OwnableUnauthorizedAccount",
     inputs: [{ name: "account", type: "address", internalType: "address" }],
   },
+  { type: "error", name: "ReentrancyGuardReentrantCall", inputs: [] },
   { type: "error", name: "dWork__AlreadyFractionalized", inputs: [] },
+  { type: "error", name: "dWork__ChainNotEnabled", inputs: [] },
+  { type: "error", name: "dWork__InvalidIPFSHash", inputs: [] },
+  { type: "error", name: "dWork__InvalidRouter", inputs: [] },
+  { type: "error", name: "dWork__NotEnoughBalanceForFees", inputs: [] },
   {
     type: "error",
     name: "dWork__NotEnoughTimePassedSinceLastVerification",
@@ -1090,22 +1061,40 @@ export const DWORK_ABI: Abi = [
   { type: "error", name: "dWork__NotEnoughValueSent", inputs: [] },
   { type: "error", name: "dWork__NotWorkOwner", inputs: [] },
   { type: "error", name: "dWork__NotZeroAddress", inputs: [] },
+  { type: "error", name: "dWork__OnlyOnPolygonAmoy", inputs: [] },
   { type: "error", name: "dWork__ProcessOrderError", inputs: [] },
+  { type: "error", name: "dWork__SenderNotEnabled", inputs: [] },
   { type: "error", name: "dWork__TokenPaused", inputs: [] },
-  { type: "error", name: "dWork__WorkNotMinted", inputs: [] },
   {
     type: "error",
-    name: "dWork__WorkVerificationNotExpected",
+    name: "dWork__TokenizationNotCompleted",
     inputs: [],
   },
+  { type: "error", name: "dWork__TransferFailed", inputs: [] },
 ]
 
-export const DWORK_SHARES_ABI = [
+export const DWORK_SHARES_ABI: Abi = [
   {
     type: "constructor",
     inputs: [
       { name: "_baseUri", type: "string", internalType: "string" },
       { name: "_priceFeed", type: "address", internalType: "address" },
+      {
+        name: "_ccipRouterAddress",
+        type: "address",
+        internalType: "address",
+      },
+      {
+        name: "_linkTokenAddress",
+        type: "address",
+        internalType: "address",
+      },
+      {
+        name: "_currentChainSelector",
+        type: "uint64",
+        internalType: "uint64",
+      },
+      { name: "_usdc", type: "address", internalType: "address" },
     ],
     stateMutability: "nonpayable",
   },
@@ -1162,6 +1151,50 @@ export const DWORK_SHARES_ABI = [
   },
   {
     type: "function",
+    name: "ccipReceive",
+    inputs: [
+      {
+        name: "message",
+        type: "tuple",
+        internalType: "struct Client.Any2EVMMessage",
+        components: [
+          {
+            name: "messageId",
+            type: "bytes32",
+            internalType: "bytes32",
+          },
+          {
+            name: "sourceChainSelector",
+            type: "uint64",
+            internalType: "uint64",
+          },
+          { name: "sender", type: "bytes", internalType: "bytes" },
+          { name: "data", type: "bytes", internalType: "bytes" },
+          {
+            name: "destTokenAmounts",
+            type: "tuple[]",
+            internalType: "struct Client.EVMTokenAmount[]",
+            components: [
+              {
+                name: "token",
+                type: "address",
+                internalType: "address",
+              },
+              {
+                name: "amount",
+                type: "uint256",
+                internalType: "uint256",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
     name: "createShares",
     inputs: [
       {
@@ -1182,6 +1215,24 @@ export const DWORK_SHARES_ABI = [
       },
     ],
     outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "enableChain",
+    inputs: [
+      {
+        name: "_chainSelector",
+        type: "uint64",
+        internalType: "uint64",
+      },
+      {
+        name: "_xWorkAddress",
+        type: "address",
+        internalType: "address",
+      },
+    ],
+    outputs: [],
     stateMutability: "nonpayable",
   },
   {
@@ -1221,6 +1272,7 @@ export const DWORK_SHARES_ABI = [
             type: "uint256",
             internalType: "uint256",
           },
+          { name: "amount", type: "uint256", internalType: "uint256" },
           {
             name: "priceUsd",
             type: "uint256",
@@ -1255,6 +1307,7 @@ export const DWORK_SHARES_ABI = [
             type: "uint256",
             internalType: "uint256",
           },
+          { name: "amount", type: "uint256", internalType: "uint256" },
           {
             name: "priceUsd",
             type: "uint256",
@@ -1293,24 +1346,26 @@ export const DWORK_SHARES_ABI = [
     inputs: [
       { name: "_workTokenId", type: "uint256", internalType: "uint256" },
     ],
-    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
+    outputs: [
+      {
+        name: "sharesTokenId",
+        type: "uint256",
+        internalType: "uint256",
+      },
+    ],
     stateMutability: "view",
   },
   {
     type: "function",
-    name: "getWorkSharesByTokenId",
+    name: "getWorkShareByWorkTokenId",
     inputs: [
-      {
-        name: "_sharesTokenId",
-        type: "uint256",
-        internalType: "uint256",
-      },
+      { name: "_workTokenId", type: "uint256", internalType: "uint256" },
     ],
     outputs: [
       {
         name: "",
         type: "tuple",
-        internalType: "struct dWorkSharesManager.WorkShares",
+        internalType: "struct IDWorkSharesManager.WorkShares",
         components: [
           {
             name: "maxShareSupply",
@@ -1342,7 +1397,71 @@ export const DWORK_SHARES_ABI = [
             type: "address",
             internalType: "address",
           },
+          {
+            name: "redeemableValuePerShare",
+            type: "uint256",
+            internalType: "uint256",
+          },
           { name: "isPaused", type: "bool", internalType: "bool" },
+          { name: "isRedeemable", type: "bool", internalType: "bool" },
+        ],
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "getWorkSharesByTokenId",
+    inputs: [
+      {
+        name: "_sharesTokenId",
+        type: "uint256",
+        internalType: "uint256",
+      },
+    ],
+    outputs: [
+      {
+        name: "",
+        type: "tuple",
+        internalType: "struct IDWorkSharesManager.WorkShares",
+        components: [
+          {
+            name: "maxShareSupply",
+            type: "uint256",
+            internalType: "uint256",
+          },
+          {
+            name: "sharePriceUsd",
+            type: "uint256",
+            internalType: "uint256",
+          },
+          {
+            name: "workTokenId",
+            type: "uint256",
+            internalType: "uint256",
+          },
+          {
+            name: "totalShareBought",
+            type: "uint256",
+            internalType: "uint256",
+          },
+          {
+            name: "totalSellValueUsd",
+            type: "uint256",
+            internalType: "uint256",
+          },
+          {
+            name: "workOwner",
+            type: "address",
+            internalType: "address",
+          },
+          {
+            name: "redeemableValuePerShare",
+            type: "uint256",
+            internalType: "uint256",
+          },
+          { name: "isPaused", type: "bool", internalType: "bool" },
+          { name: "isRedeemable", type: "bool", internalType: "bool" },
         ],
       },
     ],
@@ -1370,7 +1489,57 @@ export const DWORK_SHARES_ABI = [
       { name: "_amount", type: "uint256", internalType: "uint256" },
       { name: "_priceUsd", type: "uint256", internalType: "uint256" },
     ],
-    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
+    outputs: [
+      {
+        name: "marketShareItemId",
+        type: "uint256",
+        internalType: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "onERC1155BatchReceived",
+    inputs: [
+      { name: "operator", type: "address", internalType: "address" },
+      { name: "from", type: "address", internalType: "address" },
+      { name: "ids", type: "uint256[]", internalType: "uint256[]" },
+      { name: "values", type: "uint256[]", internalType: "uint256[]" },
+      { name: "data", type: "bytes", internalType: "bytes" },
+    ],
+    outputs: [{ name: "", type: "bytes4", internalType: "bytes4" }],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "onERC1155Received",
+    inputs: [
+      { name: "operator", type: "address", internalType: "address" },
+      { name: "from", type: "address", internalType: "address" },
+      { name: "id", type: "uint256", internalType: "uint256" },
+      { name: "value", type: "uint256", internalType: "uint256" },
+      { name: "data", type: "bytes", internalType: "bytes" },
+    ],
+    outputs: [{ name: "", type: "bytes4", internalType: "bytes4" }],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "onWorkSold",
+    inputs: [
+      {
+        name: "_sharesTokenId",
+        type: "uint256",
+        internalType: "uint256",
+      },
+      {
+        name: "_sellValueUSDC",
+        type: "uint256",
+        internalType: "uint256",
+      },
+    ],
+    outputs: [],
     stateMutability: "nonpayable",
   },
   {
@@ -1385,6 +1554,20 @@ export const DWORK_SHARES_ABI = [
     name: "pauseShares",
     inputs: [
       { name: "_workTokenId", type: "uint256", internalType: "uint256" },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "redeemAndBurnSharesForUSDC",
+    inputs: [
+      {
+        name: "_shareTokenId",
+        type: "uint256",
+        internalType: "uint256",
+      },
+      { name: "_shareAmount", type: "uint256", internalType: "uint256" },
     ],
     outputs: [],
     stateMutability: "nonpayable",
@@ -1690,7 +1873,7 @@ export const DWORK_SHARES_ABI = [
         name: "workShares",
         type: "tuple",
         indexed: false,
-        internalType: "struct dWorkSharesManager.WorkShares",
+        internalType: "struct IDWorkSharesManager.WorkShares",
         components: [
           {
             name: "maxShareSupply",
@@ -1722,7 +1905,13 @@ export const DWORK_SHARES_ABI = [
             type: "address",
             internalType: "address",
           },
+          {
+            name: "redeemableValuePerShare",
+            type: "uint256",
+            internalType: "uint256",
+          },
           { name: "isPaused", type: "bool", internalType: "bool" },
+          { name: "isRedeemable", type: "bool", internalType: "bool" },
         ],
       },
       {
@@ -1883,6 +2072,12 @@ export const DWORK_SHARES_ABI = [
     name: "OwnableUnauthorizedAccount",
     inputs: [{ name: "account", type: "address", internalType: "address" }],
   },
+  { type: "error", name: "ReentrancyGuardReentrantCall", inputs: [] },
+  {
+    type: "error",
+    name: "dWorkSharesManager__ChainNotEnabled",
+    inputs: [],
+  },
   {
     type: "error",
     name: "dWorkSharesManager__InitialSaleClosed",
@@ -1891,6 +2086,11 @@ export const DWORK_SHARES_ABI = [
   {
     type: "error",
     name: "dWorkSharesManager__InsufficientFunds",
+    inputs: [],
+  },
+  {
+    type: "error",
+    name: "dWorkSharesManager__InvalidRouter",
     inputs: [],
   },
   {
@@ -1905,6 +2105,11 @@ export const DWORK_SHARES_ABI = [
   },
   {
     type: "error",
+    name: "dWorkSharesManager__NotEnoughBalanceForFees",
+    inputs: [],
+  },
+  {
+    type: "error",
     name: "dWorkSharesManager__NotItemSeller",
     inputs: [],
   },
@@ -1915,12 +2120,47 @@ export const DWORK_SHARES_ABI = [
   },
   {
     type: "error",
+    name: "dWorkSharesManager__RedeemableValueExceeded",
+    inputs: [],
+  },
+  {
+    type: "error",
+    name: "dWorkSharesManager__SellValueError",
+    inputs: [],
+  },
+  {
+    type: "error",
+    name: "dWorkSharesManager__SenderNotEnabled",
+    inputs: [],
+  },
+  {
+    type: "error",
+    name: "dWorkSharesManager__ShareNotRedeemable",
+    inputs: [],
+  },
+  {
+    type: "error",
+    name: "dWorkSharesManager__SharesNotOwned",
+    inputs: [],
+  },
+  {
+    type: "error",
     name: "dWorkSharesManager__SharesPaused",
     inputs: [],
   },
   {
     type: "error",
     name: "dWorkSharesManager__TokenIdDoesNotExist",
+    inputs: [],
+  },
+  {
+    type: "error",
+    name: "dWorkSharesManager__TransferFailed",
+    inputs: [],
+  },
+  {
+    type: "error",
+    name: "dWorkSharesManager__TransferFailedOnRedeem",
     inputs: [],
   },
 ]
