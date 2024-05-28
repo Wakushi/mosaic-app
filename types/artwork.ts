@@ -24,7 +24,7 @@ export type ArtworkData = {
 
 export type WorkShare = {
   maxShareSupply: number
-  sharePriceUsd: bigint
+  sharePriceUsd: number
   workTokenId: number
   sharesTokenId: number
   totalShareBought: number

@@ -15,7 +15,7 @@ import { buyInitialShare } from "@/utils/user-contract-interactions"
 
 interface BuyShareDialogProps {
   sharesTokenId: number
-  sharePriceUsd: number
+  sharePriceUsd: string
 }
 
 const BuyShareDialog: React.FC<BuyShareDialogProps> = ({
@@ -29,7 +29,7 @@ const BuyShareDialog: React.FC<BuyShareDialogProps> = ({
 
   const onSubmit = async (data: any) => {
     const { shareAmount } = data
-    const value = parseEther((shareAmount * sharePriceUsd).toString())
+    const value = parseEther((shareAmount * +sharePriceUsd).toString())
 
     setIsLoading(true)
     try {
@@ -68,7 +68,7 @@ const BuyShareDialog: React.FC<BuyShareDialogProps> = ({
             </div>
           ) : (
             <form onSubmit={handleSubmit(onSubmit)}>
-              <div className="space-y-4">
+              <div className="flex flex-col space-y-4">
                 <div className="flex flex-col gap-5">
                   <label
                     htmlFor="shareAmount"
@@ -82,9 +82,7 @@ const BuyShareDialog: React.FC<BuyShareDialogProps> = ({
                     {...register("shareAmount", { required: true, min: 1 })}
                   />
                 </div>
-                <Button type="submit" className="left-0">
-                  Submit
-                </Button>
+                <Button type="submit">Submit</Button>
               </div>
             </form>
           )}

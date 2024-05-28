@@ -44,7 +44,6 @@ export default function Profil() {
               nft.contract.address.toLowerCase() ===
               DWORK_SHARES_ADDRESS.toLowerCase()
           )
-          console.log("filteredNfts", filteredNfts)
           setNfts(filteredNfts)
           setLoading(false)
         })
@@ -57,7 +56,6 @@ export default function Profil() {
 
   useEffect(() => {
     if (nfts.length > 0) {
-      console.log("nft", nfts)
       const fetchAllSharesData = async () => {
         const sharesPromises = nfts.map((nft) =>
           fetchShareData(nft.tokenId)

@@ -1,19 +1,33 @@
 import { config } from "@/app/provider"
 import { DWORK_SHARES_ABI, DWORK_SHARES_ADDRESS } from "@/lib/contract"
-import { simulateContract, writeContract } from "@wagmi/core"
+import { readContract, simulateContract, writeContract } from "@wagmi/core"
+import { chainConfig } from "./blockchain-config"
+import { parseEther } from "viem"
+
+export async function getNativeTokenPriceUsd(): Promise<number> {
+  const price: any = await readContract(chainConfig, {
+    address: DWORK_SHARES_ADDRESS,
+    abi: DWORK_SHARES_ABI,
+    functionName: "getNativeTokenPriceUsd",
+  })
+  return Number(price)
+}
 
 export async function buyInitialShare(
   sharesTokenId: number,
   shareAmount: number,
-  value: bigint
+  shareValueUsd: bigint
 ) {
+  const nativeTokenPriceUsd = await getNativeTokenPriceUsd()
+  const sharePriceNative = Number(shareValueUsd) / nativeTokenPriceUsd
+
   try {
     const { request: buyShareRequest } = await simulateContract(config, {
       address: DWORK_SHARES_ADDRESS,
       abi: DWORK_SHARES_ABI,
       functionName: "buyInitialShare",
       args: [sharesTokenId, shareAmount],
-      value,
+      value: parseEther(sharePriceNative.toString()),
     })
 
     const result = await writeContract(config, buyShareRequest)
@@ -37,14 +51,14 @@ export async function listMarketShareitem(
       abi: DWORK_SHARES_ABI,
       functionName: "listMarketShareItem",
       args: [sharesTokenId, amount, priceUsd],
-      value
-    });
+      value,
+    })
 
-    const result = await writeContract(config, listShareRequest);
+    const result = await writeContract(config, listShareRequest)
 
-    return result;
+    return result
   } catch (error) {
-    console.error("Error listing market share item:", error);
-    throw new Error("Failed to list market share item");
+    console.error("Error listing market share item:", error)
+    throw new Error("Failed to list market share item")
   }
 }

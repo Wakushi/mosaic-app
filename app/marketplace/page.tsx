@@ -122,7 +122,7 @@ export default function Marketplace() {
               <div className="flex flex-col gap-1 justify-center items-center flex-1">
                 <h2>{share.tokenizationRequest.certificate.work}</h2>
                 <p>{share.tokenizationRequest.certificate.artist}</p>
-                <p>${formatUnits(share.workShare.sharePriceUsd, 18)}</p>
+                <p>${formatUnits(BigInt(share.workShare.sharePriceUsd), 18)}</p>
               </div>
             </Link>
           ))}

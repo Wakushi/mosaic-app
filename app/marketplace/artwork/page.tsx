@@ -6,6 +6,7 @@ import Image from "next/image"
 import { useSearchParams } from "next/navigation"
 import Loader from "@/components/clientUi/Loader"
 import BuyShareDialog from "@/components/marketplace/BuyShareDialog"
+import { formatUnits } from "viem"
 
 const IMAGE_FALLBACK =
   "https://theredwindows.net/wp-content/themes/koji/assets/images/default-fallback-image.png"
@@ -63,7 +64,7 @@ const Artwork = () => {
         </div>
         <p className="text-center">{shareDetail.masterworksData.dimensions}</p>
       </div>
-      <div className="flex flex-col gap-4 h-[50vh] bg-white p-5 shadow-lg">
+      <div className="flex flex-col gap-4 h-fit bg-white p-5 shadow-lg">
         <h1 className="text-6xl self-start">
           {shareDetail.tokenizationRequest.certificate.work}
         </h1>
@@ -71,16 +72,22 @@ const Artwork = () => {
           {shareDetail.tokenizationRequest.certificate.artist}
         </p>
         <p className="text-lg">{shareDetail.masterworksData.medium}</p>
-        <p>Owner: {shareDetail.tokenizationRequest.owner}</p>
-        <p>Price: {shareDetail.workShare.sharePriceUsd} USD</p>
+        <p>
+          Price: {formatUnits(BigInt(shareDetail.workShare.sharePriceUsd), 18)}{" "}
+          USD
+        </p>
         <div className="flex flex-col items-center gap-3">
           <p>
-            {shareDetail.workShare.totalShareBought}/
-            {shareDetail.workShare.maxShareSupply}
+            {shareDetail.workShare.maxShareSupply -
+              shareDetail.workShare.totalShareBought}
+            /{shareDetail.workShare.maxShareSupply}
           </p>
           <BuyShareDialog
             sharesTokenId={shareDetail.workShare.sharesTokenId}
-            sharePriceUsd={shareDetail.workShare.sharePriceUsd}
+            sharePriceUsd={formatUnits(
+              BigInt(shareDetail.workShare.sharePriceUsd),
+              18
+            )}
           />
         </div>
       </div>
