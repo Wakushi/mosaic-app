@@ -77,3 +77,28 @@ export async function buyMarketShareItem(marketShareItemId: number) {
     throw new Error("Failed to buy market share item")
   }
 }
+
+export async function xChainWorkTokenTransfer(
+  recipientAddress: string,
+  newOwnerName: string,
+  tokenizationRequestId: number,
+  targetChain: string
+) {
+  const chainId = targetChain === "Optimism" ? "5224473277236331295" : "16281711391670634445";
+
+  try {
+    const { request: transferRequest } = await simulateContract(config, {
+      address: DWORK_SHARES_ADDRESS,
+      abi: DWORK_SHARES_ABI,
+      functionName: "xChainWorkTokenTransfer",
+      args: [recipientAddress, newOwnerName, tokenizationRequestId, chainId, 1, 300000],
+    });
+
+    const result = await writeContract(config, transferRequest);
+
+    return result;
+  } catch (error) {
+    console.error("Error transferring work token across chains:", error);
+    throw new Error("Failed to transfer work token across chains");
+  }
+}
