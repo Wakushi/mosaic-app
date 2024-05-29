@@ -100,7 +100,7 @@ export default function Profil() {
     <div className="min-h-screen flex flex-col items-center py-20">
       <div className="self-start w-full py-10 px-24">
         <h1 className="text-4xl self-start mb-10">Profil</h1>
-        <div className="w-full px-4">
+        <div className="w-full">
           <Input
             type="text"
             placeholder="Search by artist"
