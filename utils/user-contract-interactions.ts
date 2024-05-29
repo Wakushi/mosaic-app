@@ -62,13 +62,20 @@ export async function listMarketShareItem(
   }
 }
 
-export async function buyMarketShareItem(marketShareItemId: number) {
+export async function buyMarketShareItem(
+  marketShareItemId: number,
+  priceUsd: number
+) {
   try {
+    const nativeTokenPriceUsd = await getNativeTokenPriceUsd()
+    const sharePriceNative =
+      Number(priceUsd) / nativeTokenPriceUsd + PRICE_VARIATION_ALLOWANCE
     const { request: buyMarketShareRequest } = await simulateContract(config, {
       address: DWORK_SHARES_ADDRESS,
       abi: DWORK_SHARES_ABI,
       functionName: "buyMarketShareItem",
       args: [marketShareItemId],
+      value: parseEther(sharePriceNative.toString()),
     })
 
     const result = await writeContract(config, buyMarketShareRequest)

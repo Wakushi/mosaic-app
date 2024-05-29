@@ -1,28 +1,28 @@
-'use client'
-import { useQuery } from "@tanstack/react-query";
-import { ShareDetail } from "@/types/artwork";
-import Image from "next/image";
-import { useSearchParams } from "next/navigation";
-import Loader from "@/components/clientUi/Loader";
-import BuyShareDialog from "@/components/marketplace/BuyShareDialog";
-import BuyMarketShareDialog from "@/components/marketplace/BuyMarketShareDialog"; 
-import { formatUnits } from "viem";
+"use client"
+import { useQuery } from "@tanstack/react-query"
+import { ShareDetail } from "@/types/artwork"
+import Image from "next/image"
+import { useSearchParams } from "next/navigation"
+import Loader from "@/components/clientUi/Loader"
+import BuyShareDialog from "@/components/marketplace/BuyShareDialog"
+import BuyMarketShareDialog from "@/components/marketplace/BuyMarketShareDialog"
+import { formatUnits } from "viem"
 
 const IMAGE_FALLBACK =
-  "https://theredwindows.net/wp-content/themes/koji/assets/images/default-fallback-image.png";
+  "https://theredwindows.net/wp-content/themes/koji/assets/images/default-fallback-image.png"
 
 const fetchShareDetail = async (id: string): Promise<ShareDetail> => {
-  const response = await fetch(`/api/shares?id=${id}`);
+  const response = await fetch(`/api/shares?id=${id}`)
   if (!response.ok) {
-    throw new Error("Failed to fetch share details");
+    throw new Error("Failed to fetch share details")
   }
-  return response.json();
-};
+  return response.json()
+}
 
 const Artwork = () => {
-  const searchParams = useSearchParams();
-  const id = searchParams.get("id");
-  const itemId = searchParams.get("itemId"); 
+  const searchParams = useSearchParams()
+  const id = searchParams.get("id")
+  const itemId = searchParams.get("itemId")
 
   const {
     data: shareDetail,
@@ -32,22 +32,22 @@ const Artwork = () => {
     queryKey: ["shareDetail", id],
     queryFn: () => fetchShareDetail(id!),
     enabled: !!id,
-  });
+  })
 
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-white to-gray-300">
         <Loader />
       </div>
-    );
+    )
   }
 
   if (error) {
-    return <div>Error: {error.message}</div>;
+    return <div>Error: {error.message}</div>
   }
 
   if (!shareDetail) {
-    return <div>No details available</div>;
+    return <div>No details available</div>
   }
 
   return (
@@ -99,7 +99,7 @@ const Artwork = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Artwork;
+export default Artwork

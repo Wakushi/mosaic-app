@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getListedItems } from "@/utils/contract-interactions"; // Assurez-vous que cette fonction existe et est correctement importée
+import { getListedItems } from "@/utils/contract-interactions"; 
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
   try {
-    const listedItems = await getListedItems(); // Cette fonction doit renvoyer les items listés
+    const listedItems = await getListedItems(); 
     return NextResponse.json(listedItems);
   } catch (error) {
     console.error("API error:", error);

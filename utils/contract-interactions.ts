@@ -289,6 +289,21 @@ export async function getListedItems() {
   }
 }
 
+export async function getListedItemById(id: number) {
+  try {
+    const result = await readContract(chainConfig, {
+      address: DWORK_SHARES_ADDRESS,
+      abi: DWORK_SHARES_ABI,
+      functionName: "getMarketShareItemById",
+      args: [id],
+    })
+    return convertBigIntToString(result)
+  } catch (error) {
+    console.error("Error getting listed items:", error)
+    throw new Error("Failed to get listed items")
+  }
+}
+
 export function convertBigIntToString(obj: any): any {
   if (typeof obj === "bigint") {
     return obj.toString()
