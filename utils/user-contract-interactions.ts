@@ -3,6 +3,8 @@ import { DWORK_SHARES_ABI, DWORK_SHARES_ADDRESS } from "@/lib/contract"
 import { readContract, simulateContract, writeContract } from "@wagmi/core"
 import { parseEther } from "viem"
 
+const PRICE_VARIATION_ALLOWANCE = 0.00001
+
 export async function getNativeTokenPriceUsd(): Promise<number> {
   const price: any = await readContract(config, {
     address: DWORK_SHARES_ADDRESS,
@@ -18,8 +20,8 @@ export async function buyInitialShare(
   shareValueUsd: bigint
 ) {
   const nativeTokenPriceUsd = await getNativeTokenPriceUsd()
-  const sharePriceNative = Number(shareValueUsd) / nativeTokenPriceUsd
-
+  const sharePriceNative =
+    Number(shareValueUsd) / nativeTokenPriceUsd + PRICE_VARIATION_ALLOWANCE
   try {
     const { request: buyShareRequest } = await simulateContract(config, {
       address: DWORK_SHARES_ADDRESS,
@@ -84,21 +86,29 @@ export async function xChainWorkTokenTransfer(
   tokenizationRequestId: number,
   targetChain: string
 ) {
-  const chainId = targetChain === "Optimism" ? "5224473277236331295" : "16281711391670634445";
+  const chainId =
+    targetChain === "Optimism" ? "5224473277236331295" : "16281711391670634445"
 
   try {
     const { request: transferRequest } = await simulateContract(config, {
       address: DWORK_SHARES_ADDRESS,
       abi: DWORK_SHARES_ABI,
       functionName: "xChainWorkTokenTransfer",
-      args: [recipientAddress, newOwnerName, tokenizationRequestId, chainId, 1, 300000],
-    });
+      args: [
+        recipientAddress,
+        newOwnerName,
+        tokenizationRequestId,
+        chainId,
+        1,
+        300000,
+      ],
+    })
 
-    const result = await writeContract(config, transferRequest);
+    const result = await writeContract(config, transferRequest)
 
-    return result;
+    return result
   } catch (error) {
-    console.error("Error transferring work token across chains:", error);
-    throw new Error("Failed to transfer work token across chains");
+    console.error("Error transferring work token across chains:", error)
+    throw new Error("Failed to transfer work token across chains")
   }
 }
