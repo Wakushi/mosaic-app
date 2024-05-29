@@ -72,7 +72,6 @@ export const columns: ColumnDef<Artwork>[] = [
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem>View</DropdownMenuItem>
               {artwork.status === "tokenized" && (
                 <DropdownMenuItem asChild>
                   <CreateSharesButton artwork={artwork} />

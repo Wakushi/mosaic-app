@@ -275,6 +275,22 @@ export async function getShareDetail(id: number): Promise<ShareDetail> {
   }
 }
 
+export async function getListedItems() {
+  try {
+    const result = await publicClient.readContract({
+      address: DWORK_SHARES_ADDRESS,
+      abi: DWORK_SHARES_ABI,
+      functionName: "getListedItems",
+      args: [],
+    });
+
+    return convertBigIntToString(result);
+  } catch (error) {
+    console.error("Error getting listed items:", error);
+    throw new Error("Failed to get listed items");
+  }
+}
+
 export function convertBigIntToString(obj: any): any {
   if (typeof obj === "bigint") {
     return obj.toString()
