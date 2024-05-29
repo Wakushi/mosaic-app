@@ -1,37 +1,38 @@
-"use client"
-import { useEffect, useState } from "react"
-import { useAccount } from "wagmi"
-import Loader from "@/components/clientUi/Loader"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { DWORK_SHARES_ADDRESS } from "@/lib/contract"
-import Image from "next/image"
-import ListShareDialog from "@/components/listShareButton"
+"use client";
+
+import { useEffect, useState } from "react";
+import { useAccount } from "wagmi";
+import Loader from "@/components/clientUi/Loader";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { DWORK_SHARES_ADDRESS } from "@/lib/contract";
+import Image from "next/image";
+import ListShareDialog from "@/components/listShareButton";
 
 const IMAGE_FALLBACK =
-  "https://theredwindows.net/wp-content/themes/koji/assets/images/default-fallback-image.png"
+  "https://theredwindows.net/wp-content/themes/koji/assets/images/default-fallback-image.png";
 
 const fetchShareData = async (tokenId: string) => {
-  const response = await fetch(`/api/shares?id=${tokenId}`)
+  const response = await fetch(`/api/shares?id=${tokenId}`);
   if (!response.ok) {
-    throw new Error("Failed to fetch share data")
+    throw new Error("Failed to fetch share data");
   }
-  return response.json()
-}
+  return response.json();
+};
 
 export default function Profil() {
-  const { address: clientAddress } = useAccount()
-  const [nfts, setNfts] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-  const [sharesData, setSharesData] = useState<any[]>([])
-  const [searchTerm, setSearchTerm] = useState("")
-  const [openDialogTokenId, setOpenDialogTokenId] = useState<number | null>(
-    null
-  )
+  const { address: clientAddress } = useAccount();
+  const [nfts, setNfts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [sharesData, setSharesData] = useState<any[]>([]);
+  const [listedSharesDetails, setListedSharesDetails] = useState<any[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [activeSection, setActiveSection] = useState<"owned" | "listed">("owned");
+  const [openDialogTokenId, setOpenDialogTokenId] = useState<number | null>(null);
 
   useEffect(() => {
     if (clientAddress) {
-      const options = { method: "GET", headers: { accept: "application/json" } }
+      const options = { method: "GET", headers: { accept: "application/json" } };
 
       fetch(
         `https://polygon-amoy.g.alchemy.com/nft/v3/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}/getNFTsForOwner?owner=${clientAddress}`,
@@ -41,18 +42,17 @@ export default function Profil() {
         .then((response) => {
           const filteredNfts = response.ownedNfts.filter(
             (nft: any) =>
-              nft.contract.address.toLowerCase() ===
-              DWORK_SHARES_ADDRESS.toLowerCase()
-          )
-          setNfts(filteredNfts)
-          setLoading(false)
+              nft.contract.address.toLowerCase() === DWORK_SHARES_ADDRESS.toLowerCase()
+          );
+          setNfts(filteredNfts);
+          setLoading(false);
         })
         .catch((err) => {
-          console.error(err)
-          setLoading(false)
-        })
+          console.error(err);
+          setLoading(false);
+        });
     }
-  }, [clientAddress])
+  }, [clientAddress]);
 
   useEffect(() => {
     if (nfts.length > 0) {
@@ -65,87 +65,163 @@ export default function Profil() {
               balance: nft.balance,
             }))
             .catch((err) => {
-              console.error(err)
-              return null
+              console.error(err);
+              return null;
             })
-        )
+        );
 
-        const sharesResults = await Promise.all(sharesPromises)
-        setSharesData(sharesResults.filter((data) => data !== null))
-      }
+        const sharesResults = await Promise.all(sharesPromises);
+        setSharesData(sharesResults.filter((data) => data !== null));
+      };
 
-      fetchAllSharesData()
+      fetchAllSharesData();
     }
-  }, [nfts])
+  }, [nfts]);
+
+  useEffect(() => {
+    const fetchListedShares = async () => {
+      try {
+        const response = await fetch("/api/listed-shares");
+        if (!response.ok) {
+          throw new Error("Failed to fetch listed shares");
+        }
+        const listedShares = await response.json();
+
+        const userListedShares = listedShares.filter(
+          (item: any) => item.seller.toLowerCase() === clientAddress?.toLowerCase()
+        );
+
+        const sharesDetailsPromises = userListedShares.map((item: any) =>
+          fetchShareData(item.sharesTokenId)
+            .then((data) => ({
+              ...data,
+              itemId: item.itemId,
+              amount: item.amount,
+              priceUsd: item.priceUsd,
+            }))
+            .catch((err) => {
+              console.error(err);
+              return null;
+            })
+        );
+
+        const sharesDetailsResults = await Promise.all(sharesDetailsPromises);
+        setListedSharesDetails(sharesDetailsResults.filter((data) => data !== null));
+        setLoading(false);
+      } catch (error) {
+        console.error("API error:", error);
+        setLoading(false);
+      }
+    };
+
+    if (clientAddress) {
+      fetchListedShares();
+    }
+  }, [clientAddress]);
 
   const handleSearchChange = (e: any) => {
-    setSearchTerm(e.target.value)
-  }
+    setSearchTerm(e.target.value);
+  };
 
   const filteredSharesData = sharesData.filter((share) =>
-    share.tokenizationRequest.certificate.artist
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase())
-  )
+    share.tokenizationRequest.certificate.artist.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-white to-gray-300">
         <Loader />
       </div>
-    )
+    );
   }
 
   return (
     <div className="min-h-screen flex flex-col items-center py-20">
       <div className="self-start w-full py-10 px-24">
         <h1 className="text-4xl self-start mb-10">Profil</h1>
-        <div className="w-full">
+        <div className="w-full flex gap-4 items-center">
           <Input
             type="text"
             placeholder="Search by artist"
             value={searchTerm}
             onChange={handleSearchChange}
-            className="p-2 border border-gray-300 rounded-md mb-4 w-1/4"
+            className="p-2 border border-gray-300 rounded-md w-1/4"
           />
+          <Button onClick={() => setActiveSection("owned")}>Owned Shares</Button>
+          <Button onClick={() => setActiveSection("listed")}>Listed Shares</Button>
         </div>
-        <div className="grid grid-cols-3 gap-10 mt-4 justify-around">
-          {filteredSharesData.map((share) => (
-            <div
-              key={share.tokenId}
-              className="border border-slate-100 flex flex-col gap-2 justify-center p-4 rounded-md shadow-md items-center bg-white max-h-[350px]"
-            >
-              <div className="flex-1 w-full h-[200px]">
-                <Image
-                  src={share.masterworksData.imageURL || IMAGE_FALLBACK}
-                  alt="work"
-                  width={300}
-                  height={300}
-                  className="object-cover w-full h-full"
-                />
-              </div>
-              <div className="flex flex-col gap-1 justify-center items-center flex-1">
-                <h2>{share.tokenizationRequest.certificate.work}</h2>
-                <p>{share.tokenizationRequest.certificate.artist}</p>
-                <p>x{share.balance}</p>
-                <Button
-                  className="w-full"
-                  onClick={() => setOpenDialogTokenId(share.tokenId)}
+        {activeSection === "owned" && (
+          <>
+            <h2 className="text-3xl mt-10 mb-4">Owned Shares</h2>
+            <div className="grid grid-cols-3 gap-10 mt-4 justify-around">
+              {filteredSharesData.map((share) => (
+                <div
+                  key={share.tokenId}
+                  className="border border-slate-100 flex flex-col gap-2 justify-center p-4 rounded-md shadow-md items-center bg-white max-h-[350px]"
                 >
-                  List share
-                </Button>
-              </div>
-              {openDialogTokenId === share.tokenId && (
-                <ListShareDialog
-                  sharesTokenId={share.tokenId}
-                  open={true}
-                  setOpen={() => setOpenDialogTokenId(null)}
-                />
-              )}
+                  <div className="flex-1 w-full h-[200px]">
+                    <Image
+                      src={share.masterworksData?.imageURL || IMAGE_FALLBACK}
+                      alt="work"
+                      width={300}
+                      height={300}
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1 justify-center items-center flex-1">
+                    <h2>{share.tokenizationRequest.certificate.work}</h2>
+                    <p>{share.tokenizationRequest.certificate.artist}</p>
+                    <p>x{share.balance}</p>
+                    <Button
+                      className="w-full"
+                      onClick={() => setOpenDialogTokenId(share.tokenId)}
+                    >
+                      List share
+                    </Button>
+                  </div>
+                  {openDialogTokenId === share.tokenId && (
+                    <ListShareDialog
+                      sharesTokenId={share.tokenId}
+                      open={true}
+                      setOpen={() => setOpenDialogTokenId(null)}
+                    />
+                  )}
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </>
+        )}
+        {activeSection === "listed" && (
+          <>
+            <h2 className="text-3xl mt-10 mb-4">Listed Shares</h2>
+            <div className="grid grid-cols-3 gap-10 mt-4 justify-around">
+              {listedSharesDetails.map((share) => (
+                <div
+                  key={share.itemId}
+                  className="border border-slate-100 flex flex-col gap-2 justify-center p-4 rounded-md shadow-md items-center bg-white max-h-[350px]"
+                >
+                  <div className="flex-1 w-full h-[200px]">
+                    <Image
+                      src={share.masterworksData?.imageURL || IMAGE_FALLBACK}
+                      alt="work"
+                      width={300}
+                      height={300}
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1 justify-center items-center flex-1">
+                    <h2>{share.tokenizationRequest?.certificate?.work}</h2>
+                    <p>{share.tokenizationRequest?.certificate?.artist}</p>
+                    <p>Amount: {share.amount}</p>
+                    <p>Price: {share.priceUsd}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </div>
-  )
+  );
 }
+
