@@ -90,7 +90,8 @@ export default function Home() {
       <Section title="" animate={false}>
         <Link className="self-start" href={"/marketplace"}>
           <h2 className="self-start text-[5vw] leading-none font-extrabold uppercase text-gray-800">
-            Dive into a vibrant marketplace
+            Dive into a vibrant{" "}
+            <span className="underline-thin">marketplace</span>
           </h2>
         </Link>
         <p className="self-start text-2xl text-gray-700 mb-2">
