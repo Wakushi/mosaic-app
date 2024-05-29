@@ -277,17 +277,15 @@ export async function getShareDetail(id: number): Promise<ShareDetail> {
 
 export async function getListedItems() {
   try {
-    const result = await publicClient.readContract({
+    const result = await readContract(chainConfig, {
       address: DWORK_SHARES_ADDRESS,
       abi: DWORK_SHARES_ABI,
       functionName: "getListedItems",
-      args: [],
-    });
-
-    return convertBigIntToString(result);
+    })
+    return convertBigIntToString(result)
   } catch (error) {
-    console.error("Error getting listed items:", error);
-    throw new Error("Failed to get listed items");
+    console.error("Error getting listed items:", error)
+    throw new Error("Failed to get listed items")
   }
 }
 

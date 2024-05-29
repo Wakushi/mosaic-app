@@ -70,7 +70,6 @@ export default function Marketplace() {
     queryKey: ["listedItemsData"],
     queryFn: fetchListedItemsWithDetails,
   })
-  console.log(listedItemsData)
 
   const handleSearchChange = (e: any) => {
     setSearchTerm(e.target.value)
@@ -91,7 +90,6 @@ export default function Marketplace() {
           .toLowerCase()
           .includes(searchTerm.toLowerCase())
       ) || []
-  console.log(filteredListedItemsData)
 
   if (isLoading || isLoadingListedItems) {
     return (
@@ -123,7 +121,10 @@ export default function Marketplace() {
         >
           <CarouselContent className="w-full p-0">
             {sharesData?.map((share, index) => (
-              <CarouselItem key={index} className="w-full flex justify-center">
+              <CarouselItem
+                key={`carousel-item-${index}`}
+                className="w-full flex justify-center"
+              >
                 <Card className="w-full h-[50vh] flex items-center justify-center ">
                   <CardContent className="w-full h-full flex items-center justify-center p-0">
                     <CustomImage
@@ -157,7 +158,7 @@ export default function Marketplace() {
             ? filteredSharesData.map((share) => (
                 <Link
                   href={`/marketplace/artwork?id=${share.workShare.sharesTokenId}`}
-                  key={share.workShare.sharesTokenId}
+                  key={`share-${share.workShare.sharesTokenId}`}
                   className="border border-slate-100 flex flex-col gap-2 justify-center p-4 rounded-md shadow-md items-center bg-white max-h-[350px]"
                 >
                   <div className="flex-1 w-full h-[200px]">
@@ -185,7 +186,7 @@ export default function Marketplace() {
                   href={`/marketplace/artwork?id=${
                     item.workShare?.sharesTokenId || index
                   }&itemId=${item.itemListed.itemId}`}
-                  key={item.workShare?.sharesTokenId || index}
+                  key={`listed-item-${index}`}
                   className="border border-slate-100 flex flex-col gap-2 justify-center p-4 rounded-md shadow-md items-center bg-white max-h-[350px]"
                 >
                   <div className="flex-1 w-full h-[200px]">
