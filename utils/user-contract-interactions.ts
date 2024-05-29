@@ -59,3 +59,21 @@ export async function listMarketShareItem(
     throw new Error("Failed to list market share item")
   }
 }
+
+export async function buyMarketShareItem(marketShareItemId: number) {
+  try {
+    const { request: buyMarketShareRequest } = await simulateContract(config, {
+      address: DWORK_SHARES_ADDRESS,
+      abi: DWORK_SHARES_ABI,
+      functionName: "buyMarketShareItem",
+      args: [marketShareItemId],
+    })
+
+    const result = await writeContract(config, buyMarketShareRequest)
+
+    return result
+  } catch (error) {
+    console.error("Error buying market share item:", error)
+    throw new Error("Failed to buy market share item")
+  }
+}

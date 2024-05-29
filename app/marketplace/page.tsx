@@ -1,56 +1,57 @@
-"use client"
-
-import { useQuery } from "@tanstack/react-query"
-import { ShareDetail } from "@/types/artwork"
-import Image from "next/image"
-import { useState } from "react"
-import Loader from "@/components/clientUi/Loader"
+'use client'
+import { useQuery } from "@tanstack/react-query";
+import { ShareDetail } from "@/types/artwork";
+import Image from "next/image";
+import { useState } from "react";
+import Loader from "@/components/clientUi/Loader";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
-} from "@/components/ui/carousel"
-import { Card, CardContent } from "@/components/ui/card"
-import Autoplay from "embla-carousel-autoplay"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
-import { formatUnits } from "viem"
+} from "@/components/ui/carousel";
+import { Card, CardContent } from "@/components/ui/card";
+import Autoplay from "embla-carousel-autoplay";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { formatUnits } from "viem";
 
 const IMAGE_FALLBACK =
-  "https://theredwindows.net/wp-content/themes/koji/assets/images/default-fallback-image.png"
+  "https://theredwindows.net/wp-content/themes/koji/assets/images/default-fallback-image.png";
 
 const fetchSharesData = async (): Promise<ShareDetail[]> => {
-  const response = await fetch("/api/shares")
+  const response = await fetch("/api/shares");
   if (!response.ok) {
-    throw new Error("Failed to fetch shares data")
+    throw new Error("Failed to fetch shares data");
   }
-  return response.json()
-}
+  return response.json();
+};
 
 const fetchListedItemsWithDetails = async (): Promise<any[]> => {
-  const response = await fetch("/api/listed-shares")
+  const response = await fetch("/api/listed-shares");
   if (!response.ok) {
-    throw new Error("Failed to fetch listed shares")
+    throw new Error("Failed to fetch listed shares");
   }
-  const listedItems = await response.json()
+  const listedItems = await response.json();
 
   const detailedItems = await Promise.all(
     listedItems.map(async (item: any) => {
-      const shareResponse = await fetch(`/api/shares?id=${item.sharesTokenId}`)
+      const shareResponse = await fetch(`/api/shares?id=${item.sharesTokenId}`);
       if (!shareResponse.ok) {
-        throw new Error(`Failed to fetch share details for token ID ${item.sharesTokenId}`)
+        throw new Error(
+          `Failed to fetch share details for token ID ${item.sharesTokenId}`
+        );
       }
-      const shareDetails = await shareResponse.json()
-      return { shareDetails, itemId: item.itemId } 
+      const shareDetails = await shareResponse.json();
+      return { ...shareDetails, itemListed: item };
     })
-  )
-  return detailedItems
-}
+  );
+  return detailedItems;
+};
 
 export default function Marketplace() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [showShares, setShowShares] = useState(true)
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showShares, setShowShares] = useState(true);
 
   const {
     data: sharesData,
@@ -59,7 +60,7 @@ export default function Marketplace() {
   } = useQuery<ShareDetail[], Error>({
     queryKey: ["sharesData"],
     queryFn: fetchSharesData,
-  })
+  });
 
   const {
     data: listedItemsData,
@@ -68,38 +69,38 @@ export default function Marketplace() {
   } = useQuery<any[], Error>({
     queryKey: ["listedItemsData"],
     queryFn: fetchListedItemsWithDetails,
-  })
+  });
+  console.log(listedItemsData);
 
   const handleSearchChange = (e: any) => {
-    setSearchTerm(e.target.value)
-  }
+    setSearchTerm(e.target.value);
+  };
 
   const filteredSharesData =
-    sharesData?.filter(
-      (share) =>
-        share.tokenizationRequest?.certificate?.artist
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase())
-    ) || []
+    sharesData?.filter((share) =>
+      share.tokenizationRequest?.certificate?.artist
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
+    ) || [];
 
   const filteredListedItemsData =
-    listedItemsData?.flat().filter(
-      (item) =>
-        item.tokenizationRequest?.certificate?.artist
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase())
-    ) || []
+    listedItemsData?.flat().filter((item) =>
+      item.tokenizationRequest?.certificate?.artist
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
+    ) || [];
+  console.log(filteredListedItemsData);
 
   if (isLoading || isLoadingListedItems) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-white to-gray-300">
         <Loader />
       </div>
-    )
+    );
   }
 
   if (error || listedItemsError) {
-    return <div>Error: {error?.message || listedItemsError?.message}</div>
+    return <div>Error: {error?.message || listedItemsError?.message}</div>;
   }
 
   return (
@@ -165,13 +166,19 @@ export default function Marketplace() {
                   <div className="flex flex-col gap-1 justify-center items-center flex-1">
                     <h2>{share.tokenizationRequest?.certificate?.work}</h2>
                     <p>{share.tokenizationRequest?.certificate?.artist}</p>
-                    <p>${formatUnits(BigInt(share.workShare.sharePriceUsd || 0), 18)}</p>
+                    <p>
+                      $
+                      {formatUnits(
+                        BigInt(share.workShare.sharePriceUsd || 0),
+                        18
+                      )}
+                    </p>
                   </div>
                 </Link>
               ))
             : filteredListedItemsData.map((item, index) => (
                 <Link
-                  href={`/marketplace/artwork?id=${item.workShare?.sharesTokenId || index}`}
+                  href={`/marketplace/artwork?id=${item.workShare?.sharesTokenId || index}&itemId=${item.itemListed.itemId}`}
                   key={item.workShare?.sharesTokenId || index}
                   className="border border-slate-100 flex flex-col gap-2 justify-center p-4 rounded-md shadow-md items-center bg-white max-h-[350px]"
                 >
@@ -185,14 +192,20 @@ export default function Marketplace() {
                   <div className="flex flex-col gap-1 justify-center items-center flex-1">
                     <h2>{item.tokenizationRequest?.certificate?.work}</h2>
                     <p>{item.tokenizationRequest?.certificate?.artist}</p>
-                    <p>${formatUnits(BigInt(item.workShare.sharePriceUsd || 0), 18)}</p>
+                    <p>
+                      $
+                      {formatUnits(
+                        BigInt(item.workShare.sharePriceUsd || 0),
+                        18
+                      )}
+                    </p>
                   </div>
                 </Link>
               ))}
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 const CustomImage = ({
@@ -201,15 +214,15 @@ const CustomImage = ({
   fallbackSrc,
   ...props
 }: {
-  src: string
-  alt: string
-  fallbackSrc: string
+  src: string;
+  alt: string;
+  fallbackSrc: string;
 }) => {
-  const [imgSrc, setImgSrc] = useState(src)
+  const [imgSrc, setImgSrc] = useState(src);
 
   const handleError = () => {
-    setImgSrc(fallbackSrc)
-  }
+    setImgSrc(fallbackSrc);
+  };
 
   return (
     <Image
@@ -223,5 +236,5 @@ const CustomImage = ({
       className="object-cover"
       {...props}
     />
-  )
-}
+  );
+};
