@@ -1,5 +1,10 @@
 import { config } from "@/app/provider"
-import { DWORK_SHARES_ABI, DWORK_SHARES_ADDRESS } from "@/lib/contract"
+import {
+  DWORK_ABI,
+  DWORK_ADDRESS,
+  DWORK_SHARES_ABI,
+  DWORK_SHARES_ADDRESS,
+} from "@/lib/contract"
 import { readContract, simulateContract, writeContract } from "@wagmi/core"
 import { parseEther } from "viem"
 
@@ -90,22 +95,19 @@ export async function buyMarketShareItem(
 export async function xChainWorkTokenTransfer(
   recipientAddress: string,
   newOwnerName: string,
-  tokenizationRequestId: number,
-  targetChain: string
+  tokenizationRequestId: string,
+  destinationChainSelector: string
 ) {
-  const chainId =
-    targetChain === "Optimism" ? "5224473277236331295" : "16281711391670634445"
-
   try {
     const { request: transferRequest } = await simulateContract(config, {
-      address: DWORK_SHARES_ADDRESS,
-      abi: DWORK_SHARES_ABI,
+      address: DWORK_ADDRESS,
+      abi: DWORK_ABI,
       functionName: "xChainWorkTokenTransfer",
       args: [
         recipientAddress,
         newOwnerName,
         tokenizationRequestId,
-        chainId,
+        destinationChainSelector,
         1,
         300000,
       ],

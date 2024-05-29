@@ -81,3 +81,4 @@ export type WorkStatus =
   | "pending verification"
   | "work verified"
   | "tokenized"
+  | "sent cross-chain"

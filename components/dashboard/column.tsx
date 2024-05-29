@@ -1,18 +1,18 @@
-import { useState } from "react";
-import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
-import { Artwork } from "@/types/artwork";
-import { Button } from "@/components/ui/button";
+import { useState } from "react"
+import { ColumnDef } from "@tanstack/react-table"
+import { MoreHorizontal } from "lucide-react"
+import { Artwork } from "@/types/artwork"
+import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import CreateWorkShare from "./createWorkShare";
-import CreateSharesButton from "./createShare-button";
-import TransferTokenButton from "@/components/dashboard/TransferButton"; 
+} from "@/components/ui/dropdown-menu"
+import CreateWorkShare from "./createWorkShare"
+import CreateSharesButton from "./createShare-button"
+import TransferTokenButton from "@/components/dashboard/TransferButton"
 
 export const columns: ColumnDef<Artwork>[] = [
   {
@@ -26,6 +26,9 @@ export const columns: ColumnDef<Artwork>[] = [
   {
     accessorKey: "price",
     header: "Price",
+    cell: ({ row }) => {
+      return <div>{row.original.price} USD</div>
+    },
   },
   {
     accessorKey: "status",
@@ -34,30 +37,32 @@ export const columns: ColumnDef<Artwork>[] = [
       const getFormattedStatus = (status: string) => {
         switch (status) {
           case "submitted":
-            return "Submitted";
+            return "Submitted"
           case "pending certificate extraction":
-            return "Pending certificate extraction";
+            return "Pending certificate extraction"
           case "certificate extracted":
           case "pending verification":
-            return "Pending verification";
+            return "Pending verification"
           case "work verified":
           case "pending tokenization":
-            return "Pending tokenization";
+            return "Pending tokenization"
           case "tokenized":
-            return "Tokenized";
+            return "Tokenized"
+          case "sent cross-chain":
+            return "Sent cross-chain"
           default:
-            return "Unknown";
+            return "Unknown"
         }
-      };
-      return <div>{getFormattedStatus(row.original.status)}</div>;
+      }
+      return <div>{getFormattedStatus(row.original.status)}</div>
     },
   },
   {
     id: "actions",
     cell: ({ row }) => {
-      const artwork = row.original;
-      const [modalOpen, setModalOpen] = useState(false);
-      const toggleModal = () => setModalOpen(!modalOpen);
+      const artwork = row.original
+      const [modalOpen, setModalOpen] = useState(false)
+      const toggleModal = () => setModalOpen(!modalOpen)
       return (
         <>
           <DropdownMenu>
@@ -71,9 +76,11 @@ export const columns: ColumnDef<Artwork>[] = [
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               {artwork.status === "tokenized" && (
                 <>
-                  <DropdownMenuItem asChild>
-                    <CreateSharesButton artwork={artwork} />
-                  </DropdownMenuItem>
+                  {!artwork.tokenizationRequest?.sharesTokenId && (
+                    <DropdownMenuItem asChild>
+                      <CreateSharesButton artwork={artwork} />
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuItem asChild>
                     <TransferTokenButton artwork={artwork} />
                   </DropdownMenuItem>
@@ -88,7 +95,7 @@ export const columns: ColumnDef<Artwork>[] = [
           </DropdownMenu>
           <CreateWorkShare modalOpen={modalOpen} toggleModal={toggleModal} />
         </>
-      );
+      )
     },
   },
-];
+]
