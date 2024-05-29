@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { DWORK_SHARES_ADDRESS } from "@/lib/contract";
 import Image from "next/image";
 import ListShareDialog from "@/components/listShareButton";
+import { unlistMarketShareItem } from "@/utils/user-contract-interactions"; 
 
 const IMAGE_FALLBACK =
   "https://theredwindows.net/wp-content/themes/koji/assets/images/default-fallback-image.png";
@@ -123,6 +124,18 @@ export default function Profil() {
     setSearchTerm(e.target.value);
   };
 
+  const handleUnlist = async (marketShareItemId: number) => {
+    try {
+      await unlistMarketShareItem(marketShareItemId);
+      const updatedListedShares = listedSharesDetails.filter(
+        (share) => share.itemId !== marketShareItemId
+      );
+      setListedSharesDetails(updatedListedShares);
+    } catch (error) {
+      console.error("Error unlisting market share item:", error);
+    }
+  };
+
   const filteredSharesData = sharesData.filter((share) =>
     share.tokenizationRequest.certificate.artist.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -213,7 +226,12 @@ export default function Profil() {
                     <h2>{share.tokenizationRequest?.certificate?.work}</h2>
                     <p>{share.tokenizationRequest?.certificate?.artist}</p>
                     <p>Amount: {share.amount}</p>
-                    <p>Price: {share.priceUsd}</p>
+                    <Button
+                      className="w-full"
+                      onClick={() => handleUnlist(share.itemId)}
+                    >
+                      Unlist
+                    </Button>
                   </div>
                 </div>
               ))}
@@ -224,4 +242,3 @@ export default function Profil() {
     </div>
   );
 }
-

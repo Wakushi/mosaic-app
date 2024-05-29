@@ -119,3 +119,22 @@ export async function xChainWorkTokenTransfer(
     throw new Error("Failed to transfer work token across chains")
   }
 }
+
+
+export async function unlistMarketShareItem(marketShareItemId: number) {
+  try {
+    const { request: unlistRequest } = await simulateContract(config, {
+      address: DWORK_SHARES_ADDRESS,
+      abi: DWORK_SHARES_ABI,
+      functionName: "unlistMarketShareItem",
+      args: [marketShareItemId],
+    });
+
+    const result = await writeContract(config, unlistRequest);
+
+    return result;
+  } catch (error) {
+    console.error("Error unlisting market share item:", error);
+    throw new Error("Failed to unlist market share item");
+  }
+}
