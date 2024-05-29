@@ -97,7 +97,7 @@ export async function xChainWorkTokenTransfer(
   newOwnerName: string,
   tokenizationRequestId: string,
   destinationChainSelector: string
-) {
+): Promise<string> {
   try {
     const { request: transferRequest } = await simulateContract(config, {
       address: DWORK_ADDRESS,
@@ -122,7 +122,6 @@ export async function xChainWorkTokenTransfer(
   }
 }
 
-
 export async function unlistMarketShareItem(marketShareItemId: number) {
   try {
     const { request: unlistRequest } = await simulateContract(config, {
@@ -130,13 +129,13 @@ export async function unlistMarketShareItem(marketShareItemId: number) {
       abi: DWORK_SHARES_ABI,
       functionName: "unlistMarketShareItem",
       args: [marketShareItemId],
-    });
+    })
 
-    const result = await writeContract(config, unlistRequest);
+    const result = await writeContract(config, unlistRequest)
 
-    return result;
+    return result
   } catch (error) {
-    console.error("Error unlisting market share item:", error);
-    throw new Error("Failed to unlist market share item");
+    console.error("Error unlisting market share item:", error)
+    throw new Error("Failed to unlist market share item")
   }
 }

@@ -1,39 +1,43 @@
-"use client";
+"use client"
 
-import { useEffect, useState } from "react";
-import { useAccount } from "wagmi";
-import Loader from "@/components/clientUi/Loader";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { DWORK_SHARES_ADDRESS } from "@/lib/contract";
-import Image from "next/image";
-import ListShareDialog from "@/components/listShareButton";
-import { unlistMarketShareItem } from "@/utils/user-contract-interactions"; 
+import { useEffect, useState } from "react"
+import { useAccount } from "wagmi"
+import Loader from "@/components/clientUi/Loader"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { DWORK_SHARES_ADDRESS } from "@/lib/contract"
+import Image from "next/image"
+import ListShareDialog from "@/components/listShareButton"
+import { unlistMarketShareItem } from "@/utils/user-contract-interactions"
 
 const IMAGE_FALLBACK =
-  "https://theredwindows.net/wp-content/themes/koji/assets/images/default-fallback-image.png";
+  "https://theredwindows.net/wp-content/themes/koji/assets/images/default-fallback-image.png"
 
 const fetchShareData = async (tokenId: string) => {
-  const response = await fetch(`/api/shares?id=${tokenId}`);
+  const response = await fetch(`/api/shares?id=${tokenId}`)
   if (!response.ok) {
-    throw new Error("Failed to fetch share data");
+    throw new Error("Failed to fetch share data")
   }
-  return response.json();
-};
+  return response.json()
+}
 
 export default function Profil() {
-  const { address: clientAddress } = useAccount();
-  const [nfts, setNfts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [sharesData, setSharesData] = useState<any[]>([]);
-  const [listedSharesDetails, setListedSharesDetails] = useState<any[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [activeSection, setActiveSection] = useState<"owned" | "listed">("owned");
-  const [openDialogTokenId, setOpenDialogTokenId] = useState<number | null>(null);
+  const { address: clientAddress } = useAccount()
+  const [nfts, setNfts] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [sharesData, setSharesData] = useState<any[]>([])
+  const [listedSharesDetails, setListedSharesDetails] = useState<any[]>([])
+  const [searchTerm, setSearchTerm] = useState("")
+  const [activeSection, setActiveSection] = useState<"owned" | "listed">(
+    "owned"
+  )
+  const [openDialogTokenId, setOpenDialogTokenId] = useState<number | null>(
+    null
+  )
 
   useEffect(() => {
     if (clientAddress) {
-      const options = { method: "GET", headers: { accept: "application/json" } };
+      const options = { method: "GET", headers: { accept: "application/json" } }
 
       fetch(
         `https://polygon-amoy.g.alchemy.com/nft/v3/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}/getNFTsForOwner?owner=${clientAddress}`,
@@ -43,17 +47,18 @@ export default function Profil() {
         .then((response) => {
           const filteredNfts = response.ownedNfts.filter(
             (nft: any) =>
-              nft.contract.address.toLowerCase() === DWORK_SHARES_ADDRESS.toLowerCase()
-          );
-          setNfts(filteredNfts);
-          setLoading(false);
+              nft.contract.address.toLowerCase() ===
+              DWORK_SHARES_ADDRESS.toLowerCase()
+          )
+          setNfts(filteredNfts)
+          setLoading(false)
         })
         .catch((err) => {
-          console.error(err);
-          setLoading(false);
-        });
+          console.error(err)
+          setLoading(false)
+        })
     }
-  }, [clientAddress]);
+  }, [clientAddress])
 
   useEffect(() => {
     if (nfts.length > 0) {
@@ -66,31 +71,32 @@ export default function Profil() {
               balance: nft.balance,
             }))
             .catch((err) => {
-              console.error(err);
-              return null;
+              console.error(err)
+              return null
             })
-        );
+        )
 
-        const sharesResults = await Promise.all(sharesPromises);
-        setSharesData(sharesResults.filter((data) => data !== null));
-      };
+        const sharesResults = await Promise.all(sharesPromises)
+        setSharesData(sharesResults.filter((data) => data !== null))
+      }
 
-      fetchAllSharesData();
+      fetchAllSharesData()
     }
-  }, [nfts]);
+  }, [nfts])
 
   useEffect(() => {
     const fetchListedShares = async () => {
       try {
-        const response = await fetch("/api/listed-shares");
+        const response = await fetch("/api/listed-shares")
         if (!response.ok) {
-          throw new Error("Failed to fetch listed shares");
+          throw new Error("Failed to fetch listed shares")
         }
-        const listedShares = await response.json();
+        const listedShares = await response.json()
 
         const userListedShares = listedShares.filter(
-          (item: any) => item.seller.toLowerCase() === clientAddress?.toLowerCase()
-        );
+          (item: any) =>
+            item.seller.toLowerCase() === clientAddress?.toLowerCase()
+        )
 
         const sharesDetailsPromises = userListedShares.map((item: any) =>
           fetchShareData(item.sharesTokenId)
@@ -101,51 +107,55 @@ export default function Profil() {
               priceUsd: item.priceUsd,
             }))
             .catch((err) => {
-              console.error(err);
-              return null;
+              console.error(err)
+              return null
             })
-        );
+        )
 
-        const sharesDetailsResults = await Promise.all(sharesDetailsPromises);
-        setListedSharesDetails(sharesDetailsResults.filter((data) => data !== null));
-        setLoading(false);
+        const sharesDetailsResults = await Promise.all(sharesDetailsPromises)
+        setListedSharesDetails(
+          sharesDetailsResults.filter((data) => data !== null)
+        )
+        setLoading(false)
       } catch (error) {
-        console.error("API error:", error);
-        setLoading(false);
+        console.error("API error:", error)
+        setLoading(false)
       }
-    };
+    }
 
     if (clientAddress) {
-      fetchListedShares();
+      fetchListedShares()
     }
-  }, [clientAddress]);
+  }, [clientAddress])
 
   const handleSearchChange = (e: any) => {
-    setSearchTerm(e.target.value);
-  };
+    setSearchTerm(e.target.value)
+  }
 
   const handleUnlist = async (marketShareItemId: number) => {
     try {
-      await unlistMarketShareItem(marketShareItemId);
+      await unlistMarketShareItem(marketShareItemId)
       const updatedListedShares = listedSharesDetails.filter(
         (share) => share.itemId !== marketShareItemId
-      );
-      setListedSharesDetails(updatedListedShares);
+      )
+      setListedSharesDetails(updatedListedShares)
     } catch (error) {
-      console.error("Error unlisting market share item:", error);
+      console.error("Error unlisting market share item:", error)
     }
-  };
+  }
 
   const filteredSharesData = sharesData.filter((share) =>
-    share.tokenizationRequest.certificate.artist.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+    share.tokenizationRequest.certificate.artist
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase())
+  )
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-white to-gray-300">
+      <div className="min-h-screen flex items-center justify-center ">
         <Loader />
       </div>
-    );
+    )
   }
 
   return (
@@ -160,8 +170,12 @@ export default function Profil() {
             onChange={handleSearchChange}
             className="p-2 border border-gray-300 rounded-md w-1/4"
           />
-          <Button onClick={() => setActiveSection("owned")}>Owned Shares</Button>
-          <Button onClick={() => setActiveSection("listed")}>Listed Shares</Button>
+          <Button onClick={() => setActiveSection("owned")}>
+            Owned Shares
+          </Button>
+          <Button onClick={() => setActiveSection("listed")}>
+            Listed Shares
+          </Button>
         </div>
         {activeSection === "owned" && (
           <>
@@ -240,5 +254,5 @@ export default function Profil() {
         )}
       </div>
     </div>
-  );
+  )
 }

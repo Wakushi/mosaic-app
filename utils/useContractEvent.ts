@@ -1,13 +1,13 @@
-import { useEffect } from "react";
-import { useWatchContractEvent } from "wagmi";
-import { Abi } from "viem";
-import { DWORK_ABI } from "@/lib/contract";
+import { useEffect } from "react"
+import { useWatchContractEvent } from "wagmi"
+import { Abi, Log } from "viem"
+import { DWORK_ABI } from "@/lib/contract"
 
 interface UseContractEventOptions {
-  contractAddress: `0x${string}`;
-  abi: Abi;
-  eventName: string;
-  eventCallback: () => void;
+  contractAddress: `0x${string}`
+  abi: Abi
+  eventName: string
+  eventCallback: (logs: Log[]) => void
 }
 
 export function useContractEvent({
@@ -21,8 +21,8 @@ export function useContractEvent({
     abi: DWORK_ABI,
     eventName,
     onLogs: (logs) => {
-      console.log("Event logs:", logs);
-      eventCallback();
+      console.log("Event logs:", logs)
+      eventCallback(logs)
     },
-  });
+  })
 }

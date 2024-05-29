@@ -1,7 +1,7 @@
-import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
-import { Artwork } from "@/types/artwork";
-import { Button } from "@/components/ui/button";
+import { ColumnDef } from "@tanstack/react-table"
+import { MoreHorizontal } from "lucide-react"
+import { Artwork } from "@/types/artwork"
+import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,13 +9,13 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { useUserStore } from "@/store/useStore"; 
-import OpenTokenizationRequestButton from "@/components/adminDashboard/OpenTokenizationRequestButton";
-import RequestWorkVerificationButton from "@/components/adminDashboard/requestWorkVerification-button";
+} from "@/components/ui/dropdown-menu"
+import { useUserStore } from "@/store/useStore"
+import OpenTokenizationRequestButton from "@/components/adminDashboard/OpenTokenizationRequestButton"
+import RequestWorkVerificationButton from "@/components/adminDashboard/requestWorkVerification-button"
 
 export function getColumns(refreshData: () => void): ColumnDef<Artwork>[] {
-  const listening = useUserStore.getState().listening; 
+  const listening = useUserStore.getState().listening
 
   return [
     {
@@ -41,28 +41,30 @@ export function getColumns(refreshData: () => void): ColumnDef<Artwork>[] {
         const getFormattedStatus = (status: string) => {
           switch (status) {
             case "submitted":
-              return "Submitted";
+              return "Submitted"
             case "pending certificate extraction":
-              return "Pending certificate extraction";
+              return "Pending certificate extraction"
             case "certificate extracted":
-              return "Certificate extracted";
+              return "Certificate extracted"
             case "pending verification":
-              return "Pending verification";
+              return "Pending verification"
             case "work verified":
-              return "Work verified";
+              return "Work verified"
             case "tokenized":
-              return "Tokenized";
+              return "Tokenized"
+            case "sent cross-chain":
+              return "Sent cross-chain"
             default:
-              return "Unknown";
+              return "Unknown"
           }
-        };
-        return <div>{getFormattedStatus(row.original.status)}</div>;
+        }
+        return <div>{getFormattedStatus(row.original.status)}</div>
       },
     },
     {
       id: "actions",
       cell: ({ row }) => {
-        const artwork = row.original;
+        const artwork = row.original
 
         return (
           <DropdownMenu>
@@ -76,7 +78,9 @@ export function getColumns(refreshData: () => void): ColumnDef<Artwork>[] {
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuSeparator />
               {listening ? (
-                <DropdownMenuItem disabled>Event is in progress</DropdownMenuItem>
+                <DropdownMenuItem disabled>
+                  Event is in progress
+                </DropdownMenuItem>
               ) : (
                 <>
                   {artwork.status === "submitted" && (
@@ -106,8 +110,8 @@ export function getColumns(refreshData: () => void): ColumnDef<Artwork>[] {
               )}
             </DropdownMenuContent>
           </DropdownMenu>
-        );
+        )
       },
     },
-  ];
+  ]
 }

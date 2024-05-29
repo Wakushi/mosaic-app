@@ -36,7 +36,7 @@ const Artwork = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-white to-gray-300">
+      <div className="min-h-screen flex items-center justify-center ">
         <Loader />
       </div>
     )
@@ -51,7 +51,7 @@ const Artwork = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-white to-gray-300 flex pt-28 px-14 gap-5">
+    <div className="min-h-screen  flex pt-28 px-14 gap-5">
       <div>
         <div className="p-10 w-[55vw] bg-white shadow-lg">
           <Image

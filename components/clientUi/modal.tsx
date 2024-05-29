@@ -1,13 +1,13 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode } from "react"
 
 interface ModalProps {
-  isOpen: boolean;
-  close: () => void;
-  children: ReactNode;
+  isOpen: boolean
+  close: () => void
+  children: ReactNode
 }
 
 export const Modal: React.FC<ModalProps> = ({ isOpen, close, children }) => {
-  if (!isOpen) return null;
+  if (!isOpen) return null
 
   return (
     <div
@@ -21,21 +21,19 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, close, children }) => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-		    zIndex: 1000,
+        zIndex: 1000,
       }}
       className="min-h-[100vh]"
-
     >
       <div
         style={{
           position: "relative",
-          padding: "20px",
+          padding: "2.5rem 1.5rem",
           background: "white",
           borderRadius: "8px",
           maxWidth: "500px",
           width: "100%",
         }}
-        className="min-h-[50vh]"
       >
         <button
           onClick={close}
@@ -46,5 +44,5 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, close, children }) => {
         {children}
       </div>
     </div>
-  );
-};
+  )
+}

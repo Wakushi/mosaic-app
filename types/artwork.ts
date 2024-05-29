@@ -38,7 +38,7 @@ export type TokenizationRequest = {
   appraiserReportIPFSHash: string
   certificateIPFSHash: string
   owner: Address
-  initialOwnerName: string
+  ownerName: string
   lastWorkPriceUsd: number
   workTokenId: number
   sharesTokenId: number

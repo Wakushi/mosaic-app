@@ -1,44 +1,44 @@
-"use client";
+"use client"
 
 // React
-import { useEffect, useState } from "react";
-import Link from "next/link";
+import { useEffect, useState } from "react"
+import Link from "next/link"
 
 // Wagmi
-import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { useAccount } from "wagmi";
+import { ConnectButton } from "@rainbow-me/rainbowkit"
+import { useAccount } from "wagmi"
 
 // Components
-import { Modal } from "@/components/clientUi/modal";
-import { ProfileForm } from "../profile-form";
+import { Modal } from "@/components/clientUi/modal"
+import { ProfileForm } from "../profile-form"
 
 // Shadcn
-import { Button } from "../ui/button";
+import { Button } from "../ui/button"
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuShortcut,
-} from "../ui/dropdown-menu";
+} from "../ui/dropdown-menu"
 
 // Zustand store
-import { useUserStore } from "@/store/useStore";
-import Image from "next/image";
+import { useUserStore } from "@/store/useStore"
+import Image from "next/image"
 
 const fetchUserData = async (clientAddress: string) => {
-  const response = await fetch(`/api/user?clientAddress=${clientAddress}`);
-  const data = await response.json();
+  const response = await fetch(`/api/user?clientAddress=${clientAddress}`)
+  const data = await response.json()
   if (!response.ok) {
-    throw new Error(data.error || "Failed to fetch user data");
+    throw new Error(data.error || "Failed to fetch user data")
   }
-  return data;
-};
+  return data
+}
 
 export default function Header() {
-  const account = useAccount();
-  const [modalOpen, setModalOpen] = useState(false);
-  const [scroll, setScroll] = useState(false);
+  const account = useAccount()
+  const [modalOpen, setModalOpen] = useState(false)
+  const [scroll, setScroll] = useState(false)
 
   const {
     isRegistered,
@@ -47,44 +47,44 @@ export default function Header() {
     setIsRegistered,
     setIsAdmin,
     setUserType,
-  } = useUserStore();
+  } = useUserStore()
 
-  const clientAddress = account.address;
+  const clientAddress = account.address
 
   useEffect(() => {
     async function checkUser() {
       if (clientAddress) {
         try {
-          const data = await fetchUserData(clientAddress);
-          setIsRegistered(data.isRegistered);
+          const data = await fetchUserData(clientAddress)
+          setIsRegistered(data.isRegistered)
 
           if (data.isRegistered) {
-            const user = data.user;
-            setIsAdmin(user.role === "admin");
-            setUserType(user.userType);
+            const user = data.user
+            setIsAdmin(user.role === "admin")
+            setUserType(user.userType)
           }
         } catch (error) {
-          console.error("Error fetching user data:", error);
-          setIsRegistered(false);
+          console.error("Error fetching user data:", error)
+          setIsRegistered(false)
         }
       }
     }
 
-    checkUser();
-  }, [clientAddress]);
+    checkUser()
+  }, [clientAddress])
 
-  const toggleModal = () => setModalOpen(!modalOpen);
+  const toggleModal = () => setModalOpen(!modalOpen)
 
   useEffect(() => {
     const handleScroll = () => {
-      setScroll(window.scrollY > 0);
-    };
+      setScroll(window.scrollY > 0)
+    }
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll)
     return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
+      window.removeEventListener("scroll", handleScroll)
+    }
+  }, [])
 
   return (
     <header className="flex justify-between py-3 z-30 w-screen fixed px-14 items-center bg-white bg-opacity-[0.02] shadow-sm backdrop-blur-sm">
@@ -107,7 +107,7 @@ export default function Header() {
         </Link>
         {isRegistered === false && (
           <>
-            <Button onClick={toggleModal}>Signup</Button>
+            <Button onClick={toggleModal}>Register a work</Button>
             <Modal isOpen={modalOpen} close={toggleModal}>
               <ProfileForm />
             </Modal>
@@ -159,5 +159,5 @@ export default function Header() {
         />
       </div>
     </header>
-  );
+  )
 }

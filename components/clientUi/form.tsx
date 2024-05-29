@@ -62,7 +62,7 @@ export const ReusableForm: React.FC<ReusableFormProps> = ({
             <Loader />
           </div>
         ) : (
-          <>
+          <div className="flex flex-col gap-6">
             {fields.map((field) => (
               <FormField
                 key={field.name}
@@ -110,8 +110,10 @@ export const ReusableForm: React.FC<ReusableFormProps> = ({
                 )}
               />
             ))}
-            <Button type="submit">Submit</Button>
-          </>
+            <Button type="submit" className="self-end	">
+              Submit
+            </Button>
+          </div>
         )}
       </form>
     </Form>

@@ -1,35 +1,40 @@
-"use client";
+"use client"
 
-import { useQuery } from '@tanstack/react-query';
-import { Artwork } from "@/types/artwork";
-import { DataTable } from "@/components/adminDashboard/data-table";
-import { getColumns } from "@/components/adminDashboard/column";
-import Loader from "@/components/clientUi/Loader";
+import { useQuery } from "@tanstack/react-query"
+import { Artwork } from "@/types/artwork"
+import { DataTable } from "@/components/adminDashboard/data-table"
+import { getColumns } from "@/components/adminDashboard/column"
+import Loader from "@/components/clientUi/Loader"
 
 const fetchArtworks = async (): Promise<Artwork[]> => {
-  const response = await fetch("/api/artwork");
+  const response = await fetch("/api/artwork")
   if (!response.ok) {
-    throw new Error("Failed to fetch artworks");
+    throw new Error("Failed to fetch artworks")
   }
-  return response.json();
-};
+  return response.json()
+}
 
 export default function Admin() {
-  const { data: artworks, error, isLoading, refetch } = useQuery<Artwork[], Error>({
-    queryKey: ['artworks'],
-    queryFn: fetchArtworks
-  });
+  const {
+    data: artworks,
+    error,
+    isLoading,
+    refetch,
+  } = useQuery<Artwork[], Error>({
+    queryKey: ["artworks"],
+    queryFn: fetchArtworks,
+  })
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-white to-gray-300">
+      <div className="min-h-screen flex items-center justify-center ">
         <Loader />
       </div>
-    );
+    )
   }
 
   if (error) {
-    return <div>Error: {error.message}</div>;
+    return <div>Error: {error.message}</div>
   }
 
   return (
@@ -39,5 +44,5 @@ export default function Admin() {
         <DataTable columns={getColumns(refetch)} data={artworks || []} />
       </div>
     </div>
-  );
+  )
 }
