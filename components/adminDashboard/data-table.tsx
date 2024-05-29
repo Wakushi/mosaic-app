@@ -68,23 +68,29 @@ export function DataTable<TData, TValue>({
             <Button variant="outline">Filter by Status</Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem onClick={() => handleStatusFilter("pending")}>
-              Pending
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleStatusFilter("processing")}>
-              Processing
-            </DropdownMenuItem>
-
-            <DropdownMenuItem onClick={() => handleStatusFilter("approved")}>
-              approved
+            <DropdownMenuItem onClick={() => handleStatusFilter("submitted")}>
+              Submitted
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => handleStatusFilter("shares created")}
+              onClick={() =>
+                handleStatusFilter("pending certificate extraction")
+              }
             >
-              Shares created
+              Pending certificate extraction
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleStatusFilter("rejected")}>
-              Rejected
+
+            <DropdownMenuItem
+              onClick={() => handleStatusFilter("certificate extracted")}
+            >
+              Certificate extracted
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => handleStatusFilter("pending verification")}
+            >
+              Pending verification
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleStatusFilter("tokenized")}>
+              Tokenized
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => handleStatusFilter("")}>
               Clear Filter

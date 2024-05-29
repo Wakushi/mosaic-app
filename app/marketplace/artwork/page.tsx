@@ -66,7 +66,7 @@ const Artwork = () => {
         <p className="text-center">{shareDetail.masterworksData.dimensions}</p>
       </div>
       <div className="flex flex-col gap-4 h-fit bg-white p-5 shadow-lg">
-        <h1 className="text-6xl self-start">
+        <h1 className="text-5xl self-start">
           {shareDetail.tokenizationRequest.certificate.work}
         </h1>
         <p className="text-4xl text-slate-400">
