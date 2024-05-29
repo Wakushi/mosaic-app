@@ -15,9 +15,9 @@ import { Canvas } from "@react-three/fiber"
 import Experience from "@/components/canvas/Canvas"
 import Loader from "@/components/clientUi/Loader"
 import { useState } from "react"
+import Hero from "@/components/Hero"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
-import Hero from "@/components/Hero"
 
 const IMAGE_FALLBACK =
   "https://theredwindows.net/wp-content/themes/koji/assets/images/default-fallback-image.png"
@@ -31,6 +31,7 @@ const fetchSharesData = async (): Promise<ShareDetail[]> => {
 }
 
 export default function Home() {
+  const router = useRouter()
   const {
     data: sharesData,
     error,
@@ -250,15 +251,34 @@ export default function Home() {
       </Section>
 
       <Section title="" animate={false}>
-        <h2 className="self-start font-extrabold leading-none text-[5vw] uppercase mb-8">
+        <h2 className="font-extrabold leading-none text-[5vw] uppercase mb-8">
           Simplify art investment
         </h2>
-        <p className="text-xl text-center px-4 text-gray-700">
+        <p className="text-2xl max-w-[90%] text-center px-4 text-gray-700 mb-5">
           Our platform democratizes art investment, making it accessible to a
           broader audience while providing galleries with a novel way to manage
           and monetize their collections. By leveraging blockchain technology,
           we ensure security, transparency, and efficiency in all transactions.
         </p>
+        <div className="flex gap-4 w-full items-center justify-center">
+          <Button
+            className="w-full max-w-[200px] text-[1.1rem]"
+            onClick={() => router.push("")}
+          >
+            I'm an art collector
+          </Button>
+          <Button
+            className="w-full max-w-[200px] text-[1.1rem]"
+            onClick={() => router.push("/marketplace")}
+          >
+            I'm an investor
+          </Button>
+        </div>
+        <div className="w-full h-[50vh] relative">
+          <Canvas>
+            <Experience />
+          </Canvas>
+        </div>
       </Section>
     </div>
   )
