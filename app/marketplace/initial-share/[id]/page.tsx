@@ -1,32 +1,32 @@
-"use client";
-import Image from "next/image";
-import Loader from "@/components/clientUi/Loader";
-import BuyShareDialog from "@/components/marketplace/BuyShareDialog";
-import { formatUnits } from "viem";
-import { SharesContext } from "@/services/ShareContext";
-import { useContext } from "react";
+"use client"
+import Image from "next/image"
+import Loader from "@/components/clientUi/Loader"
+import BuyShareDialog from "@/components/marketplace/BuyShareDialog"
+import { formatUnits } from "viem"
+import { SharesContext } from "@/services/ShareContext"
+import { useContext } from "react"
 
 const IMAGE_FALLBACK =
-  "https://theredwindows.net/wp-content/themes/koji/assets/images/default-fallback-image.png";
+  "https://theredwindows.net/wp-content/themes/koji/assets/images/default-fallback-image.png"
 
 const InitialShareDetailPage = ({ params }: { params: { id: string } }) => {
-  const id = params.id;
+  const id = params.id
 
-  const { initialShares, initialSharesLoading } = useContext(SharesContext);
+  const { initialShares, initialSharesLoading } = useContext(SharesContext)
 
   const shareDetail = initialShares?.find(
     (share) => +share.workShare.sharesTokenId === +id
-  );
+  )
   const formatDate = (dateString: string) =>
-    new Date(dateString).toLocaleDateString();
-  const formatPrice = (price: number) => `$${Number(price).toLocaleString()}`;
+    new Date(dateString).toLocaleDateString()
+  const formatPrice = (price: number) => `$${Number(price).toLocaleString()}`
 
   if (initialSharesLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center ">
         <Loader />
       </div>
-    );
+    )
   }
 
   if (!shareDetail) {
@@ -34,14 +34,13 @@ const InitialShareDetailPage = ({ params }: { params: { id: string } }) => {
       <div className="min-h-screen flex items-center justify-center text-3xl">
         Share sold !
       </div>
-    );
+    )
   }
-  console.log(shareDetail);
 
   return (
     <div className="min-h-screen  flex pt-28 px-14 gap-5">
       <div>
-        <div className="p-10 w-[55vw] h-[80vh] bg-white shadow-lg border-4 border-double">
+        <div className="p-10 w-[55vw] h-[80vh] bg-white shadow-lg border-4 border-double mb-4">
           <Image
             src={shareDetail.masterworksData.imageURL || IMAGE_FALLBACK}
             alt={shareDetail.tokenizationRequest.certificate.artist}
@@ -105,7 +104,7 @@ const InitialShareDetailPage = ({ params }: { params: { id: string } }) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default InitialShareDetailPage;
+export default InitialShareDetailPage

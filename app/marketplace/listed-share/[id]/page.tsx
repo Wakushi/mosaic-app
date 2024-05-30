@@ -1,34 +1,34 @@
-"use client";
-export const dynamic = "force-dynamic";
-import Image from "next/image";
-import Loader from "@/components/clientUi/Loader";
-import BuyShareDialog from "@/components/marketplace/BuyShareDialog";
-import BuyMarketShareDialog from "@/components/marketplace/BuyMarketShareDialog";
-import { formatUnits } from "viem";
-import { SharesContext } from "@/services/ShareContext";
-import { useContext } from "react";
+"use client"
+export const dynamic = "force-dynamic"
+import Image from "next/image"
+import Loader from "@/components/clientUi/Loader"
+import BuyShareDialog from "@/components/marketplace/BuyShareDialog"
+import BuyMarketShareDialog from "@/components/marketplace/BuyMarketShareDialog"
+import { formatUnits } from "viem"
+import { SharesContext } from "@/services/ShareContext"
+import { useContext } from "react"
 
 const IMAGE_FALLBACK =
-  "https://theredwindows.net/wp-content/themes/koji/assets/images/default-fallback-image.png";
+  "https://theredwindows.net/wp-content/themes/koji/assets/images/default-fallback-image.png"
 
 const ListedShareDetailPage = ({ params }: { params: { id: string } }) => {
-  const id = params.id;
-  const { listedShares, listedSharesLoading } = useContext(SharesContext);
+  const id = params.id
+  const { listedShares, listedSharesLoading } = useContext(SharesContext)
 
   const listedShareDetail = listedShares.find(
     (share) => +share.listedShare.itemId === parseInt(id)
-  );
+  )
 
   const formatDate = (dateString: string) =>
-    new Date(dateString).toLocaleDateString();
-  const formatPrice = (price: number) => `$${Number(price).toLocaleString()}`;
+    new Date(dateString).toLocaleDateString()
+  const formatPrice = (price: number) => `$${Number(price).toLocaleString()}`
 
   if (listedSharesLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader />
       </div>
-    );
+    )
   }
 
   if (!listedShareDetail) {
@@ -36,13 +36,13 @@ const ListedShareDetailPage = ({ params }: { params: { id: string } }) => {
       <div className="min-h-screen flex items-center justify-center text-3xl">
         Share sold !
       </div>
-    );
+    )
   }
 
   return (
     <div className="min-h-screen flex pt-28 px-14 gap-5">
       <div>
-        <div className="p-10 w-[55vw] h-[80vh] bg-white shadow-lg border-4 border-double">
+        <div className="p-10 w-[55vw] h-[80vh] bg-white shadow-lg border-4 border-double mb-4">
           <Image
             src={listedShareDetail.masterworksData.imageURL || IMAGE_FALLBACK}
             alt={listedShareDetail.tokenizationRequest.certificate.artist}
@@ -102,7 +102,7 @@ const ListedShareDetailPage = ({ params }: { params: { id: string } }) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ListedShareDetailPage;
+export default ListedShareDetailPage
