@@ -76,24 +76,19 @@ const Artwork = ({ params }: { params: { id: string } }) => {
           USD
         </p>
         <div className="flex flex-col items-center gap-3">
-          {!id && (
-            <p>
-              {shareDetail.workShare.maxShareSupply -
-                shareDetail.workShare.totalShareBought}
-              /{shareDetail.workShare.maxShareSupply}
-            </p>
-          )}
-          {id ? (
-            <BuyMarketShareDialog marketShareItemId={parseInt(id)} />
-          ) : (
-            <BuyShareDialog
-              sharesTokenId={shareDetail.workShare.sharesTokenId}
-              sharePriceUsd={formatUnits(
-                BigInt(shareDetail.workShare.sharePriceUsd),
-                18
-              )}
-            />
-          )}
+          <p>
+            {shareDetail.workShare.maxShareSupply -
+              shareDetail.workShare.totalShareBought}
+            /{shareDetail.workShare.maxShareSupply}
+          </p>
+
+          <BuyShareDialog
+            sharesTokenId={shareDetail.workShare.sharesTokenId}
+            sharePriceUsd={formatUnits(
+              BigInt(shareDetail.workShare.sharePriceUsd),
+              18
+            )}
+          />
         </div>
       </div>
     </div>

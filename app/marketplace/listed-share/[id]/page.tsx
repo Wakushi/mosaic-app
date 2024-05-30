@@ -7,45 +7,29 @@ import Loader from "@/components/clientUi/Loader"
 import BuyShareDialog from "@/components/marketplace/BuyShareDialog"
 import BuyMarketShareDialog from "@/components/marketplace/BuyMarketShareDialog"
 import { formatUnits } from "viem"
+import { useUserStore } from "@/store/useStore"
 
 const IMAGE_FALLBACK =
   "https://theredwindows.net/wp-content/themes/koji/assets/images/default-fallback-image.png"
 
-const fetchShareDetail = async (id: string): Promise<ShareDetail> => {
-  const response = await fetch(`/api/shares?id=${id}`)
-  if (!response.ok) {
-    throw new Error("Failed to fetch share details")
-  }
-  return response.json()
-}
+// const fetchShareDetail = async (id: string): Promise<ShareDetail> => {
+//   const response = await fetch(`/api/shares?id=${id}`)
+//   if (!response.ok) {
+//     throw new Error("Failed to fetch share details")
+//   }
+//   return response.json()
+// }
 
 const Artwork = ({ params }: { params: { id: string } }) => {
+  const listedShares = useUserStore((state) => state.listedShares)
   const id = params.id
 
-  const {
-    data: shareDetail,
-    error,
-    isLoading,
-  } = useQuery<ShareDetail, Error>({
-    queryKey: ["shareDetail", id],
-    queryFn: () => fetchShareDetail(id!),
-    enabled: !!id,
-  })
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center ">
-        <Loader />
-      </div>
-    )
-  }
-
-  if (error) {
-    return <div>Error: {error.message}</div>
-  }
+  const shareDetail = listedShares.find(
+    (share) => share.workShare.sharesTokenId === parseInt(id)
+  )
 
   if (!shareDetail) {
-    return <div>No details available</div>
+    return <div>Share not found</div>
   }
 
   return (
