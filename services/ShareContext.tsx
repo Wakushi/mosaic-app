@@ -66,7 +66,6 @@ export default function SharesContextProvider(
   })
 
   async function fetchInitialShares(): Promise<ShareDetail[]> {
-    console.log("fetching initial shares")
     const response = await fetch("/api/shares")
     if (!response.ok) {
       throw new Error("Failed to fetch shares data")
@@ -76,7 +75,6 @@ export default function SharesContextProvider(
   }
 
   async function fetchListedShares(): Promise<ListedShareDetail[]> {
-    console.log("fetching listed shares")
     if (!initialShares) return []
     const response = await fetch("/api/listed-shares")
     if (!response.ok) {

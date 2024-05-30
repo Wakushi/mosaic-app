@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { useAccount } from "wagmi"
 import Loader from "@/components/clientUi/Loader"
 import { Input } from "@/components/ui/input"
@@ -10,24 +10,15 @@ import Image from "next/image"
 import ListShareDialog from "@/components/listShareButton"
 import { unlistMarketShareItem } from "@/utils/user-contract-interactions"
 import BurnShareButton from "@/components/BurnShareButton"
+import { SharesContext } from "@/services/ShareContext"
 
 const IMAGE_FALLBACK =
   "https://theredwindows.net/wp-content/themes/koji/assets/images/default-fallback-image.png"
-
-const fetchShareData = async (tokenId: string) => {
-  const response = await fetch(`/api/shares?id=${tokenId}`)
-  if (!response.ok) {
-    throw new Error("Failed to fetch share data")
-  }
-  return response.json()
-}
 
 export default function Profil() {
   const { address: clientAddress } = useAccount()
   const [nfts, setNfts] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
-  const [sharesData, setSharesData] = useState<any[]>([])
-  const [listedSharesDetails, setListedSharesDetails] = useState<any[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [activeSection, setActiveSection] = useState<"owned" | "listed">(
     "owned"
@@ -35,6 +26,15 @@ export default function Profil() {
   const [openDialogTokenId, setOpenDialogTokenId] = useState<number | null>(
     null
   )
+  const [ownedShares, setOwnedShares] = useState<any[]>([])
+  const [ownedListedShares, setOwnedListedShares] = useState<any[]>([])
+
+  const {
+    initialShares,
+    listedShares,
+    initialSharesLoading,
+    listedSharesLoading,
+  } = useContext(SharesContext)
 
   useEffect(() => {
     if (clientAddress) {
@@ -62,71 +62,28 @@ export default function Profil() {
   }, [clientAddress])
 
   useEffect(() => {
-    if (nfts.length > 0) {
-      const fetchAllSharesData = async () => {
-        const sharesPromises = nfts.map((nft) =>
-          fetchShareData(nft.tokenId)
-            .then((data) => ({
-              ...data,
-              tokenId: nft.tokenId,
-              balance: nft.balance,
-            }))
-            .catch((err) => {
-              console.error(err)
-              return null
-            })
+    if (nfts.length > 0 && initialShares.length > 0) {
+      const ownedShares: any[] = []
+      nfts.forEach((nft) => {
+        const ownedShare = initialShares.find(
+          (share) => +share.workShare.workTokenId === +nft.tokenId
         )
-
-        const sharesResults = await Promise.all(sharesPromises)
-        setSharesData(sharesResults.filter((data) => data !== null))
-      }
-
-      fetchAllSharesData()
+        ownedShares.push({
+          ...ownedShare,
+          balance: nft.balance,
+          tokenId: nft.tokenId,
+        })
+      })
+      setOwnedShares(ownedShares)
     }
-  }, [nfts])
+  }, [nfts, initialShares])
 
   useEffect(() => {
-    const fetchListedShares = async () => {
-      try {
-        const response = await fetch("/api/listed-shares")
-        if (!response.ok) {
-          throw new Error("Failed to fetch listed shares")
-        }
-        const listedShares = await response.json()
-
-        const userListedShares = listedShares.filter(
-          (item: any) =>
-            item.seller.toLowerCase() === clientAddress?.toLowerCase()
-        )
-
-        const sharesDetailsPromises = userListedShares.map((item: any) =>
-          fetchShareData(item.sharesTokenId)
-            .then((data) => ({
-              ...data,
-              itemId: item.itemId,
-              amount: item.amount,
-              priceUsd: item.priceUsd,
-            }))
-            .catch((err) => {
-              console.error(err)
-              return null
-            })
-        )
-
-        const sharesDetailsResults = await Promise.all(sharesDetailsPromises)
-        setListedSharesDetails(
-          sharesDetailsResults.filter((data) => data !== null)
-        )
-        setLoading(false)
-      } catch (error) {
-        console.error("API error:", error)
-        setLoading(false)
-      }
-    }
-
-    if (clientAddress) {
-      fetchListedShares()
-    }
+    const ownedListedShares = listedShares.filter(
+      (share) =>
+        share.listedShare.seller.toLowerCase() === clientAddress?.toLowerCase()
+    )
+    setOwnedListedShares(ownedListedShares)
   }, [clientAddress])
 
   const handleSearchChange = (e: any) => {
@@ -136,29 +93,34 @@ export default function Profil() {
   const handleUnlist = async (marketShareItemId: number) => {
     try {
       await unlistMarketShareItem(marketShareItemId)
-      const updatedListedShares = listedSharesDetails.filter(
+      const updatedListedShares = ownedListedShares.filter(
         (share) => share.itemId !== marketShareItemId
       )
-      setListedSharesDetails(updatedListedShares)
+      setOwnedListedShares(updatedListedShares)
     } catch (error) {
       console.error("Error unlisting market share item:", error)
     }
   }
 
-  const filteredSharesData = sharesData.filter((share) =>
+  const filteredSharesData = ownedShares.filter((share) =>
     share.tokenizationRequest.certificate.artist
       .toLowerCase()
       .includes(searchTerm.toLowerCase())
   )
 
-  if (loading) {
+  const filteredListedShares = ownedListedShares.filter((share) =>
+    share.tokenizationRequest.certificate.artist
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase())
+  )
+
+  if (loading || initialSharesLoading || listedSharesLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center ">
         <Loader />
       </div>
     )
   }
-console.log(sharesData);
 
   return (
     <div className="min-h-screen flex flex-col items-center py-20">
@@ -172,10 +134,16 @@ console.log(sharesData);
             onChange={handleSearchChange}
             className="p-2 border border-gray-300 rounded-md w-1/4"
           />
-          <Button onClick={() => setActiveSection("owned")}>
+          <Button
+            variant={activeSection === "listed" ? "outline" : "default"}
+            onClick={() => setActiveSection("owned")}
+          >
             Owned Shares
           </Button>
-          <Button onClick={() => setActiveSection("listed")}>
+          <Button
+            variant={activeSection === "owned" ? "outline" : "default"}
+            onClick={() => setActiveSection("listed")}
+          >
             Listed Shares
           </Button>
         </div>
@@ -228,7 +196,7 @@ console.log(sharesData);
           <>
             <h2 className="text-3xl mt-10 mb-4">Listed Shares</h2>
             <div className="grid grid-cols-3 gap-10 mt-4 justify-around">
-              {listedSharesDetails.map((share) => (
+              {filteredListedShares.map((share) => (
                 <div
                   key={share.itemId}
                   className="border border-slate-100 flex flex-col gap-2 justify-center p-4 rounded-md shadow-md items-center bg-white max-h-[400px]"
@@ -248,7 +216,8 @@ console.log(sharesData);
                     <p>Amount: {share.amount}</p>
                     {share.workShare?.isRedeemable && (
                       <div className="text-red-500 text-center">
-                        This share has been sold. Please unlist and burn your share.
+                        This share has been sold. Please unlist and burn your
+                        share.
                       </div>
                     )}
                     <Button
