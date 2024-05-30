@@ -1,6 +1,5 @@
 "use client"
-import { ListedShareDetail, ShareDetail } from "@/types/artwork"
-import { useEffect, useState } from "react"
+import { useContext, useState } from "react"
 import {
   Carousel,
   CarouselContent,
@@ -12,45 +11,20 @@ import { Input } from "@/components/ui/input"
 import Link from "next/link"
 import { formatUnits } from "viem"
 import CustomImage from "@/components/clientUi/CustomImage"
-import { useUserStore } from "@/store/useStore"
 import Loader from "@/components/clientUi/Loader"
+import { SharesContext } from "@/services/ShareContext"
 
 const IMAGE_FALLBACK =
   "https://theredwindows.net/wp-content/themes/koji/assets/images/default-fallback-image.png"
 
 export default function Marketplace() {
   const [searchTerm, setSearchTerm] = useState("")
-  const initialShares = useUserStore((state) => state.initialShares)
-  const listedShares = useUserStore((state) => state.listedShares)
-  const setListedShares = useUserStore((state) => state.setListedShares)
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-
-  useEffect(() => {
-    const fetchListedSharesWithDetails = async () => {
-      if (!initialShares.length || listedShares.length) return
-      setIsLoading(true)
-      const response = await fetch("/api/listed-shares")
-      if (!response.ok) {
-        throw new Error("Failed to fetch listed shares")
-      }
-      const listedSharesData = await response.json()
-      const listedSharesDetailed = listedSharesData.map((listedShare: any) => {
-        const shareDetail = initialShares.find(
-          (share) =>
-            +share.workShare.sharesTokenId === +listedShare.sharesTokenId
-        )
-        return {
-          ...shareDetail,
-          listedShare,
-        } as ListedShareDetail
-      })
-
-      setListedShares(listedSharesDetailed)
-      setIsLoading(false)
-    }
-
-    fetchListedSharesWithDetails()
-  }, [initialShares, listedShares, setListedShares])
+  const {
+    initialShares,
+    listedShares,
+    initialSharesLoading,
+    listedSharesLoading,
+  } = useContext(SharesContext)
 
   const handleSearchChange = (e: any) => {
     setSearchTerm(e.target.value)
@@ -72,7 +46,7 @@ export default function Marketplace() {
           .includes(searchTerm.toLowerCase())
       ) || []
 
-  if (isLoading) {
+  if (initialSharesLoading || listedSharesLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center ">
         <Loader />

@@ -15,7 +15,7 @@ const IMAGE_FALLBACK =
 const Artwork = ({ params }: { params: { id: string } }) => {
   const listedShares = useUserStore((state) => state.listedShares)
   const id = params.id
-  
+
   const shareDetail = listedShares.find(
     (share) => +share.listedShare.itemId === parseInt(id)
   )

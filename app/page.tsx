@@ -11,13 +11,15 @@ import { Card, CardContent } from "@/components/ui/card"
 import Autoplay from "embla-carousel-autoplay"
 import { Canvas } from "@react-three/fiber"
 import Experience from "@/components/canvas/Canvas"
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import Hero from "@/components/Hero"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import { Modal } from "@/components/clientUi/modal"
 import { ProfileForm } from "@/components/profile-form"
 import { useUserStore } from "@/store/useStore"
+import { SharesContext } from "@/services/ShareContext"
+import Loader from "@/components/clientUi/Loader"
 
 const IMAGE_FALLBACK =
   "https://theredwindows.net/wp-content/themes/koji/assets/images/default-fallback-image.png"
@@ -27,7 +29,7 @@ export default function Home() {
   const [modalOpen, setModalOpen] = useState(false)
   const toggleModal = () => setModalOpen(!modalOpen)
   const isRegistered = useUserStore((state) => state.isRegistered)
-  const initialShares = useUserStore((state) => state.initialShares)
+  const { initialShares } = useContext(SharesContext)
 
   return (
     <div className="flex flex-col bg-gray-100">
@@ -94,7 +96,7 @@ export default function Home() {
                 <Card className="w-full h-[50vh] flex items-center justify-center shadow-xl rounded-lg">
                   <CardContent className="w-full h-full flex items-center justify-center p-0">
                     <CustomImage
-                      src={share.masterworksData.imageURL || IMAGE_FALLBACK}
+                      src={share?.masterworksData?.imageURL || IMAGE_FALLBACK}
                       alt="work"
                       fallbackSrc={IMAGE_FALLBACK}
                     />
