@@ -90,7 +90,10 @@ export default function Home() {
       <Section title="" animate={false}>
         <Link className="self-start" href={"/marketplace"}>
           <h2 className="self-start text-[5vw] leading-none font-extrabold uppercase text-gray-800">
-            Dive into a vibrant{" "}
+            Dive into a{" "}
+            <span className="bg-gradient-to-r from-black dark:from-green-200 dark:via-green-400 dark:to-green-200 via-green-600 to-black bg-clip-text font-display tracking-tight text-transparent">
+              vibrant
+            </span>{" "}
             <span className="underline-thin">marketplace</span>
           </h2>
         </Link>
@@ -131,8 +134,8 @@ export default function Home() {
         <h2 className="self-start font-extrabold leading-none text-[5vw] uppercase mb-8">
           Why tokenizing assets ?
         </h2>
-        <div className="grid grid-cols-2 gap-4 w-full">
-          <div className="flex flex-col gap-4 max-w-[500px] rounded border border-gray-200 p-8">
+        <div className="grid grid-cols-2 gap-4 w-full justify-center">
+          <div className="flex flex-col gap-4 rounded border border-gray-200 p-8 shadow-md hover:shadow-lg transition-all">
             <h3 className="font-bold text-4xl">
               Permissionless, free access liquidity
             </h3>
@@ -142,7 +145,7 @@ export default function Home() {
               assets without the need for an intermediary.
             </p>
           </div>
-          <div className="flex flex-col gap-4 max-w-[500px] rounded border border-gray-200 p-8">
+          <div className="flex flex-col gap-4  rounded border border-gray-200 p-8 shadow-md hover:shadow-lg transition-all">
             <h3 className="font-bold text-4xl">Blockchain transparency</h3>
             <p>
               Unlike traditional purchase and sale registers that can be private
@@ -151,7 +154,7 @@ export default function Home() {
               immutable nature of the blockchain.
             </p>
           </div>
-          <div className="flex flex-col gap-4 max-w-[500px] rounded border border-gray-200 p-8">
+          <div className="flex flex-col gap-4 rounded border border-gray-200 p-8 shadow-md hover:shadow-lg transition-all">
             <h3 className="font-bold text-4xl">
               Reducing transaction friction
             </h3>
@@ -161,7 +164,7 @@ export default function Home() {
               lengthy and complicated, also reducing administrative costs.
             </p>
           </div>
-          <div className="flex flex-col gap-4 max-w-[500px] rounded border border-gray-200 p-8">
+          <div className="flex flex-col gap-4  rounded border border-gray-200 p-8 shadow-md hover:shadow-lg transition-all">
             <h3 className="font-bold text-4xl">
               Increasing liquidity and expanding the buyer pool
             </h3>
