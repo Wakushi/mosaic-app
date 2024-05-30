@@ -1,3 +1,4 @@
+"use client"
 import { ReusableForm } from "./clientUi/form"
 import { z } from "zod"
 import { useAccount } from "wagmi"
@@ -6,9 +7,6 @@ import { useToast } from "@/components/ui/use-toast"
 const formSchema = z.object({
   username: z.string().min(2).max(50),
   email: z.string().email(),
-  userType: z.enum(["Gallery", "Investor"], {
-    required_error: "You need to select a user type.",
-  }),
 })
 
 const fieldsData = [
@@ -26,29 +24,38 @@ const fieldsData = [
 
 type FormValues = z.infer<typeof formSchema>
 
-export function ProfileForm() {
+export function ProfileForm({ toggleModal }: { toggleModal: () => void }) {
   const account = useAccount()
   const { toast } = useToast()
 
   const onSubmit = async (values: FormValues) => {
     if (account?.address) {
-      const response = await fetch("/api/user", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...values,
-          address: account.address,
-        }),
-      })
-      const responseData = await response.json()
-      toast({
-        title: "Profile Update",
-        description: responseData.message,
-      })
+      try {
+        const response = await fetch("/api/user", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ...values,
+            address: account.address,
+          }),
+        })
+        const responseData = await response.json()
+        toast({
+          title: "Registration Success",
+          description: responseData.message,
+        })
+      } catch (error) {
+        toast({
+          title: "Registration Error",
+          description: "Failed to register",
+        })
+      } finally {
+        toggleModal()
+      }
     } else {
       toast({
         title: "Connection Error",
-        description: "User is not connected",
+        description: "Wallet not connected",
       })
     }
   }

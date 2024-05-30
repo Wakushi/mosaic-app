@@ -4,11 +4,14 @@ import { Button } from "./ui/button"
 import { useState } from "react"
 import { Modal } from "./clientUi/modal"
 import { ProfileForm } from "./profile-form"
+import { useUserStore } from "@/store/useStore"
+import { is } from "@react-three/fiber/dist/declarations/src/core/utils"
 
 export default function Hero() {
   const router = useRouter()
   const [modalOpen, setModalOpen] = useState(false)
   const toggleModal = () => setModalOpen(!modalOpen)
+  const isRegistered = useUserStore((state) => state.isRegistered)
   return (
     <div className="flex flex-col lg:flex-row items-center justify-center p-8 min-h-[100vh] bg-white">
       <div className="flex flex-col justify-center items-center p-8 animate-fadeIn">
@@ -30,13 +33,19 @@ export default function Hero() {
           <>
             <Button
               className="w-full max-w-[200px] text-[1.1rem]"
-              onClick={toggleModal}
+              onClick={() => {
+                if (isRegistered) {
+                  router.push("/dashboard")
+                } else {
+                  toggleModal()
+                }
+              }}
             >
               {" "}
               I'm an art collector
             </Button>
             <Modal isOpen={modalOpen} close={toggleModal}>
-              <ProfileForm />
+              <ProfileForm toggleModal={toggleModal} />
             </Modal>
           </>
           <Button

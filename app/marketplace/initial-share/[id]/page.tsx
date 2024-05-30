@@ -1,8 +1,8 @@
 "use client"
+export const dynamic = "force-dynamic"
 import { useQuery } from "@tanstack/react-query"
 import { ShareDetail } from "@/types/artwork"
 import Image from "next/image"
-import { useSearchParams } from "next/navigation"
 import Loader from "@/components/clientUi/Loader"
 import BuyShareDialog from "@/components/marketplace/BuyShareDialog"
 import BuyMarketShareDialog from "@/components/marketplace/BuyMarketShareDialog"
@@ -19,10 +19,8 @@ const fetchShareDetail = async (id: string): Promise<ShareDetail> => {
   return response.json()
 }
 
-const Artwork = () => {
-  const searchParams = useSearchParams()
-  const id = searchParams.get("id")
-  const itemId = searchParams.get("itemId")
+const Artwork = ({ params }: { params: { id: string } }) => {
+  const id = params.id
 
   const {
     data: shareDetail,
@@ -78,15 +76,15 @@ const Artwork = () => {
           USD
         </p>
         <div className="flex flex-col items-center gap-3">
-          {!itemId && (
+          {!id && (
             <p>
               {shareDetail.workShare.maxShareSupply -
                 shareDetail.workShare.totalShareBought}
               /{shareDetail.workShare.maxShareSupply}
             </p>
           )}
-          {itemId ? (
-            <BuyMarketShareDialog marketShareItemId={parseInt(itemId)} />
+          {id ? (
+            <BuyMarketShareDialog marketShareItemId={parseInt(id)} />
           ) : (
             <BuyShareDialog
               sharesTokenId={shareDetail.workShare.sharesTokenId}

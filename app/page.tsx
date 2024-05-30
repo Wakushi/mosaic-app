@@ -1,6 +1,4 @@
 "use client"
-
-import { useQuery } from "@tanstack/react-query"
 import { ShareDetail } from "@/types/artwork"
 import Image from "next/image"
 import Link from "next/link"
@@ -13,41 +11,23 @@ import { Card, CardContent } from "@/components/ui/card"
 import Autoplay from "embla-carousel-autoplay"
 import { Canvas } from "@react-three/fiber"
 import Experience from "@/components/canvas/Canvas"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Hero from "@/components/Hero"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import { Modal } from "@/components/clientUi/modal"
 import { ProfileForm } from "@/components/profile-form"
+import { useUserStore } from "@/store/useStore"
 
 const IMAGE_FALLBACK =
   "https://theredwindows.net/wp-content/themes/koji/assets/images/default-fallback-image.png"
-
-const fetchSharesData = async (): Promise<ShareDetail[]> => {
-  const response = await fetch("/api/shares")
-  if (!response.ok) {
-    throw new Error("Failed to fetch shares data")
-  }
-  return response.json()
-}
 
 export default function Home() {
   const router = useRouter()
   const [modalOpen, setModalOpen] = useState(false)
   const toggleModal = () => setModalOpen(!modalOpen)
-
-  const {
-    data: sharesData,
-    error,
-    isLoading,
-  } = useQuery<ShareDetail[], Error>({
-    queryKey: ["sharesData"],
-    queryFn: fetchSharesData,
-  })
-
-  if (error) {
-    return <div>Error: {error.message}</div>
-  }
+  const isRegistered = useUserStore((state) => state.isRegistered)
+  const initialShares = useUserStore((state) => state.initialShares)
 
   return (
     <div className="flex flex-col bg-gray-100">
@@ -109,7 +89,7 @@ export default function Home() {
           }}
         >
           <CarouselContent className="w-full p-0">
-            {sharesData?.map((share, index) => (
+            {initialShares?.map((share, index) => (
               <CarouselItem key={index} className="w-full flex justify-center">
                 <Card className="w-full h-[50vh] flex items-center justify-center shadow-xl rounded-lg">
                   <CardContent className="w-full h-full flex items-center justify-center p-0">
@@ -269,13 +249,19 @@ export default function Home() {
           <>
             <Button
               className="w-full max-w-[200px] text-[1.1rem]"
-              onClick={toggleModal}
+              onClick={() => {
+                if (isRegistered) {
+                  router.push("/dashboard")
+                } else {
+                  toggleModal()
+                }
+              }}
             >
               {" "}
               I'm an art collector
             </Button>
             <Modal isOpen={modalOpen} close={toggleModal}>
-              <ProfileForm />
+              <ProfileForm toggleModal={toggleModal} />
             </Modal>
           </>
           <Button

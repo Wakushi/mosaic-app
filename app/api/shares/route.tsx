@@ -7,7 +7,7 @@ import {
 export async function GET(req: NextRequest): Promise<NextResponse> {
   const { searchParams } = new URL(req.url)
   const id = searchParams.get("id")
-
+  
   try {
     if (id) {
       const shareDetail = await getShareDetail(Number(id))

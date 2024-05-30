@@ -103,20 +103,20 @@ export default function Header() {
       </Link>
       <div className="flex gap-4">
         <Link href="/marketplace">
-          <Button variant="outline">Marketplace</Button>
+          <Button>Marketplace</Button>
         </Link>
         {isRegistered === false && (
           <>
             <Button onClick={toggleModal}>Register a work</Button>
             <Modal isOpen={modalOpen} close={toggleModal}>
-              <ProfileForm />
+              <ProfileForm toggleModal={toggleModal} />
             </Modal>
           </>
         )}
         {isRegistered === true && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline">Menu</Button>
+              <Button>Menu</Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56">
               <Link href={"/profil"}>

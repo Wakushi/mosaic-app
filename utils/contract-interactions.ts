@@ -275,7 +275,7 @@ export async function getShareDetail(id: number): Promise<ShareDetail> {
   }
 }
 
-export async function getListedItems() {
+export async function getListedShares() {
   try {
     const result = await readContract(chainConfig, {
       address: DWORK_SHARES_ADDRESS,

@@ -2,8 +2,9 @@ import sharp from "sharp"
 import satori from "satori"
 
 import React from "react"
+import { WorkStatus } from "@/types/artwork"
 
-async function getOptimizedFrame(frameComponent: React.ReactElement) {
+export async function getOptimizedFrame(frameComponent: React.ReactElement) {
   const jerseyFontResponse = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_PATH}/fonts/Roboto-Regular.ttf`
   )
@@ -28,4 +29,21 @@ async function getOptimizedFrame(frameComponent: React.ReactElement) {
   return response
 }
 
-export default getOptimizedFrame
+export function getVerificationStepStatus(
+  verificationStep: number
+): WorkStatus {
+  switch (verificationStep) {
+    case 0:
+      return "pending certificate extraction"
+    case 1:
+      return "certificate extracted"
+    case 2:
+      return "pending verification"
+    case 3:
+      return "work verified"
+    case 4:
+      return "tokenized"
+    default:
+      return "submitted"
+  }
+}

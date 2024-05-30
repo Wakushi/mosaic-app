@@ -1,3 +1,4 @@
+"use client"
 import React, { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -110,7 +111,7 @@ export const ReusableForm: React.FC<ReusableFormProps> = ({
                 )}
               />
             ))}
-            <Button type="submit" className="self-end	">
+            <Button type="submit" className="self-end">
               Submit
             </Button>
           </div>

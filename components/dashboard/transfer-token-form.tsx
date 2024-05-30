@@ -62,7 +62,6 @@ export function TransferWorkTokenForm({
         artwork.tokenizationRequestId,
         values.destinationChain
       )
-      console.log("Transfer hash:", hash)
       toast({
         title: "Success",
         description: "Work token transferred successfully.",

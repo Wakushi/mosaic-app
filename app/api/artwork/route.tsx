@@ -4,8 +4,9 @@ import {
   getAllArtworks,
   getArtworksByClientAddress,
 } from "@/utils/firebase-data"
-import { Artwork, TokenizationRequest, WorkStatus } from "@/types/artwork"
+import { Artwork, TokenizationRequest } from "@/types/artwork"
 import { getTokenizationRequestById } from "@/utils/contract-interactions"
+import { getVerificationStepStatus } from "@/utils/helpers"
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
@@ -74,24 +75,5 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     } else {
       return NextResponse.json({ error: "Unknown error" }, { status: 500 })
     }
-  }
-}
-
-export function getVerificationStepStatus(
-  verificationStep: number
-): WorkStatus {
-  switch (verificationStep) {
-    case 0:
-      return "pending certificate extraction"
-    case 1:
-      return "certificate extracted"
-    case 2:
-      return "pending verification"
-    case 3:
-      return "work verified"
-    case 4:
-      return "tokenized"
-    default:
-      return "submitted"
   }
 }

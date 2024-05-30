@@ -23,7 +23,6 @@ const BuyMarketShareDialog: React.FC<BuyMarketShareDialogProps> = ({
   const onBuy = async () => {
     try {
       const marketShareItem = await fetchMarketShareDetail(marketShareItemId)
-      console.log("Market share item:", marketShareItem)
       if (!marketShareItem) {
         throw new Error("Market share item not found")
       }

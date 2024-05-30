@@ -61,6 +61,19 @@ export type ShareDetail = {
   masterworksData: MasterworksWorkData
 }
 
+export type ListedShare = {
+  amount: number
+  isSold: boolean
+  itemId: string
+  priceUsd: number
+  seller: Address
+  sharesTokenId: number
+}
+
+export type ListedShareDetail = ShareDetail & {
+  listedShare: ListedShare
+}
+
 export type MasterworksWorkData = {
   title: string
   artist: string

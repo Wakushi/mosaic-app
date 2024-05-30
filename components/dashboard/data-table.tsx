@@ -1,7 +1,7 @@
 "use client"
 
-import * as React from "react";
-import { useEffect, useState } from "react";
+import * as React from "react"
+import { useEffect, useState } from "react"
 import {
   ColumnDef,
   flexRender,
@@ -9,7 +9,7 @@ import {
   useReactTable,
   ColumnFiltersState,
   getFilteredRowModel,
-} from "@tanstack/react-table";
+} from "@tanstack/react-table"
 import {
   Table,
   TableBody,
@@ -17,31 +17,34 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Modal } from "@/components/clientUi/modal";
-import { ArtForm } from "./artwork-form";
+} from "@/components/ui/table"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { Modal } from "@/components/clientUi/modal"
+import { ArtForm } from "./artwork-form"
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  clientAddress?: string;
+  columns: ColumnDef<TData, TValue>[]
+  data: TData[]
+  clientAddress?: string
 }
 
-const fetchArtworks = async (clientAddress:string) => {
-  const response = await fetch("/api/artwork" + (clientAddress ? `?clientAddress=${clientAddress}` : ""))
-  const data = await response.json();
-  return data;
-};
+const fetchArtworks = async (clientAddress: string) => {
+  const response = await fetch(
+    "/api/artwork" + (clientAddress ? `?clientAddress=${clientAddress}` : "")
+  )
+  const data = await response.json()
+  return data
+}
 
 export function DataTable<TData, TValue>({
   columns,
-  clientAddress
+  clientAddress,
 }: DataTableProps<TData, TValue>) {
-  const [data, setData] = useState<TData[]>([]);
+  const [data, setData] = useState<TData[]>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
-  );
+  )
   const table = useReactTable({
     data,
     columns,
@@ -51,18 +54,18 @@ export function DataTable<TData, TValue>({
     state: {
       columnFilters,
     },
-  });
-  const [modalOpen, setModalOpen] = useState(false);
-  const toggleModal = () => setModalOpen(!modalOpen);
+  })
+  const [modalOpen, setModalOpen] = useState(false)
+  const toggleModal = () => setModalOpen(!modalOpen)
 
   const loadArtworks = async () => {
-    const artworks = await fetchArtworks(clientAddress ?? "");
-    setData(artworks);
-  };
+    const artworks = await fetchArtworks(clientAddress ?? "")
+    setData(artworks)
+  }
 
   useEffect(() => {
-    loadArtworks();
-  }, []);
+    loadArtworks()
+  }, [])
 
   return (
     <div className="w-full">
@@ -75,7 +78,7 @@ export function DataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
-        <Button onClick={toggleModal}>Add Artwork</Button>
+        <Button onClick={toggleModal}>Open tokenization request</Button>
         <Modal isOpen={modalOpen} close={toggleModal}>
           <ArtForm onArtworkAdded={loadArtworks} />
         </Modal>
@@ -95,7 +98,7 @@ export function DataTable<TData, TValue>({
                             header.getContext()
                           )}
                     </TableHead>
-                  );
+                  )
                 })}
               </TableRow>
             ))}
@@ -131,5 +134,5 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
     </div>
-  );
+  )
 }

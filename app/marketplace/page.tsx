@@ -1,9 +1,6 @@
 "use client"
-import { useQuery } from "@tanstack/react-query"
-import { ShareDetail } from "@/types/artwork"
-import Image from "next/image"
-import { useState } from "react"
-import Loader from "@/components/clientUi/Loader"
+import { ListedShareDetail, ShareDetail } from "@/types/artwork"
+import { useEffect, useState } from "react"
 import {
   Carousel,
   CarouselContent,
@@ -12,96 +9,64 @@ import {
 import { Card, CardContent } from "@/components/ui/card"
 import Autoplay from "embla-carousel-autoplay"
 import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { formatUnits } from "viem"
+import CustomImage from "@/components/clientUi/CustomImage"
+import { useUserStore } from "@/store/useStore"
 
 const IMAGE_FALLBACK =
   "https://theredwindows.net/wp-content/themes/koji/assets/images/default-fallback-image.png"
 
-const fetchSharesData = async (): Promise<ShareDetail[]> => {
-  const response = await fetch("/api/shares")
-  if (!response.ok) {
-    throw new Error("Failed to fetch shares data")
-  }
-  return response.json()
-}
-
-const fetchListedItemsWithDetails = async (): Promise<any[]> => {
-  const response = await fetch("/api/listed-shares")
-  if (!response.ok) {
-    throw new Error("Failed to fetch listed shares")
-  }
-  const listedItems = await response.json()
-
-  const detailedItems = await Promise.all(
-    listedItems.map(async (item: any) => {
-      const shareResponse = await fetch(`/api/shares?id=${item.sharesTokenId}`)
-      if (!shareResponse.ok) {
-        throw new Error(
-          `Failed to fetch share details for token ID ${item.sharesTokenId}`
-        )
-      }
-      const shareDetails = await shareResponse.json()
-      return { ...shareDetails, itemListed: item }
-    })
-  )
-  return detailedItems
-}
-
 export default function Marketplace() {
   const [searchTerm, setSearchTerm] = useState("")
-  const [showShares, setShowShares] = useState(true)
+  const initialShares = useUserStore((state) => state.initialShares)
+  const listedShares = useUserStore((state) => state.listedShares)
+  const setListedShares = useUserStore((state) => state.setListedShares)
 
-  const {
-    data: sharesData,
-    error,
-    isLoading,
-  } = useQuery<ShareDetail[], Error>({
-    queryKey: ["sharesData"],
-    queryFn: fetchSharesData,
-  })
+  useEffect(() => {
+    const fetchListedSharesWithDetails = async () => {
+      if (listedShares.length) return
+      const response = await fetch("/api/listed-shares")
+      if (!response.ok) {
+        throw new Error("Failed to fetch listed shares")
+      }
+      const listedSharesData = await response.json()
+      const listedSharesDetailed = listedSharesData.map((listedShare: any) => {
+        const shareDetail = initialShares.find(
+          (share) =>
+            +share.workShare.sharesTokenId === +listedShare.sharesTokenId
+        )
+        return {
+          ...shareDetail,
+          listedShare,
+        } as ListedShareDetail
+      })
 
-  const {
-    data: listedItemsData,
-    error: listedItemsError,
-    isLoading: isLoadingListedItems,
-  } = useQuery<any[], Error>({
-    queryKey: ["listedItemsData"],
-    queryFn: fetchListedItemsWithDetails,
-  })
+      setListedShares(listedSharesDetailed)
+    }
+
+    fetchListedSharesWithDetails()
+  }, [listedShares, setListedShares])
 
   const handleSearchChange = (e: any) => {
     setSearchTerm(e.target.value)
   }
 
-  const filteredSharesData =
-    sharesData?.filter((share) =>
+  const filteredInitialShares =
+    initialShares?.filter((share) =>
       share.tokenizationRequest?.certificate?.artist
         .toLowerCase()
         .includes(searchTerm.toLowerCase())
     ) || []
 
-  const filteredListedItemsData =
-    listedItemsData
+  const filteredListedShares =
+    listedShares
       ?.flat()
       .filter((item) =>
         item.tokenizationRequest?.certificate?.artist
           .toLowerCase()
           .includes(searchTerm.toLowerCase())
       ) || []
-
-  if (isLoading || isLoadingListedItems) {
-    return (
-      <div className="min-h-screen flex items-center justify-center ">
-        <Loader />
-      </div>
-    )
-  }
-
-  if (error || listedItemsError) {
-    return <div>Error: {error?.message || listedItemsError?.message}</div>
-  }
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-white">
@@ -120,7 +85,7 @@ export default function Marketplace() {
           }}
         >
           <CarouselContent className="w-full p-0">
-            {sharesData?.map((share, index) => (
+            {initialShares?.map((share, index) => (
               <CarouselItem
                 key={`carousel-item-${index}`}
                 className="w-full flex justify-center"
@@ -162,9 +127,9 @@ export default function Marketplace() {
             </div>
 
             <div className="grid grid-cols-3 gap-10 justify-around">
-              {filteredSharesData.map((share) => (
+              {filteredInitialShares.map((share) => (
                 <Link
-                  href={`/marketplace/artwork?id=${share.workShare.sharesTokenId}`}
+                  href={`/marketplace/initial-share/${share.workShare.sharesTokenId}`}
                   key={`share-${share.workShare.sharesTokenId}`}
                   className="border border-slate-100 flex flex-col gap-2 justify-center p-4 rounded-md shadow-md items-center bg-white max-h-[350px]"
                 >
@@ -202,28 +167,36 @@ export default function Marketplace() {
               </p>
             </div>
             <div className="grid grid-cols-3 gap-10 justify-around">
-              {filteredListedItemsData.map((item, index) => (
+              {filteredListedShares.map((listedShareDetail, index) => (
                 <Link
-                  href={`/marketplace/artwork?id=${
-                    item.workShare?.sharesTokenId || index
-                  }&itemId=${item.itemListed.itemId}`}
+                  href={`/marketplace/listed-share/${listedShareDetail.listedShare.itemId}`}
                   key={`listed-item-${index}`}
                   className="border border-slate-100 flex flex-col gap-2 justify-center p-4 rounded-md shadow-md items-center bg-white max-h-[350px]"
                 >
                   <div className="flex-1 w-full h-[200px]">
                     <CustomImage
-                      src={item.masterworksData?.imageURL || IMAGE_FALLBACK}
+                      src={
+                        listedShareDetail.masterworksData?.imageURL ||
+                        IMAGE_FALLBACK
+                      }
                       alt="work"
                       fallbackSrc={IMAGE_FALLBACK}
                     />
                   </div>
                   <div className="flex flex-col gap-1 justify-center items-center flex-1">
-                    <h2>{item.tokenizationRequest?.certificate?.work}</h2>
-                    <p>{item.tokenizationRequest?.certificate?.artist}</p>
+                    <h2>
+                      {listedShareDetail.tokenizationRequest?.certificate?.work}
+                    </h2>
+                    <p>
+                      {
+                        listedShareDetail.tokenizationRequest?.certificate
+                          ?.artist
+                      }
+                    </p>
                     <p>
                       $
                       {formatUnits(
-                        BigInt(item.workShare.sharePriceUsd || 0),
+                        BigInt(listedShareDetail.workShare.sharePriceUsd || 0),
                         18
                       )}
                     </p>
@@ -235,36 +208,5 @@ export default function Marketplace() {
         </div>
       </div>
     </div>
-  )
-}
-
-const CustomImage = ({
-  src,
-  alt,
-  fallbackSrc,
-  ...props
-}: {
-  src: string
-  alt: string
-  fallbackSrc: string
-}) => {
-  const [imgSrc, setImgSrc] = useState(src)
-
-  const handleError = () => {
-    setImgSrc(fallbackSrc)
-  }
-
-  return (
-    <Image
-      src={imgSrc}
-      alt={alt}
-      onError={handleError}
-      width={0}
-      height={0}
-      style={{ width: "100%", height: "100%" }}
-      sizes="100vw"
-      className="object-cover"
-      {...props}
-    />
   )
 }
