@@ -13,8 +13,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import Autoplay from "embla-carousel-autoplay"
 import { Canvas } from "@react-three/fiber"
 import Experience from "@/components/canvas/Canvas"
-import Loader from "@/components/clientUi/Loader"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Hero from "@/components/Hero"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
@@ -46,13 +45,6 @@ export default function Home() {
     queryFn: fetchSharesData,
   })
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader />
-      </div>
-    )
-  }
 
   if (error) {
     return <div>Error: {error.message}</div>
@@ -264,7 +256,7 @@ export default function Home() {
         </div>
       </Section>
 
-      <Section title="" animate={false}>
+      <Section title="" animate={false} bgWhite>
         <h2 className="font-extrabold leading-none text-[5vw] uppercase mb-8">
           Simplify art investment
         </h2>
