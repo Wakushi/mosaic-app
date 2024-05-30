@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { useToast } from "@/components/ui/use-toast"
 import { useWatchContractEvent } from "wagmi"
-import { DWORK_ABI, DWORK_ADDRESS } from "@/lib/contract"
+import { DWORK_ABI, DWORK_ADDRESS_POLYGON } from "@/lib/contract"
 import { useUserStore } from "@/store/useStore"
 
 interface RequestWorkVerificationButtonProps {
@@ -31,7 +31,7 @@ const RequestWorkVerificationButton = forwardRef<
   const triggerRefresh = useUserStore((state) => state.triggerRefresh)
 
   useWatchContractEvent({
-    address: DWORK_ADDRESS,
+    address: DWORK_ADDRESS_POLYGON,
     abi: DWORK_ABI,
     eventName: "WorkVerificationRequested",
     onLogs: () => {

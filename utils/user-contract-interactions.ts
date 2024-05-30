@@ -1,9 +1,9 @@
 import { config } from "@/app/provider"
 import {
   DWORK_ABI,
-  DWORK_ADDRESS,
+  DWORK_ADDRESS_POLYGON,
   DWORK_SHARES_ABI,
-  DWORK_SHARES_ADDRESS,
+  DWORK_SHARES_ADDRESS_POLYGON,
 } from "@/lib/contract"
 import { readContract, simulateContract, writeContract } from "@wagmi/core"
 import { parseEther } from "viem"
@@ -12,7 +12,7 @@ const PRICE_VARIATION_ALLOWANCE = 0.00001
 
 export async function getNativeTokenPriceUsd(): Promise<number> {
   const price: any = await readContract(config, {
-    address: DWORK_SHARES_ADDRESS,
+    address: DWORK_SHARES_ADDRESS_POLYGON,
     abi: DWORK_SHARES_ABI,
     functionName: "getNativeTokenPriceUsd",
   })
@@ -29,7 +29,7 @@ export async function buyInitialShare(
     Number(shareValueUsd) / nativeTokenPriceUsd + PRICE_VARIATION_ALLOWANCE
   try {
     const { request: buyShareRequest } = await simulateContract(config, {
-      address: DWORK_SHARES_ADDRESS,
+      address: DWORK_SHARES_ADDRESS_POLYGON,
       abi: DWORK_SHARES_ABI,
       functionName: "buyInitialShare",
       args: [sharesTokenId, shareAmount],
@@ -52,7 +52,7 @@ export async function listMarketShareItem(
 ) {
   try {
     const { request: listShareRequest } = await simulateContract(config, {
-      address: DWORK_SHARES_ADDRESS,
+      address: DWORK_SHARES_ADDRESS_POLYGON,
       abi: DWORK_SHARES_ABI,
       functionName: "listMarketShareItem",
       args: [sharesTokenId, amount, parseEther(totalPriceUsd.toString())],
@@ -76,7 +76,7 @@ export async function buyMarketShareItem(
     const sharePriceNative =
       Number(priceUsd) / nativeTokenPriceUsd + PRICE_VARIATION_ALLOWANCE
     const { request: buyMarketShareRequest } = await simulateContract(config, {
-      address: DWORK_SHARES_ADDRESS,
+      address: DWORK_SHARES_ADDRESS_POLYGON,
       abi: DWORK_SHARES_ABI,
       functionName: "buyMarketShareItem",
       args: [marketShareItemId],
@@ -100,7 +100,7 @@ export async function xChainWorkTokenTransfer(
 ): Promise<string> {
   try {
     const { request: transferRequest } = await simulateContract(config, {
-      address: DWORK_ADDRESS,
+      address: DWORK_ADDRESS_POLYGON,
       abi: DWORK_ABI,
       functionName: "xChainWorkTokenTransfer",
       args: [
@@ -125,7 +125,7 @@ export async function xChainWorkTokenTransfer(
 export async function unlistMarketShareItem(marketShareItemId: number) {
   try {
     const { request: unlistRequest } = await simulateContract(config, {
-      address: DWORK_SHARES_ADDRESS,
+      address: DWORK_SHARES_ADDRESS_POLYGON,
       abi: DWORK_SHARES_ABI,
       functionName: "unlistMarketShareItem",
       args: [marketShareItemId],

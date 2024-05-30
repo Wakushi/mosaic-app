@@ -5,7 +5,7 @@ import { useAccount } from "wagmi"
 import Loader from "@/components/clientUi/Loader"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { DWORK_SHARES_ADDRESS } from "@/lib/contract"
+import { DWORK_SHARES_ADDRESS_POLYGON } from "@/lib/contract"
 import Image from "next/image"
 import ListShareDialog from "@/components/listShareButton"
 import { unlistMarketShareItem } from "@/utils/user-contract-interactions"
@@ -48,7 +48,7 @@ export default function Profil() {
           const filteredNfts = response.ownedNfts.filter(
             (nft: any) =>
               nft.contract.address.toLowerCase() ===
-              DWORK_SHARES_ADDRESS.toLowerCase()
+              DWORK_SHARES_ADDRESS_POLYGON.toLowerCase()
           )
           setNfts(filteredNfts)
           setLoading(false)

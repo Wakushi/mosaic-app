@@ -2,9 +2,9 @@ import { createWalletClient, http, createPublicClient, parseUnits } from "viem"
 import { privateKeyToAccount } from "viem/accounts"
 import { polygonAmoy } from "viem/chains"
 import {
-  DWORK_ADDRESS,
+  DWORK_ADDRESS_POLYGON,
   DWORK_ABI,
-  DWORK_SHARES_ADDRESS,
+  DWORK_SHARES_ADDRESS_POLYGON,
   DWORK_SHARES_ABI,
 } from "@/lib/contract"
 import { MasterworksWorkData, ShareDetail, WorkShare } from "@/types/artwork"
@@ -43,7 +43,7 @@ export async function openTokenizationRequest(
     const { request: tokenizationRequest, result } =
       await publicClient.simulateContract({
         account: walletClient.account,
-        address: DWORK_ADDRESS,
+        address: DWORK_ADDRESS_POLYGON,
         abi: DWORK_ABI,
         functionName: "openTokenizationRequest",
         args,
@@ -63,7 +63,7 @@ export async function requestWorkVerification(tokenizationRequestId: string) {
     const { request: workVerificationRequest } =
       await publicClient.simulateContract({
         account: walletClient.account,
-        address: DWORK_ADDRESS,
+        address: DWORK_ADDRESS_POLYGON,
         abi: DWORK_ABI,
         functionName: "requestWorkVerification",
         args: [tokenizationRequestId],
@@ -83,7 +83,7 @@ export async function getTokenizationRequestById(
 ) {
   try {
     const result = await publicClient.readContract({
-      address: DWORK_ADDRESS,
+      address: DWORK_ADDRESS_POLYGON,
       abi: DWORK_ABI,
       functionName: "getTokenizationRequest",
       args: [tokenizationRequestId],
@@ -105,7 +105,7 @@ export async function createShares(
     const { request: createSharesRequest } =
       await publicClient.simulateContract({
         account: walletClient.account,
-        address: DWORK_ADDRESS,
+        address: DWORK_ADDRESS_POLYGON,
         abi: DWORK_ABI,
         functionName: "createWorkShares",
         args: [
@@ -127,14 +127,14 @@ export async function getAllSharesDetails() {
   try {
     const result: any = await readContract(chainConfig, {
       abi: DWORK_SHARES_ABI,
-      address: DWORK_SHARES_ADDRESS,
+      address: DWORK_SHARES_ADDRESS_POLYGON,
       functionName: "getLastTokenId",
     })
     const shareLastTokenId = Number(result) + 2 // RPC fatigue
     const workShares: WorkShare[] = []
     for (let i = 1; i <= shareLastTokenId; i++) {
       const share: any = await readContract(chainConfig, {
-        address: DWORK_SHARES_ADDRESS,
+        address: DWORK_SHARES_ADDRESS_POLYGON,
         abi: DWORK_SHARES_ABI,
         functionName: "getWorkSharesByTokenId",
         args: [i],
@@ -156,13 +156,13 @@ export async function getAllSharesDetails() {
     const sharesDetailed: ShareDetail[] = []
     for (let workShare of workShares) {
       const tokenizationRequestId: any = await readContract(chainConfig, {
-        address: DWORK_ADDRESS,
+        address: DWORK_ADDRESS_POLYGON,
         abi: DWORK_ABI,
         functionName: "getTokenizationRequestIdByWorkTokenId",
         args: [workShare.workTokenId],
       })
       const tokenizationRequest: any = await readContract(chainConfig, {
-        address: DWORK_ADDRESS,
+        address: DWORK_ADDRESS_POLYGON,
         abi: DWORK_ABI,
         functionName: "getTokenizationRequest",
         args: [tokenizationRequestId],
@@ -207,9 +207,10 @@ export async function getAllSharesDetails() {
 }
 
 export async function getShareDetail(id: number): Promise<ShareDetail> {
+  console.log("getShareDetail", id)
   try {
     const share: any = await readContract(chainConfig, {
-      address: DWORK_SHARES_ADDRESS,
+      address: DWORK_SHARES_ADDRESS_POLYGON,
       abi: DWORK_SHARES_ABI,
       functionName: "getWorkSharesByTokenId",
       args: [id],
@@ -228,13 +229,13 @@ export async function getShareDetail(id: number): Promise<ShareDetail> {
     }
 
     const tokenizationRequestId: any = await readContract(chainConfig, {
-      address: DWORK_ADDRESS,
+      address: DWORK_ADDRESS_POLYGON,
       abi: DWORK_ABI,
       functionName: "getTokenizationRequestIdByWorkTokenId",
       args: [workShare.workTokenId],
     })
     const tokenizationRequest: any = await readContract(chainConfig, {
-      address: DWORK_ADDRESS,
+      address: DWORK_ADDRESS_POLYGON,
       abi: DWORK_ABI,
       functionName: "getTokenizationRequest",
       args: [tokenizationRequestId],
@@ -282,7 +283,7 @@ export async function getShareDetail(id: number): Promise<ShareDetail> {
 export async function getListedShares() {
   try {
     const result = await readContract(chainConfig, {
-      address: DWORK_SHARES_ADDRESS,
+      address: DWORK_SHARES_ADDRESS_POLYGON,
       abi: DWORK_SHARES_ABI,
       functionName: "getListedItems",
     })
@@ -296,7 +297,7 @@ export async function getListedShares() {
 export async function getListedItemById(id: number) {
   try {
     const result = await readContract(chainConfig, {
-      address: DWORK_SHARES_ADDRESS,
+      address: DWORK_SHARES_ADDRESS_POLYGON,
       abi: DWORK_SHARES_ABI,
       functionName: "getMarketShareItemById",
       args: [id],

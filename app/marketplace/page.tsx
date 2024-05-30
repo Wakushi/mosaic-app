@@ -13,6 +13,7 @@ import { formatUnits } from "viem"
 import CustomImage from "@/components/clientUi/CustomImage"
 import Loader from "@/components/clientUi/Loader"
 import { SharesContext } from "@/services/ShareContext"
+import { ListedShareDetail } from "@/types/artwork"
 
 const IMAGE_FALLBACK =
   "https://theredwindows.net/wp-content/themes/koji/assets/images/default-fallback-image.png"
@@ -152,47 +153,51 @@ export default function Marketplace() {
                 market.
               </p>
             </div>
-            <div className="grid grid-cols-3 gap-10 justify-around">
-              {filteredListedShares.map((listedShareDetail, index) => (
-                <Link
-                  href={`/marketplace/listed-share/${listedShareDetail.listedShare.itemId}`}
-                  key={`listed-item-${index}`}
-                  className="border border-slate-100 flex flex-col gap-2 justify-center p-4 rounded-md shadow-md items-center bg-white max-h-[350px]"
-                >
-                  <div className="flex-1 w-full h-[200px]">
-                    <CustomImage
-                      src={
-                        listedShareDetail.masterworksData?.imageURL ||
-                        IMAGE_FALLBACK
-                      }
-                      alt="work"
-                      fallbackSrc={IMAGE_FALLBACK}
-                    />
-                  </div>
-                  <div className="flex flex-col gap-1 justify-center items-center flex-1">
-                    <h2>
-                      {listedShareDetail.tokenizationRequest?.certificate?.work}
-                    </h2>
-                    <p>
-                      {
-                        listedShareDetail.tokenizationRequest?.certificate
-                          ?.artist
-                      }
-                    </p>
-                    <p>
-                      $
-                      {formatUnits(
-                        BigInt(listedShareDetail.workShare.sharePriceUsd || 0),
-                        18
-                      )}
-                    </p>
-                  </div>
-                </Link>
-              ))}
-            </div>
+            {filteredListedShares.length ? (
+              <ListedSharesList shares={filteredListedShares} />
+            ) : (
+              <div>
+                <p className="text-xl text-gray-700">No shares found</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
+    </div>
+  )
+}
+
+const ListedSharesList = ({ shares }: { shares: ListedShareDetail[] }) => {
+  return (
+    <div className="grid grid-cols-3 gap-10 justify-around">
+      {shares.map((listedShareDetail, index) => (
+        <Link
+          href={`/marketplace/listed-share/${listedShareDetail.listedShare.itemId}`}
+          key={`listed-item-${index}`}
+          className="border border-slate-100 flex flex-col gap-2 justify-center p-4 rounded-md shadow-md items-center bg-white max-h-[350px]"
+        >
+          <div className="flex-1 w-full h-[200px]">
+            <CustomImage
+              src={
+                listedShareDetail.masterworksData?.imageURL || IMAGE_FALLBACK
+              }
+              alt="work"
+              fallbackSrc={IMAGE_FALLBACK}
+            />
+          </div>
+          <div className="flex flex-col gap-1 justify-center items-center flex-1">
+            <h2>{listedShareDetail.tokenizationRequest?.certificate?.work}</h2>
+            <p>{listedShareDetail.tokenizationRequest?.certificate?.artist}</p>
+            <p>
+              $
+              {formatUnits(
+                BigInt(listedShareDetail.workShare.sharePriceUsd || 0),
+                18
+              )}
+            </p>
+          </div>
+        </Link>
+      ))}
     </div>
   )
 }

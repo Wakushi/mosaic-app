@@ -1,5 +1,3 @@
-"use client"
-
 // Styles
 import "@rainbow-me/rainbowkit/styles.css"
 
@@ -7,7 +5,7 @@ import "@rainbow-me/rainbowkit/styles.css"
 import React, { ReactNode } from "react"
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { polygonAmoy } from "wagmi/chains"
+import { polygonAmoy, optimismSepolia } from "wagmi/chains"
 import { getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit"
 import { WagmiProvider } from "wagmi"
 import SharesContextProvider from "@/services/ShareContext"
@@ -19,7 +17,7 @@ if (!process.env.NEXT_PUBLIC_PROJECT_ID) {
 export const config = getDefaultConfig({
   appName: "Mosaic",
   projectId: process.env.NEXT_PUBLIC_PROJECT_ID,
-  chains: [polygonAmoy],
+  chains: [polygonAmoy, optimismSepolia],
   ssr: true,
 })
 

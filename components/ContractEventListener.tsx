@@ -2,7 +2,7 @@
 import { useEffect } from "react"
 import { useUserStore } from "@/store/useStore"
 import { useContractEvent } from "@/utils/useContractEvent"
-import { DWORK_ABI, DWORK_ADDRESS } from "@/lib/contract"
+import { DWORK_ABI, DWORK_ADDRESS_POLYGON } from "@/lib/contract"
 import { useToast } from "@/components/ui/use-toast"
 
 const ContractEventListener: React.FC = () => {
@@ -12,7 +12,7 @@ const ContractEventListener: React.FC = () => {
   const { toast } = useToast()
 
   useContractEvent({
-    contractAddress: DWORK_ADDRESS,
+    contractAddress: DWORK_ADDRESS_POLYGON,
     abi: DWORK_ABI,
     eventName: "TokenizationRequestOpened",
     eventCallback: () => {
@@ -26,7 +26,7 @@ const ContractEventListener: React.FC = () => {
   })
 
   useContractEvent({
-    contractAddress: DWORK_ADDRESS,
+    contractAddress: DWORK_ADDRESS_POLYGON,
     abi: DWORK_ABI,
     eventName: "WorkVerificationError",
     eventCallback: (logs) => {
@@ -40,7 +40,7 @@ const ContractEventListener: React.FC = () => {
   })
 
   useContractEvent({
-    contractAddress: DWORK_ADDRESS,
+    contractAddress: DWORK_ADDRESS_POLYGON,
     abi: DWORK_ABI,
     eventName: "VerificationProcess",
     eventCallback: () => {

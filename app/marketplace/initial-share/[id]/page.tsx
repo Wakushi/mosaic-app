@@ -1,38 +1,24 @@
 "use client"
-export const dynamic = "force-dynamic"
-import { useQuery } from "@tanstack/react-query"
-import { ShareDetail } from "@/types/artwork"
 import Image from "next/image"
 import Loader from "@/components/clientUi/Loader"
 import BuyShareDialog from "@/components/marketplace/BuyShareDialog"
-import BuyMarketShareDialog from "@/components/marketplace/BuyMarketShareDialog"
 import { formatUnits } from "viem"
+import { SharesContext } from "@/services/ShareContext"
+import { useContext } from "react"
 
 const IMAGE_FALLBACK =
   "https://theredwindows.net/wp-content/themes/koji/assets/images/default-fallback-image.png"
 
-const fetchShareDetail = async (id: string): Promise<ShareDetail> => {
-  const response = await fetch(`/api/shares?id=${id}`)
-  if (!response.ok) {
-    throw new Error("Failed to fetch share details")
-  }
-  return response.json()
-}
-
-const Artwork = ({ params }: { params: { id: string } }) => {
+const InitialShareDetailPage = ({ params }: { params: { id: string } }) => {
   const id = params.id
 
-  const {
-    data: shareDetail,
-    error,
-    isLoading,
-  } = useQuery<ShareDetail, Error>({
-    queryKey: ["shareDetail", id],
-    queryFn: () => fetchShareDetail(id!),
-    enabled: !!id,
-  })
+  const { initialShares, initialSharesLoading } = useContext(SharesContext)
 
-  if (isLoading) {
+  const shareDetail = initialShares?.find(
+    (share) => +share.workShare.sharesTokenId === +id
+  )
+
+  if (initialSharesLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center ">
         <Loader />
@@ -40,12 +26,12 @@ const Artwork = ({ params }: { params: { id: string } }) => {
     )
   }
 
-  if (error) {
-    return <div>Error: {error.message}</div>
-  }
-
   if (!shareDetail) {
-    return <div>No details available</div>
+    return (
+      <div className="min-h-screen flex items-center justify-center text-3xl">
+        Share sold !
+      </div>
+    )
   }
 
   return (
@@ -95,4 +81,4 @@ const Artwork = ({ params }: { params: { id: string } }) => {
   )
 }
 
-export default Artwork
+export default InitialShareDetailPage

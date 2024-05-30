@@ -12,6 +12,8 @@ import Loader from "@/components/clientUi/Loader"
 import { useToast } from "@/components/ui/use-toast"
 import { parseEther } from "viem"
 import { buyInitialShare } from "@/utils/user-contract-interactions"
+import { useQueryClient } from "@tanstack/react-query"
+import { useRouter } from "next/navigation"
 
 interface BuyShareDialogProps {
   sharesTokenId: number
@@ -26,6 +28,8 @@ const BuyShareDialog: React.FC<BuyShareDialogProps> = ({
   const [isLoading, setIsLoading] = useState(false)
   const { register, handleSubmit, reset } = useForm()
   const { toast } = useToast()
+  const queryClient = useQueryClient()
+  const router = useRouter()
 
   const onSubmit = async (data: any) => {
     const { shareAmount } = data
@@ -38,9 +42,10 @@ const BuyShareDialog: React.FC<BuyShareDialogProps> = ({
         title: "Success",
         description: "Share purchased successfully!",
       })
-
+      queryClient.invalidateQueries({ queryKey: ["shares"] })
       reset()
       setOpen(false)
+      router.push("/marketplace")
     } catch (error) {
       console.error("Error buying share:", error)
       toast({
@@ -58,7 +63,7 @@ const BuyShareDialog: React.FC<BuyShareDialogProps> = ({
         Buy
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
+        <DialogContent className="min-h-[50vh]">
           <DialogHeader>
             <DialogTitle>Buy Share</DialogTitle>
           </DialogHeader>

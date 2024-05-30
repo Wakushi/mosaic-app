@@ -1,6 +1,8 @@
-import { createContext, ReactNode } from "react"
+import { createContext, ReactNode, useEffect } from "react"
 import { useQuery, UseQueryResult } from "@tanstack/react-query"
 import { ListedShareDetail, ShareDetail } from "@/types/artwork"
+import { useAccount } from "wagmi"
+import { DWORK_ADDRESS_OPTIMISM, DWORK_ADDRESS_POLYGON } from "@/lib/contract"
 
 interface SharesContextProviderProps {
   children: ReactNode
@@ -11,6 +13,7 @@ interface SharesContextProps {
   initialSharesLoading: boolean
   listedShares: ListedShareDetail[]
   listedSharesLoading: boolean
+  activeWorkContractAddress?: string
 }
 
 const SharesContext = createContext<SharesContextProps>({
@@ -18,11 +21,30 @@ const SharesContext = createContext<SharesContextProps>({
   initialSharesLoading: true,
   listedShares: [],
   listedSharesLoading: true,
+  activeWorkContractAddress: DWORK_ADDRESS_POLYGON,
 })
 
 export default function SharesContextProvider(
   props: SharesContextProviderProps
 ) {
+  const account = useAccount()
+  const activeWorkContractAddress = getWorkContractAddress(
+    account?.chain?.id || 80002
+  )
+
+  function getWorkContractAddress(chainId: number) {
+    switch (chainId) {
+      case 80002:
+        return DWORK_ADDRESS_POLYGON
+      case 11155420:
+        return DWORK_ADDRESS_OPTIMISM
+      default:
+        return DWORK_ADDRESS_POLYGON
+    }
+  }
+
+  useEffect(() => {}, [account])
+
   const {
     data: initialShares,
     isLoading: initialSharesLoading,
@@ -44,17 +66,17 @@ export default function SharesContextProvider(
   })
 
   async function fetchInitialShares(): Promise<ShareDetail[]> {
+    console.log("fetching initial shares")
     const response = await fetch("/api/shares")
     if (!response.ok) {
       throw new Error("Failed to fetch shares data")
     }
     const sharesData = await response.json()
-
-    console.log("Shares:", sharesData)
     return sharesData
   }
 
   async function fetchListedShares(): Promise<ListedShareDetail[]> {
+    console.log("fetching listed shares")
     if (!initialShares) return []
     const response = await fetch("/api/listed-shares")
     if (!response.ok) {
@@ -70,8 +92,6 @@ export default function SharesContextProvider(
         listedShare,
       } as ListedShareDetail
     })
-
-    console.log("Listed :", listedSharesDetailed)
     return listedSharesDetailed
   }
 
@@ -80,6 +100,7 @@ export default function SharesContextProvider(
     initialSharesLoading,
     listedShares: listedShares ?? [],
     listedSharesLoading,
+    activeWorkContractAddress,
   }
 
   return (
