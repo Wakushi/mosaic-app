@@ -7,10 +7,11 @@ import {
   DWORK_SHARES_ADDRESS_POLYGON,
   DWORK_SHARES_ABI,
 } from "@/lib/contract"
-import { MasterworksWorkData, ShareDetail, WorkShare } from "@/types/artwork"
+import { ShareDetail, WorkShare } from "@/types/artwork"
 import { getMasterworksData } from "./external-data"
 import { chainConfig } from "./blockchain-config"
 import { readContract } from "@wagmi/core"
+import { convertBigIntToString } from "./user-contract-interactions"
 
 const account = privateKeyToAccount(process.env.PRIVATE_KEY as `0x`)
 
@@ -123,91 +124,7 @@ export async function createShares(
   }
 }
 
-export async function getAllSharesDetails() {
-  try {
-    const result: any = await readContract(chainConfig, {
-      abi: DWORK_SHARES_ABI,
-      address: DWORK_SHARES_ADDRESS_POLYGON,
-      functionName: "getLastTokenId",
-    })
-    const shareLastTokenId = Number(result) + 2 // RPC fatigue
-    const workShares: WorkShare[] = []
-    for (let i = 1; i <= shareLastTokenId; i++) {
-      const share: any = await readContract(chainConfig, {
-        address: DWORK_SHARES_ADDRESS_POLYGON,
-        abi: DWORK_SHARES_ABI,
-        functionName: "getWorkSharesByTokenId",
-        args: [i],
-      })
-      if (!share.workTokenId) continue
-
-      workShares.push({
-        sharesTokenId: i,
-        maxShareSupply: Number(share.maxShareSupply),
-        sharePriceUsd: Number(share.sharePriceUsd),
-        workTokenId: Number(share.workTokenId),
-        totalShareBought: Number(share.totalShareBought),
-        totalSellValueUsd: Number(share.totalSellValueUsd),
-        workOwner: share.workOwner,
-        isPaused: share.isPaused,
-        isRedeemable: share.isRedeemable,
-      })
-    }
-    const sharesDetailed: ShareDetail[] = []
-    for (let workShare of workShares) {
-      const tokenizationRequestId: any = await readContract(chainConfig, {
-        address: DWORK_ADDRESS_POLYGON,
-        abi: DWORK_ABI,
-        functionName: "getTokenizationRequestIdByWorkTokenId",
-        args: [workShare.workTokenId],
-      })
-      const tokenizationRequest: any = await readContract(chainConfig, {
-        address: DWORK_ADDRESS_POLYGON,
-        abi: DWORK_ABI,
-        functionName: "getTokenizationRequest",
-        args: [tokenizationRequestId],
-      })
-
-      const masterworksData: MasterworksWorkData = await getMasterworksData(
-        tokenizationRequest.certificate.artist,
-        tokenizationRequest.certificate.work
-      )
-      sharesDetailed.push({
-        tokenizationRequest: {
-          customerSubmissionIPFSHash:
-            tokenizationRequest.customerSubmissionIPFSHash,
-          appraiserReportIPFSHash: tokenizationRequest.appraiserReportIPFSHash,
-          certificateIPFSHash: tokenizationRequest.certificateIPFSHash,
-          owner: tokenizationRequest.owner,
-          ownerName: tokenizationRequest.ownerName,
-          lastWorkPriceUsd: Number(tokenizationRequest.lastWorkPriceUsd),
-          workTokenId: Number(tokenizationRequest.workTokenId),
-          sharesTokenId: tokenizationRequest.sharesTokenId.toString(),
-          listingPriceUsd: Number(tokenizationRequest.listingPriceUsd),
-          isMinted: tokenizationRequest.isMinted,
-          isFractionalized: tokenizationRequest.isFractionalized,
-          isPaused: tokenizationRequest.isPaused,
-          isListed: tokenizationRequest.isListed,
-          lastVerifiedAt: Number(tokenizationRequest.lastVerifiedAt),
-          verificationStep: Number(tokenizationRequest.verificationStep),
-          certificate: {
-            artist: tokenizationRequest.certificate.artist,
-            work: tokenizationRequest.certificate.work,
-          },
-        },
-        workShare,
-        masterworksData,
-      })
-    }
-    return sharesDetailed
-  } catch (error) {
-    console.error("Error getting tokenization request:", error)
-    throw new Error("Failed to get tokenization request")
-  }
-}
-
 export async function getShareDetail(id: number): Promise<ShareDetail> {
-  console.log("getShareDetail", id)
   try {
     const share: any = await readContract(chainConfig, {
       address: DWORK_SHARES_ADDRESS_POLYGON,
@@ -280,20 +197,6 @@ export async function getShareDetail(id: number): Promise<ShareDetail> {
   }
 }
 
-export async function getListedShares() {
-  try {
-    const result = await readContract(chainConfig, {
-      address: DWORK_SHARES_ADDRESS_POLYGON,
-      abi: DWORK_SHARES_ABI,
-      functionName: "getListedItems",
-    })
-    return convertBigIntToString(result)
-  } catch (error) {
-    console.error("Error getting listed items:", error)
-    throw new Error("Failed to get listed items")
-  }
-}
-
 export async function getListedItemById(id: number) {
   try {
     const result = await readContract(chainConfig, {
@@ -306,22 +209,5 @@ export async function getListedItemById(id: number) {
   } catch (error) {
     console.error("Error getting listed items:", error)
     throw new Error("Failed to get listed items")
-  }
-}
-
-export function convertBigIntToString(obj: any): any {
-  if (typeof obj === "bigint") {
-    return obj.toString()
-  } else if (Array.isArray(obj)) {
-    return obj.map(convertBigIntToString)
-  } else if (typeof obj === "object" && obj !== null) {
-    return Object.fromEntries(
-      Object.entries(obj).map(([key, value]) => [
-        key,
-        convertBigIntToString(value),
-      ])
-    )
-  } else {
-    return obj
   }
 }

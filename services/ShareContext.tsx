@@ -1,8 +1,11 @@
-import { createContext, ReactNode, useEffect } from "react"
+"use client"
+import { createContext, ReactNode } from "react"
 import { useQuery, UseQueryResult } from "@tanstack/react-query"
 import { ListedShareDetail, ShareDetail } from "@/types/artwork"
-import { useAccount } from "wagmi"
-import { DWORK_ADDRESS_OPTIMISM, DWORK_ADDRESS_POLYGON } from "@/lib/contract"
+import {
+  getAllSharesDetails,
+  getListedShares,
+} from "@/utils/user-contract-interactions"
 
 interface SharesContextProviderProps {
   children: ReactNode
@@ -13,7 +16,6 @@ interface SharesContextProps {
   initialSharesLoading: boolean
   listedShares: ListedShareDetail[]
   listedSharesLoading: boolean
-  activeWorkContractAddress?: string
 }
 
 const SharesContext = createContext<SharesContextProps>({
@@ -21,30 +23,11 @@ const SharesContext = createContext<SharesContextProps>({
   initialSharesLoading: true,
   listedShares: [],
   listedSharesLoading: true,
-  activeWorkContractAddress: DWORK_ADDRESS_POLYGON,
 })
 
 export default function SharesContextProvider(
   props: SharesContextProviderProps
 ) {
-  const account = useAccount()
-  const activeWorkContractAddress = getWorkContractAddress(
-    account?.chain?.id || 80002
-  )
-
-  function getWorkContractAddress(chainId: number) {
-    switch (chainId) {
-      case 80002:
-        return DWORK_ADDRESS_POLYGON
-      case 11155420:
-        return DWORK_ADDRESS_OPTIMISM
-      default:
-        return DWORK_ADDRESS_POLYGON
-    }
-  }
-
-  useEffect(() => {}, [account])
-
   const {
     data: initialShares,
     isLoading: initialSharesLoading,
@@ -66,22 +49,20 @@ export default function SharesContextProvider(
   })
 
   async function fetchInitialShares(): Promise<ShareDetail[]> {
-    const response = await fetch("/api/shares")
-    if (!response.ok) {
+    const shares = await getAllSharesDetails()
+    if (!shares.length) {
       throw new Error("Failed to fetch shares data")
     }
-    const sharesData = await response.json()
-    return sharesData
+    return shares
   }
 
   async function fetchListedShares(): Promise<ListedShareDetail[]> {
     if (!initialShares) return []
-    const response = await fetch("/api/listed-shares")
-    if (!response.ok) {
+    const listedShares = await getListedShares()
+    if (!listedShares.length) {
       throw new Error("Failed to fetch shares data")
     }
-    const listedSharesData = await response.json()
-    const listedSharesDetailed = listedSharesData.map((listedShare: any) => {
+    const listedSharesDetailed = listedShares.map((listedShare: any) => {
       const shareDetail = initialShares.find(
         (share) => +share.workShare.sharesTokenId === +listedShare.sharesTokenId
       )
@@ -98,7 +79,6 @@ export default function SharesContextProvider(
     initialSharesLoading,
     listedShares: listedShares ?? [],
     listedSharesLoading,
-    activeWorkContractAddress,
   }
 
   return (

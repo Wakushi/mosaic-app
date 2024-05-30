@@ -1,3 +1,4 @@
+"use client"
 // Styles
 import "@rainbow-me/rainbowkit/styles.css"
 
