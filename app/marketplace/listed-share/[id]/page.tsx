@@ -12,20 +12,12 @@ import { useUserStore } from "@/store/useStore"
 const IMAGE_FALLBACK =
   "https://theredwindows.net/wp-content/themes/koji/assets/images/default-fallback-image.png"
 
-// const fetchShareDetail = async (id: string): Promise<ShareDetail> => {
-//   const response = await fetch(`/api/shares?id=${id}`)
-//   if (!response.ok) {
-//     throw new Error("Failed to fetch share details")
-//   }
-//   return response.json()
-// }
-
 const Artwork = ({ params }: { params: { id: string } }) => {
   const listedShares = useUserStore((state) => state.listedShares)
   const id = params.id
-
+  
   const shareDetail = listedShares.find(
-    (share) => share.workShare.sharesTokenId === parseInt(id)
+    (share) => +share.listedShare.itemId === parseInt(id)
   )
 
   if (!shareDetail) {
