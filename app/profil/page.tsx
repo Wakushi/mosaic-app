@@ -158,7 +158,6 @@ export default function Profil() {
       </div>
     )
   }
-console.log(sharesData);
 
   return (
     <div className="min-h-screen flex flex-col items-center py-20">
