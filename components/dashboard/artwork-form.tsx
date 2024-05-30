@@ -1,13 +1,14 @@
-import { z } from "zod";
-import React, { useState } from "react";
-import { ReusableForm } from "../clientUi/form";
-import { useAccount } from "wagmi";
-import { pinJSONToIPFS, pinFileToIPFS } from "@/utils/pinata-data";
-import { ArtworkData } from "@/types/artwork";
-import { Button } from "../ui/button";
-import Link from "next/link";
-import { useToast } from "@/components/ui/use-toast";
-import Loader from "@/components/clientUi/Loader";
+import { z } from "zod"
+import React, { useState } from "react"
+import { ReusableForm } from "../clientUi/form"
+import { useAccount } from "wagmi"
+import { pinJSONToIPFS, pinFileToIPFS } from "@/utils/pinata-data"
+import { ArtworkData } from "@/types/artwork"
+import { Button } from "../ui/button"
+import Link from "next/link"
+import { useToast } from "@/components/ui/use-toast"
+import Loader from "@/components/clientUi/Loader"
+import { useQueryClient } from "@tanstack/react-query"
 
 const stringToNumber = z
   .union([
@@ -19,16 +20,16 @@ const stringToNumber = z
   ])
   .refine((value) => typeof value === "number", {
     message: "Must be a valid number",
-  });
+  })
 
 export const artFormSchema = z.object({
   artist: z.string().min(2, "Artist name is required").max(100),
   owner: z.string().min(2, "Owner name is required").max(100),
   title: z.string().min(2, "Title is required").max(100),
   price: stringToNumber,
-});
+})
 
-export type ArtFormValues = z.infer<typeof artFormSchema>;
+export type ArtFormValues = z.infer<typeof artFormSchema>
 
 export const artFieldsData = [
   { name: "artist", label: "Artist", description: "Name of the artist." },
@@ -40,33 +41,30 @@ export const artFieldsData = [
     description: "Price of the artwork.",
     type: "number",
   },
-];
+]
 
-interface ArtFormProps {
-  onArtworkAdded: () => void;
-}
-
-export function ArtForm({ onArtworkAdded }: ArtFormProps) {
-  const account = useAccount();
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const { toast } = useToast();
+export function ArtForm({ clientAddress }: { clientAddress: string }) {
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
+  const account = useAccount()
+  const [loading, setLoading] = useState(false)
+  const { toast } = useToast()
+  const queryClient = useQueryClient()
 
   const onSubmit = async (values: ArtFormValues) => {
-    setLoading(true);
+    setLoading(true)
     try {
       const artworkData: ArtworkData = {
-        clientAddress: account?.address || "",
+        clientAddress: clientAddress,
         title: values.title,
         artist: values.artist,
         owner: values.owner,
         price: values.price,
-      };
+      }
 
       const pinataResponse = await pinJSONToIPFS(
         artworkData,
         `artwork-${values.title}`
-      );
+      )
 
       if (pinataResponse.IpfsHash) {
         const expertReport = {
@@ -75,12 +73,12 @@ export function ArtForm({ onArtworkAdded }: ArtFormProps) {
           work: values.title,
           valuationUSD: values.price,
           owner: values.owner,
-        };
+        }
 
         const reportResponse = await pinJSONToIPFS(
           expertReport,
           `rapport-${values.title}`
-        );
+        )
 
         if (reportResponse.IpfsHash) {
           const certificateResponse = await fetch("/api/generateCertificate", {
@@ -90,60 +88,62 @@ export function ArtForm({ onArtworkAdded }: ArtFormProps) {
               title: values.title,
               artist: values.artist,
             }),
-          });
+          })
 
-          const certificateData = await certificateResponse.json();
+          const certificateData = await certificateResponse.json()
 
           if (!certificateResponse.ok) {
             throw new Error(
               certificateData.error || "Failed to generate certificate"
-            );
+            )
           }
 
           const certificateBuffer = Buffer.from(
             certificateData.certificateBuffer,
             "base64"
-          );
+          )
           const pinataCertificateResponse = await pinFileToIPFS(
             certificateBuffer,
             `certificate-${values.title}`
-          );
+          )
 
           if (pinataCertificateResponse.IpfsHash) {
             const hashDataResponse = await fetch("/api/artwork/addHashData", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                clientAddress: account?.address || "",
+                clientAddress: clientAddress,
                 title: values.title,
                 hashReport: reportResponse.IpfsHash,
                 hashArtwork: pinataResponse.IpfsHash,
                 hashCertificate: pinataCertificateResponse.IpfsHash,
               }),
-            });
+            })
 
             if (!hashDataResponse.ok) {
-              throw new Error("Failed to add hash data to Firebase");
+              throw new Error("Failed to add hash data to Firebase")
             }
 
             setSuccessMessage(
               "Artwork added successfully! Expert report and certificate generated and stored."
-            );
+            )
             toast({
               title: "Success",
               description:
                 "Artwork added successfully! Expert report and certificate generated and stored.",
-            });
+            })
 
-            onArtworkAdded(); 
+            queryClient.invalidateQueries({
+              queryKey: ["artworks", account?.address],
+            })
           } else {
-            throw new Error("Failed to pin certificate to IPFS");
+            throw new Error("Failed to pin certificate to IPFS")
           }
         } else {
-          throw new Error("Failed to pin expert report to IPFS");
+          throw new Error("Failed to pin expert report to IPFS")
         }
       } else {
-        throw new Error("Failed to pin JSON to IPFS");
+        throw new Error("Failed to pin JSON to IPFS")
       }
 
       const response = await fetch("/api/artwork", {
@@ -153,33 +153,33 @@ export function ArtForm({ onArtworkAdded }: ArtFormProps) {
       });
       const responseData = await response.json();
       if (response.ok) {
-        setSuccessMessage("Artwork added successfully!");
+        setSuccessMessage("Artwork added successfully!")
         toast({
           title: "Success",
           description: "Artwork added successfully",
-        });
+        })
       } else {
         toast({
           title: "Error",
           description: "Failed to add artwork: " + responseData.error,
-        });
+        })
       }
     } catch (error) {
       if (error instanceof Error) {
         toast({
           title: "Error",
           description: "Failed to add artwork: " + error.message,
-        });
+        })
       } else {
         toast({
           title: "Error",
           description: "Failed to add artwork: Unknown error",
-        });
+        })
       }
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <div>
@@ -209,5 +209,5 @@ export function ArtForm({ onArtworkAdded }: ArtFormProps) {
         />
       )}
     </div>
-  );
+  )
 }

@@ -36,6 +36,10 @@ export default function Dashboard() {
     return <div>Error: {error.message}</div>
   }
 
+  if (!data) {
+    return <div>No data</div>
+  }
+
   return (
     <div className="min-h-screen px-14 pt-[8rem]">
       <h1 className="text-4xl self-start">Dashboard</h1>
@@ -43,7 +47,7 @@ export default function Dashboard() {
       <div className="mx-auto py-10">
         <DataTable
           columns={columns}
-          data={data || []}
+          data={data}
           clientAddress={clientAddress}
         />
       </div>

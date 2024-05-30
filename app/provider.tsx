@@ -7,7 +7,7 @@ import React, { ReactNode } from "react"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { polygonAmoy, optimismSepolia } from "wagmi/chains"
 import { getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit"
-import { WagmiProvider } from "wagmi"
+import { WagmiProvider, http } from "wagmi"
 import SharesContextProvider from "@/services/ShareContext"
 
 if (!process.env.NEXT_PUBLIC_PROJECT_ID) {
@@ -18,6 +18,9 @@ export const config = getDefaultConfig({
   appName: "Mosaic",
   projectId: process.env.NEXT_PUBLIC_PROJECT_ID,
   chains: [polygonAmoy, optimismSepolia],
+  transports: {
+    [polygonAmoy.id]: http("https://rpc-amoy.polygon.technology/"),
+  },
   ssr: true,
 })
 

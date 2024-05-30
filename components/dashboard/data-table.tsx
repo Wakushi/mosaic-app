@@ -29,22 +29,20 @@ interface DataTableProps<TData, TValue> {
   clientAddress?: string
 }
 
-const fetchArtworks = async (clientAddress: string) => {
-  const response = await fetch(
-    "/api/artwork" + (clientAddress ? `?clientAddress=${clientAddress}` : "")
-  )
-  const data = await response.json()
-  return data
-}
-
 export function DataTable<TData, TValue>({
   columns,
+  data: initialData,
   clientAddress,
 }: DataTableProps<TData, TValue>) {
-  const [data, setData] = useState<TData[]>([])
+  const [data, setData] = useState<TData[]>(initialData)
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   )
+
+  useEffect(() => {
+    setData(initialData)
+  }, [initialData])
+
   const table = useReactTable({
     data,
     columns,
@@ -57,15 +55,6 @@ export function DataTable<TData, TValue>({
   })
   const [modalOpen, setModalOpen] = useState(false)
   const toggleModal = () => setModalOpen(!modalOpen)
-
-  const loadArtworks = async () => {
-    const artworks = await fetchArtworks(clientAddress ?? "")
-    setData(artworks)
-  }
-
-  useEffect(() => {
-    loadArtworks()
-  }, [])
 
   return (
     <div className="w-full">
@@ -80,7 +69,7 @@ export function DataTable<TData, TValue>({
         />
         <Button onClick={toggleModal}>Open tokenization request</Button>
         <Modal isOpen={modalOpen} close={toggleModal}>
-          <ArtForm onArtworkAdded={loadArtworks} />
+          <ArtForm clientAddress={clientAddress ?? ""} />
         </Modal>
       </div>
       <div className="rounded-md border">

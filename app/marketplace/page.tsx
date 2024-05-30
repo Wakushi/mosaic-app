@@ -96,7 +96,7 @@ export default function Marketplace() {
                       />
                       <div className="absolute bottom-0 w-full bg-white bg-opacity-[0.02] shadow-sm backdrop-blur-sm flex items-center justify-end px-20 py-10">
                         <div className="text-white text-xl drop-shadow-xl">
-                          {share.masterworksData.title}-{" "}
+                          {share.masterworksData.title} -{" "}
                           {share.masterworksData.artist}{" "}
                         </div>
                       </div>
