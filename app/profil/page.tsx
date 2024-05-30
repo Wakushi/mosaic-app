@@ -9,6 +9,7 @@ import { DWORK_SHARES_ADDRESS_POLYGON } from "@/lib/contract"
 import Image from "next/image"
 import ListShareDialog from "@/components/listShareButton"
 import { unlistMarketShareItem } from "@/utils/user-contract-interactions"
+import BurnShareButton from "@/components/BurnShareButton"
 
 const IMAGE_FALLBACK =
   "https://theredwindows.net/wp-content/themes/koji/assets/images/default-fallback-image.png"
@@ -157,6 +158,7 @@ export default function Profil() {
       </div>
     )
   }
+console.log(sharesData);
 
   return (
     <div className="min-h-screen flex flex-col items-center py-20">
@@ -184,7 +186,7 @@ export default function Profil() {
               {filteredSharesData.map((share) => (
                 <div
                   key={share.tokenId}
-                  className="border border-slate-100 flex flex-col gap-2 justify-center p-4 rounded-md shadow-md items-center bg-white max-h-[350px]"
+                  className="border border-slate-100 flex flex-col gap-2 justify-center p-4 rounded-md shadow-md items-center bg-white max-h-[400px]"
                 >
                   <div className="flex-1 w-full h-[200px]">
                     <Image
@@ -199,12 +201,16 @@ export default function Profil() {
                     <h2>{share.tokenizationRequest.certificate.work}</h2>
                     <p>{share.tokenizationRequest.certificate.artist}</p>
                     <p>x{share.balance}</p>
-                    <Button
-                      className="w-full"
-                      onClick={() => setOpenDialogTokenId(share.tokenId)}
-                    >
-                      List share
-                    </Button>
+                    {share.workShare.isRedeemable ? (
+                      <BurnShareButton sharesTokenId={share.tokenId} />
+                    ) : (
+                      <Button
+                        className="w-full"
+                        onClick={() => setOpenDialogTokenId(share.tokenId)}
+                      >
+                        List share
+                      </Button>
+                    )}
                   </div>
                   {openDialogTokenId === share.tokenId && (
                     <ListShareDialog
@@ -225,7 +231,7 @@ export default function Profil() {
               {listedSharesDetails.map((share) => (
                 <div
                   key={share.itemId}
-                  className="border border-slate-100 flex flex-col gap-2 justify-center p-4 rounded-md shadow-md items-center bg-white max-h-[350px]"
+                  className="border border-slate-100 flex flex-col gap-2 justify-center p-4 rounded-md shadow-md items-center bg-white max-h-[400px]"
                 >
                   <div className="flex-1 w-full h-[200px]">
                     <Image
@@ -240,6 +246,11 @@ export default function Profil() {
                     <h2>{share.tokenizationRequest?.certificate?.work}</h2>
                     <p>{share.tokenizationRequest?.certificate?.artist}</p>
                     <p>Amount: {share.amount}</p>
+                    {share.workShare?.isRedeemable && (
+                      <div className="text-red-500 text-center">
+                        This share has been sold. Please unlist and burn your share.
+                      </div>
+                    )}
                     <Button
                       className="w-full"
                       onClick={() => handleUnlist(share.itemId)}

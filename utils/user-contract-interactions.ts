@@ -139,3 +139,24 @@ export async function unlistMarketShareItem(marketShareItemId: number) {
     throw new Error("Failed to unlist market share item")
   }
 }
+
+export async function redeemAndBurnSharesForUSDC(
+  shareTokenId: number,
+  shareAmount: number
+) {
+  try {
+    const { request: burnSharesRequest } = await simulateContract(config, {
+      address: DWORK_SHARES_ADDRESS_POLYGON,
+      abi: DWORK_SHARES_ABI,
+      functionName: "redeemAndBurnSharesForUSDC",
+      args: [shareTokenId, shareAmount],
+    });
+
+    const result = await writeContract(config, burnSharesRequest);
+
+    return result;
+  } catch (error) {
+    console.error("Error burning shares for USDC:", error);
+    throw new Error("Failed to burn shares for USDC");
+  }
+}

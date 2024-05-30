@@ -54,7 +54,7 @@ export default function Marketplace() {
       </div>
     )
   }
-
+  
   return (
     <div className="min-h-screen flex flex-col items-center bg-white">
       <div className="w-screen flex flex-col justify-center items-center p-24 pt-[8rem] gap-4">
