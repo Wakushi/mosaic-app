@@ -42,7 +42,7 @@ export type TokenizationRequest = {
   ownerName: string
   lastWorkPriceUsd: number
   workTokenId: number
-  sharesTokenId: number
+  sharesTokenId: string
   listingPriceUsd: number
   isMinted: boolean
   isFractionalized: boolean

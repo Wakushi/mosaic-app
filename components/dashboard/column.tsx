@@ -61,6 +61,7 @@ export const columns: ColumnDef<Artwork>[] = [
     id: "actions",
     cell: ({ row }) => {
       const artwork = row.original
+      if (!artwork) return null
       const [modalOpen, setModalOpen] = useState(false)
       const toggleModal = () => setModalOpen(!modalOpen)
       return (
@@ -76,11 +77,12 @@ export const columns: ColumnDef<Artwork>[] = [
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               {artwork.status === "tokenized" && (
                 <>
-                  {!artwork.tokenizationRequest?.sharesTokenId && (
-                    <DropdownMenuItem asChild>
-                      <CreateSharesButton artwork={artwork} />
-                    </DropdownMenuItem>
-                  )}
+                  {artwork.tokenizationRequest &&
+                    artwork.tokenizationRequest.sharesTokenId === "0" && (
+                      <DropdownMenuItem asChild>
+                        <CreateSharesButton artwork={artwork} />
+                      </DropdownMenuItem>
+                    )}
                   <DropdownMenuItem asChild>
                     <TransferTokenButton artwork={artwork} />
                   </DropdownMenuItem>
