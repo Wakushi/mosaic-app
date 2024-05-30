@@ -5,7 +5,6 @@ import { useState } from "react"
 import { Modal } from "./clientUi/modal"
 import { ProfileForm } from "./profile-form"
 import { useUserStore } from "@/store/useStore"
-import { is } from "@react-three/fiber/dist/declarations/src/core/utils"
 
 export default function Hero() {
   const router = useRouter()

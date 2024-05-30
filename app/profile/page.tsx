@@ -15,7 +15,7 @@ import { SharesContext } from "@/services/ShareContext"
 const IMAGE_FALLBACK =
   "https://theredwindows.net/wp-content/themes/koji/assets/images/default-fallback-image.png"
 
-export default function Profil() {
+export default function Profile() {
   const { address: clientAddress } = useAccount()
   const [nfts, setNfts] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
@@ -23,9 +23,7 @@ export default function Profil() {
   const [activeSection, setActiveSection] = useState<"owned" | "listed">(
     "owned"
   )
-  const [openDialogTokenId, setOpenDialogTokenId] = useState<number | null>(
-    null
-  )
+
   const [ownedShares, setOwnedShares] = useState<any[]>([])
   const [ownedListedShares, setOwnedListedShares] = useState<any[]>([])
 
@@ -125,7 +123,7 @@ export default function Profil() {
   return (
     <div className="min-h-screen flex flex-col items-center py-20">
       <div className="self-start w-full py-10 px-24">
-        <h1 className="text-4xl self-start mb-10">Profil</h1>
+        <h1 className="text-4xl self-start mb-10">Profile</h1>
         <div className="w-full flex gap-4 items-center">
           <Input
             type="text"
@@ -151,44 +149,11 @@ export default function Profil() {
           <>
             <h2 className="text-3xl mt-10 mb-4">Owned Shares</h2>
             <div className="grid grid-cols-3 gap-10 mt-4 justify-around">
-              {filteredSharesData.map((share) => (
-                <div
-                  key={share.tokenId}
-                  className="border border-slate-100 flex flex-col gap-2 justify-center p-4 rounded-md shadow-md items-center bg-white max-h-[400px]"
-                >
-                  <div className="flex-1 w-full h-[200px]">
-                    <Image
-                      src={share.masterworksData?.imageURL || IMAGE_FALLBACK}
-                      alt="work"
-                      width={300}
-                      height={300}
-                      className="object-cover w-full h-full"
-                    />
-                  </div>
-                  <div className="flex flex-col gap-1 justify-center items-center flex-1">
-                    <h2>{share.tokenizationRequest.certificate.work}</h2>
-                    <p>{share.tokenizationRequest.certificate.artist}</p>
-                    <p>x{share.balance}</p>
-                    {share.workShare.isRedeemable ? (
-                      <BurnShareButton sharesTokenId={share.tokenId} />
-                    ) : (
-                      <Button
-                        className="w-full"
-                        onClick={() => setOpenDialogTokenId(share.tokenId)}
-                      >
-                        List share
-                      </Button>
-                    )}
-                  </div>
-                  {openDialogTokenId === share.tokenId && (
-                    <ListShareDialog
-                      sharesTokenId={share.tokenId}
-                      open={true}
-                      setOpen={() => setOpenDialogTokenId(null)}
-                    />
-                  )}
-                </div>
-              ))}
+              {filteredSharesData.length ? (
+                <OwnedSharesList shares={filteredSharesData} />
+              ) : (
+                <div>You don't own any share.</div>
+              )}
             </div>
           </>
         )}
@@ -196,43 +161,111 @@ export default function Profil() {
           <>
             <h2 className="text-3xl mt-10 mb-4">Listed Shares</h2>
             <div className="grid grid-cols-3 gap-10 mt-4 justify-around">
-              {filteredListedShares.map((share) => (
-                <div
-                  key={share.itemId}
-                  className="border border-slate-100 flex flex-col gap-2 justify-center p-4 rounded-md shadow-md items-center bg-white max-h-[400px]"
-                >
-                  <div className="flex-1 w-full h-[200px]">
-                    <Image
-                      src={share.masterworksData?.imageURL || IMAGE_FALLBACK}
-                      alt="work"
-                      width={300}
-                      height={300}
-                      className="object-cover w-full h-full"
-                    />
-                  </div>
-                  <div className="flex flex-col gap-1 justify-center items-center flex-1">
-                    <h2>{share.tokenizationRequest?.certificate?.work}</h2>
-                    <p>{share.tokenizationRequest?.certificate?.artist}</p>
-                    <p>Amount: {share.amount}</p>
-                    {share.workShare?.isRedeemable && (
-                      <div className="text-red-500 text-center">
-                        This share has been sold. Please unlist and burn your
-                        share.
-                      </div>
-                    )}
-                    <Button
-                      className="w-full"
-                      onClick={() => handleUnlist(share.itemId)}
-                    >
-                      Unlist
-                    </Button>
-                  </div>
-                </div>
-              ))}
+              {filteredListedShares.length ? (
+                <ListedSharesList
+                  shares={filteredListedShares}
+                  handleUnlist={handleUnlist}
+                />
+              ) : (
+                <div>You don't have any listed shares.</div>
+              )}
             </div>
           </>
         )}
       </div>
     </div>
+  )
+}
+
+const OwnedSharesList = ({ shares }: { shares: any[] }) => {
+  const [openDialogTokenId, setOpenDialogTokenId] = useState<number | null>(
+    null
+  )
+  return (
+    <>
+      {shares.map((share) => (
+        <div
+          key={share.tokenId}
+          className="border border-slate-100 flex flex-col gap-2 justify-center p-4 rounded-md shadow-md items-center bg-white max-h-[400px]"
+        >
+          <div className="flex-1 w-full h-[200px] shadow-lg">
+            <Image
+              src={share.masterworksData?.imageURL || IMAGE_FALLBACK}
+              alt="work"
+              width={300}
+              height={300}
+              className="object-cover w-full h-full"
+            />
+          </div>
+          <div className="flex flex-col gap-1 justify-center items-center flex-1">
+            <h2>{share.tokenizationRequest.certificate.work}</h2>
+            <p>{share.tokenizationRequest.certificate.artist}</p>
+            <p className="mb-4 font-sans">x{share.balance}</p>
+            {share.workShare.isRedeemable ? (
+              <BurnShareButton sharesTokenId={share.tokenId} />
+            ) : (
+              <Button
+                className="w-[150px]"
+                onClick={() => setOpenDialogTokenId(share.tokenId)}
+              >
+                List share
+              </Button>
+            )}
+          </div>
+          {openDialogTokenId === share.tokenId && (
+            <ListShareDialog
+              sharesTokenId={share.tokenId}
+              open={true}
+              setOpen={() => setOpenDialogTokenId(null)}
+            />
+          )}
+        </div>
+      ))}
+    </>
+  )
+}
+
+const ListedSharesList = ({
+  shares,
+  handleUnlist,
+}: {
+  shares: any[]
+  handleUnlist: (id: number) => void
+}) => {
+  return (
+    <>
+      {shares.map((share) => (
+        <div
+          key={share.itemId}
+          className="border border-slate-100 flex flex-col gap-2 justify-center p-4 rounded-md shadow-md items-center bg-white max-h-[400px]"
+        >
+          <div className="flex-1 w-full h-[200px]">
+            <Image
+              src={share.masterworksData?.imageURL || IMAGE_FALLBACK}
+              alt="work"
+              width={300}
+              height={300}
+              className="object-cover w-full h-full"
+            />
+          </div>
+          <div className="flex flex-col gap-1 justify-center items-center flex-1">
+            <h2>{share.tokenizationRequest?.certificate?.work}</h2>
+            <p>{share.tokenizationRequest?.certificate?.artist}</p>
+            <p>Amount: {share.amount}</p>
+            {share.workShare?.isRedeemable && (
+              <div className="text-red-500 text-center">
+                This share has been sold. Please unlist and burn your share.
+              </div>
+            )}
+            <Button
+              className="w-full"
+              onClick={() => handleUnlist(share.itemId)}
+            >
+              Unlist
+            </Button>
+          </div>
+        </div>
+      ))}
+    </>
   )
 }

@@ -27,7 +27,7 @@ export const columns: ColumnDef<Artwork>[] = [
     accessorKey: "price",
     header: "Price",
     cell: ({ row }) => {
-      return <div>{row.original.price} USD</div>
+      return <div className="font-sans">{row.original.price} USD</div>
     },
   },
   {

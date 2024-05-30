@@ -33,6 +33,9 @@ export function getColumns(refreshData: () => void): ColumnDef<Artwork>[] {
     {
       accessorKey: "price",
       header: "Price",
+      cell: ({ row }) => {
+        return <div className="font-sans">{row.original.price} USD</div>
+      },
     },
     {
       accessorKey: "status",

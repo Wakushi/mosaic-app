@@ -119,7 +119,7 @@ export default function Header() {
               <Button>Menu</Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56">
-              <Link href={"/profil"}>
+              <Link href={"/profile"}>
                 {" "}
                 <DropdownMenuItem>
                   Profile

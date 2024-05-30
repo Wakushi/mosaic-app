@@ -1,11 +1,12 @@
 "use client"
-import { ShareDetail } from "@/types/artwork"
 import Image from "next/image"
 import Link from "next/link"
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
 } from "@/components/ui/carousel"
 import { Card, CardContent } from "@/components/ui/card"
 import Autoplay from "embla-carousel-autoplay"
@@ -78,34 +79,47 @@ export default function Home() {
         <p className="self-start text-2xl text-gray-700 mb-2">
           Buy and sell fractional shares of tokenized real-world assets
         </p>
-        <Carousel
-          className="w-full"
-          plugins={[
-            Autoplay({
-              delay: 5000,
-            }),
-          ]}
-          opts={{
-            align: "start",
-            loop: true,
-          }}
-        >
-          <CarouselContent className="w-full p-0">
-            {initialShares?.map((share, index) => (
-              <CarouselItem key={index} className="w-full flex justify-center">
-                <Card className="w-full h-[50vh] flex items-center justify-center shadow-xl rounded-lg">
-                  <CardContent className="w-full h-full flex items-center justify-center p-0">
-                    <CustomImage
-                      src={share?.masterworksData?.imageURL || IMAGE_FALLBACK}
-                      alt="work"
-                      fallbackSrc={IMAGE_FALLBACK}
-                    />
-                  </CardContent>
-                </Card>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-        </Carousel>
+        {!!initialShares.length && (
+          <Carousel
+            className="w-full"
+            plugins={[
+              Autoplay({
+                delay: 5000,
+              }),
+            ]}
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+          >
+            <CarouselContent className="w-full p-0">
+              {initialShares?.map((share, index) => (
+                <CarouselItem
+                  key={index}
+                  className="w-full flex justify-center"
+                >
+                  <Card className="w-full h-[50vh] flex items-center justify-center shadow-xl rounded-lg">
+                    <CardContent className="w-full h-full relative flex items-center justify-center p-0">
+                      <CustomImage
+                        src={share?.masterworksData?.imageURL || IMAGE_FALLBACK}
+                        alt="work"
+                        fallbackSrc={IMAGE_FALLBACK}
+                      />
+                      <div className="absolute bottom-0 w-full bg-white bg-opacity-[0.02] shadow-sm backdrop-blur-sm flex items-center justify-end px-20 py-10">
+                        <div className="text-white text-xl drop-shadow-xl">
+                          {share.masterworksData.title}-{" "}
+                          {share.masterworksData.artist}{" "}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+          </Carousel>
+        )}
       </Section>
 
       <Section title="" animate={false}>
