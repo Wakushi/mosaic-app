@@ -58,8 +58,9 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
             tokenizedWork.verificationStep
           )
           if (
-            tokenizedWork.ownerName ===
-            "0x0000000000000000000000000000000000000000"
+            tokenizedWork.owner ===
+              "0x0000000000000000000000000000000000000000" &&
+            !tokenizedWork.ownerName
           ) {
             artwork.status = "sent cross-chain"
           }

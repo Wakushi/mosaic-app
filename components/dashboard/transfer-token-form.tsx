@@ -31,10 +31,7 @@ const fieldsData = [
     label: "Destination Chain",
     description: "Chain to transfer the token to.",
     type: "select",
-    options: [
-      { id: "16281711391670634445", label: "Polygon Amoy" },
-      { id: "5224473277236331295", label: "Optimism Sepolia" },
-    ],
+    options: [{ id: "5224473277236331295", label: "Optimism Sepolia" }],
   },
 ]
 
@@ -56,12 +53,18 @@ export function TransferWorkTokenForm({
       if (!artwork?.tokenizationRequestId) {
         throw new Error("Invalid tokenization request ID.")
       }
+      console.log("values", {
+        ...values,
+        tokenizationRequestId: artwork.tokenizationRequestId,
+      })
+
       const hash = await xChainWorkTokenTransfer(
         values.recipient,
         values.newOwnerName,
         artwork.tokenizationRequestId,
         values.destinationChain
       )
+
       toast({
         title: "Success",
         description: "Work token transferred successfully.",

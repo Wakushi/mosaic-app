@@ -101,13 +101,13 @@ export default function Profile() {
   }
 
   const filteredSharesData = ownedShares.filter((share) =>
-    share.tokenizationRequest.certificate.artist
+    share.tokenizationRequest?.certificate.artist
       .toLowerCase()
       .includes(searchTerm.toLowerCase())
   )
 
   const filteredListedShares = ownedListedShares.filter((share) =>
-    share.tokenizationRequest.certificate.artist
+    share.tokenizationRequest?.certificate.artist
       .toLowerCase()
       .includes(searchTerm.toLowerCase())
   )

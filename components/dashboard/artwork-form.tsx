@@ -33,8 +33,8 @@ export type ArtFormValues = z.infer<typeof artFormSchema>
 
 export const artFieldsData = [
   { name: "artist", label: "Artist", description: "Name of the artist." },
-  { name: "owner", label: "Owner", description: "Name of the current owner." },
   { name: "title", label: "Title", description: "Title of the artwork." },
+  { name: "owner", label: "Owner", description: "Name of the current owner." },
   {
     name: "price",
     label: "Price",
@@ -150,8 +150,8 @@ export function ArtForm({ clientAddress }: { clientAddress: string }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(artworkData),
-      });
-      const responseData = await response.json();
+      })
+      const responseData = await response.json()
       if (response.ok) {
         setSuccessMessage("Artwork added successfully!")
         toast({
