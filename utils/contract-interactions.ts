@@ -130,7 +130,7 @@ export async function getAllSharesDetails() {
       address: DWORK_SHARES_ADDRESS,
       functionName: "getLastTokenId",
     })
-    const shareLastTokenId = Number(result)
+    const shareLastTokenId = Number(result) + 1 // RPC fatigue
     const workShares: WorkShare[] = []
     for (let i = 1; i <= shareLastTokenId; i++) {
       const share: any = await readContract(chainConfig, {
@@ -139,6 +139,8 @@ export async function getAllSharesDetails() {
         functionName: "getWorkSharesByTokenId",
         args: [i],
       })
+      if (!share.workTokenId) continue
+
       workShares.push({
         sharesTokenId: i,
         maxShareSupply: Number(share.maxShareSupply),
