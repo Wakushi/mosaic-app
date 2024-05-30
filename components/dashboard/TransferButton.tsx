@@ -28,7 +28,9 @@ const TransferWorkTokenButton = forwardRef<
     <>
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogTrigger asChild>
-          <div className="p-1 text-sm cursor-pointer">Transfer work token</div>
+          <Button variant="ghost" className="justify-start">
+            Transfer work token
+          </Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>

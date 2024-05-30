@@ -73,7 +73,7 @@ export const columns: ColumnDef<Artwork>[] = [
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="flex flex-col">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               {artwork.status === "tokenized" && (
                 <>
