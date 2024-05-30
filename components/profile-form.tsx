@@ -14,10 +14,14 @@ const formSchema = z.object({
 const fieldsData = [
   {
     name: "username",
-    label: "Username",
-    description: "This is your public display name.",
+    label: "Gallery / Company Name",
+    description: "Enter the name of your gallery or company.",
   },
-  { name: "email", label: "Email", description: "This is your email address." },
+  {
+    name: "email",
+    label: "Email",
+    description: "Provide an email address for contact purposes.",
+  },
 ]
 
 type FormValues = z.infer<typeof formSchema>
@@ -50,11 +54,18 @@ export function ProfileForm() {
   }
 
   return (
-    <ReusableForm
-      schema={formSchema}
-      defaultValues={{ username: "", email: "" }}
-      onSubmit={onSubmit}
-      fields={fieldsData}
-    />
+    <div>
+      <h3 className="text-xl font-bold">Are you a gallery or an art owner?</h3>
+      <p className="mb-4">
+        Register now to access your dashboard and submit your first artwork
+        tokenization request.
+      </p>
+      <ReusableForm
+        schema={formSchema}
+        defaultValues={{ username: "", email: "" }}
+        onSubmit={onSubmit}
+        fields={fieldsData}
+      />
+    </div>
   )
 }

@@ -1,4 +1,5 @@
 import React, { ReactNode } from "react"
+import { IoIosClose } from "react-icons/io"
 
 interface ModalProps {
   isOpen: boolean
@@ -35,12 +36,16 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, close, children }) => {
           width: "100%",
         }}
       >
-        <button
+        <IoIosClose
           onClick={close}
-          style={{ position: "absolute", top: 10, right: 10 }}
-        >
-          Close
-        </button>
+          style={{
+            position: "absolute",
+            top: 10,
+            right: 10,
+            cursor: "pointer",
+            fontSize: "1.5rem",
+          }}
+        />
         {children}
       </div>
     </div>

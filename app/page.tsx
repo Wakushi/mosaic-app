@@ -18,6 +18,8 @@ import { useState } from "react"
 import Hero from "@/components/Hero"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
+import { Modal } from "@/components/clientUi/modal"
+import { ProfileForm } from "@/components/profile-form"
 
 const IMAGE_FALLBACK =
   "https://theredwindows.net/wp-content/themes/koji/assets/images/default-fallback-image.png"
@@ -32,6 +34,9 @@ const fetchSharesData = async (): Promise<ShareDetail[]> => {
 
 export default function Home() {
   const router = useRouter()
+  const [modalOpen, setModalOpen] = useState(false)
+  const toggleModal = () => setModalOpen(!modalOpen)
+
   const {
     data: sharesData,
     error,
@@ -87,7 +92,7 @@ export default function Home() {
         </div>
       </Section>
 
-      <Section title="" animate={false}>
+      <Section title="" animate={false} bgWhite>
         <Link className="self-start" href={"/marketplace"}>
           <h2 className="self-start text-[5vw] leading-none font-extrabold uppercase text-gray-800">
             Dive into a{" "}
@@ -135,7 +140,7 @@ export default function Home() {
           Why tokenizing assets ?
         </h2>
         <div className="grid grid-cols-2 gap-4 w-full justify-center">
-          <div className="flex flex-col gap-4 rounded border border-gray-200 p-8 shadow-md hover:shadow-lg transition-all">
+          <div className="flex flex-col gap-4 rounded border border-gray-200 p-8 shadow-md hover:shadow-lg transition-all bg-white">
             <h3 className="font-bold text-4xl">
               Permissionless, free access liquidity
             </h3>
@@ -145,7 +150,7 @@ export default function Home() {
               assets without the need for an intermediary.
             </p>
           </div>
-          <div className="flex flex-col gap-4  rounded border border-gray-200 p-8 shadow-md hover:shadow-lg transition-all">
+          <div className="flex flex-col gap-4  rounded border border-gray-200 p-8 shadow-md hover:shadow-lg transition-all bg-white">
             <h3 className="font-bold text-4xl">Blockchain transparency</h3>
             <p>
               Unlike traditional purchase and sale registers that can be private
@@ -154,7 +159,7 @@ export default function Home() {
               immutable nature of the blockchain.
             </p>
           </div>
-          <div className="flex flex-col gap-4 rounded border border-gray-200 p-8 shadow-md hover:shadow-lg transition-all">
+          <div className="flex flex-col gap-4 rounded border border-gray-200 p-8 shadow-md hover:shadow-lg transition-all bg-white">
             <h3 className="font-bold text-4xl">
               Reducing transaction friction
             </h3>
@@ -164,7 +169,7 @@ export default function Home() {
               lengthy and complicated, also reducing administrative costs.
             </p>
           </div>
-          <div className="flex flex-col gap-4  rounded border border-gray-200 p-8 shadow-md hover:shadow-lg transition-all">
+          <div className="flex flex-col gap-4  rounded border border-gray-200 p-8 shadow-md hover:shadow-lg transition-all bg-white">
             <h3 className="font-bold text-4xl">
               Increasing liquidity and expanding the buyer pool
             </h3>
@@ -178,7 +183,7 @@ export default function Home() {
         </div>
       </Section>
 
-      <Section title="" animate={false}>
+      <Section title="" animate={false} bgWhite>
         <h2 className="self-start font-extrabold leading-none text-[5vw] uppercase mb-8">
           About art traceability
         </h2>
@@ -219,37 +224,42 @@ export default function Home() {
           <Step
             stepNumber="1"
             title="Consultation"
-            description="Engage with Us: Begin by reaching out through our platform. We'll discuss your specific needs, the artwork you wish to tokenize, and how our service can benefit you."
+            description="Begin by reaching out through our platform. We'll discuss your specific needs, the artwork you wish to tokenize, how our service can benefit you, and organize a meeting with an art appraiser."
           />
           <Step
             stepNumber="2"
-            title="Legal Setup"
-            description="Form an LLC: For each artwork, we help you establish a Limited Liability Company (LLC) that legally owns the art. Transfer Art Ownership: You transfer ownership of the artwork to the newly formed LLC."
+            title="Expert Appraisal"
+            description="Our art appraiser will evaluate the artwork's authenticity, condition, and market value. This appraisal is essential for determining the artwork's tokenization value and confirming its eligibility for our service."
           />
           <Step
             stepNumber="3"
             title="Tokenization"
-            description="Mint an NFT: We mint a Non-Fungible Token (NFT) representing ownership of the LLC. Tokenize the Artwork: Fractional ownership tokens (ERC-20) are minted to represent shares in the LLC."
+            description="We leverage Chainlink and OpenAI services to verify the artwork's authenticity on-chain by computing the data you provided along with the expert appraisal and external market data. This process ensures that the artwork is accurately represented by the NFT."
           />
           <Step
             stepNumber="4"
-            title="Control and Management"
-            description="Maintain Control: Holding the NFT allows you to retain control over the LLC. Distribute Shares: Sell fractional shares to investors, providing them with a stake in the artwork's future financial returns."
+            title="Legal Setup"
+            description="For each artwork, we help you establish a Limited Liability Company (LLC) that legally owns the artwork. This LLC ownership is binded to the token minted on our contract, ensuring that the NFT holder has a stake in the artwork's future financial returns."
           />
           <Step
             stepNumber="5"
-            title="Marketplace Integration"
-            description="Trading Platform Access: Both the NFT and fractional shares are listed on our secure trading platform, allowing for open trading and liquidity."
+            title="Control and Management"
+            description="Holding the NFT allows you to retain control over the LLC. Sell fractional shares to investors, providing them with a stake in the artwork's future financial returns."
           />
           <Step
             stepNumber="6"
-            title="Revenue and Reporting"
-            description="Profit Sharing: Any profits from the sale or leasing of the artwork are distributed to the shareholders. Transparent Reporting: Regular reports and updates are provided to all stakeholders."
+            title="Fractionalization"
+            description="Our platform enables you to tokenize artwork into fractional shares, making it possible to sell portions of the artwork to multiple investors. This approach increases liquidity and broadens your reach to a larger audience of potential buyers."
           />
           <Step
             stepNumber="7"
+            title="Marketplace Integration"
+            description="Both the NFT and fractional shares can be listed on our secure trading platform, allowing for open trading and liquidity. Investors can buy and sell shares of the artwork, and you can track the artwork's value and ownership in real-time."
+          />
+          <Step
+            stepNumber="8"
             title="Long-term Management"
-            description="Ongoing Support: We continue to offer support and advice, helping you manage the LLC, adjust to market conditions, and plan future steps for your tokenized artwork."
+            description="We continue to offer support and advice, helping you manage the LLC, adjust to market conditions, and plan future steps for your tokenized artwork."
           />
         </div>
       </Section>
@@ -265,12 +275,18 @@ export default function Home() {
           we ensure security, transparency, and efficiency in all transactions.
         </p>
         <div className="flex gap-4 w-full items-center justify-center">
-          <Button
-            className="w-full max-w-[200px] text-[1.1rem]"
-            onClick={() => router.push("")}
-          >
-            I'm an art collector
-          </Button>
+          <>
+            <Button
+              className="w-full max-w-[200px] text-[1.1rem]"
+              onClick={toggleModal}
+            >
+              {" "}
+              I'm an art collector
+            </Button>
+            <Modal isOpen={modalOpen} close={toggleModal}>
+              <ProfileForm />
+            </Modal>
+          </>
           <Button
             className="w-full max-w-[200px] text-[1.1rem]"
             onClick={() => router.push("/marketplace")}
@@ -291,18 +307,20 @@ export default function Home() {
 interface SectionProps {
   title: string
   children: React.ReactNode
+  bgWhite?: boolean
   animate?: boolean
 }
 
 const Section: React.FC<SectionProps> = ({
   title,
   children,
+  bgWhite = false,
   animate = true,
 }) => (
   <section
     className={`w-screen flex flex-col min-h-[100vh] justify-center items-center p-24 gap-4 ${
       animate ? "transform transition duration-500" : ""
-    }`}
+    } ${bgWhite ? "bg-white" : "bg-gray-100"}`}
   >
     <h2 className="text-4xl font-semibold text-gray-800 mb-8">{title}</h2>
     {children}
@@ -316,7 +334,7 @@ interface StepProps {
 }
 
 const Step: React.FC<StepProps> = ({ stepNumber, title, description }) => (
-  <div className="w-full flex flex-col mb-8 p-6 border rounded-lg bg-white transform transition duration-300 hover:scale-105">
+  <div className="flex flex-col gap-4  rounded border border-gray-200 p-8 shadow-md hover:shadow-lg transition-all bg-white">
     <h3 className="text-2xl font-semibold text-gray-700 mb-2">
       Step {stepNumber}: {title}
     </h3>
