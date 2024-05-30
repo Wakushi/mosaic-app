@@ -31,6 +31,7 @@ export type WorkShare = {
   totalSellValueUsd: number
   workOwner: Address
   isPaused: boolean
+  isRedeemable: boolean
 }
 
 export type TokenizationRequest = {

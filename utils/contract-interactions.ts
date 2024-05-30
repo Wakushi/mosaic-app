@@ -148,6 +148,7 @@ export async function getAllSharesDetails() {
         totalSellValueUsd: Number(share.totalSellValueUsd),
         workOwner: share.workOwner,
         isPaused: share.isPaused,
+        isRedeemable: share.isRedeemable,
       })
     }
     const sharesDetailed: ShareDetail[] = []
@@ -221,6 +222,7 @@ export async function getShareDetail(id: number): Promise<ShareDetail> {
       totalSellValueUsd: Number(share.totalSellValueUsd),
       workOwner: share.workOwner,
       isPaused: share.isPaused,
+      isRedeemable: share.isRedeemable,
     }
 
     const tokenizationRequestId: any = await readContract(chainConfig, {
