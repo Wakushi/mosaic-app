@@ -13,7 +13,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import Autoplay from "embla-carousel-autoplay"
 import { Canvas } from "@react-three/fiber"
 import Experience from "@/components/canvas/Canvas"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import Hero from "@/components/Hero"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
@@ -44,7 +44,6 @@ export default function Home() {
     queryKey: ["sharesData"],
     queryFn: fetchSharesData,
   })
-
 
   if (error) {
     return <div>Error: {error.message}</div>

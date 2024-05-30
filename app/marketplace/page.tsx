@@ -104,8 +104,8 @@ export default function Marketplace() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center">
-      <div className="w-screen flex flex-col justify-center items-center bg-white p-24 pt-[8rem] gap-4">
+    <div className="min-h-screen flex flex-col items-center bg-white">
+      <div className="w-screen flex flex-col justify-center items-center p-24 pt-[8rem] gap-4">
         <h2 className="self-start text-4xl ">New Arrivals</h2>
         <Carousel
           className="w-full"
@@ -140,72 +140,97 @@ export default function Marketplace() {
         </Carousel>
       </div>
       <div className="self-start w-full py-10 px-24">
-        <div className="w-full flex items-center gap-4 mb-4">
+        <div className="w-full flex items-center gap-4 mb-8">
           <Input
             type="text"
             placeholder="Search by artist"
             value={searchTerm}
             onChange={handleSearchChange}
-            className="p-2 border border-gray-300 rounded-md w-1/4"
+            className="p-2 border border-gray-300 rounded-md w-1/4 bg-white"
           />
         </div>
-        <div className="flex flex-col gap-8">
-          <h2 className="text-3xl uppercase font-semibold">Initial offering</h2>
-          <div className="grid grid-cols-3 gap-10 justify-around">
-            {filteredSharesData.map((share) => (
-              <Link
-                href={`/marketplace/artwork?id=${share.workShare.sharesTokenId}`}
-                key={`share-${share.workShare.sharesTokenId}`}
-                className="border border-slate-100 flex flex-col gap-2 justify-center p-4 rounded-md shadow-md items-center bg-white max-h-[350px]"
-              >
-                <div className="flex-1 w-full h-[200px]">
-                  <CustomImage
-                    src={share.masterworksData?.imageURL || IMAGE_FALLBACK}
-                    alt="work"
-                    fallbackSrc={IMAGE_FALLBACK}
-                  />
-                </div>
-                <div className="flex flex-col gap-1 justify-center items-center flex-1">
-                  <h2>{share.tokenizationRequest?.certificate?.work}</h2>
-                  <p>{share.tokenizationRequest?.certificate?.artist}</p>
-                  <p>
-                    $
-                    {formatUnits(
-                      BigInt(share.workShare.sharePriceUsd || 0),
-                      18
-                    )}
-                  </p>
-                </div>
-              </Link>
-            ))}
+        <div className="flex flex-col gap-20">
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
+              <h2 className="text-4xl uppercase font-semibold">
+                Initial Offering
+              </h2>
+              <p className="text-xl text-gray-700">
+                Browse the collection of fractionalized art shares offered by
+                the galleries, available for initial purchase.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-3 gap-10 justify-around">
+              {filteredSharesData.map((share) => (
+                <Link
+                  href={`/marketplace/artwork?id=${share.workShare.sharesTokenId}`}
+                  key={`share-${share.workShare.sharesTokenId}`}
+                  className="border border-slate-100 flex flex-col gap-2 justify-center p-4 rounded-md shadow-md items-center bg-white max-h-[350px]"
+                >
+                  <div className="flex-1 w-full h-[200px]">
+                    <CustomImage
+                      src={share.masterworksData?.imageURL || IMAGE_FALLBACK}
+                      alt="work"
+                      fallbackSrc={IMAGE_FALLBACK}
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1 justify-center items-center flex-1">
+                    <h2>{share.tokenizationRequest?.certificate?.work}</h2>
+                    <p>{share.tokenizationRequest?.certificate?.artist}</p>
+                    <p>
+                      $
+                      {formatUnits(
+                        BigInt(share.workShare.sharePriceUsd || 0),
+                        18
+                      )}
+                    </p>
+                  </div>
+                </Link>
+              ))}
+            </div>
           </div>
-          <h2 className="text-3xl uppercase font-semibold">Secondary market</h2>
-          <div className="grid grid-cols-3 gap-10 justify-around">
-            {filteredListedItemsData.map((item, index) => (
-              <Link
-                href={`/marketplace/artwork?id=${
-                  item.workShare?.sharesTokenId || index
-                }&itemId=${item.itemListed.itemId}`}
-                key={`listed-item-${index}`}
-                className="border border-slate-100 flex flex-col gap-2 justify-center p-4 rounded-md shadow-md items-center bg-white max-h-[350px]"
-              >
-                <div className="flex-1 w-full h-[200px]">
-                  <CustomImage
-                    src={item.masterworksData?.imageURL || IMAGE_FALLBACK}
-                    alt="work"
-                    fallbackSrc={IMAGE_FALLBACK}
-                  />
-                </div>
-                <div className="flex flex-col gap-1 justify-center items-center flex-1">
-                  <h2>{item.tokenizationRequest?.certificate?.work}</h2>
-                  <p>{item.tokenizationRequest?.certificate?.artist}</p>
-                  <p>
-                    $
-                    {formatUnits(BigInt(item.workShare.sharePriceUsd || 0), 18)}
-                  </p>
-                </div>
-              </Link>
-            ))}
+
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
+              <h2 className="text-4xl uppercase font-semibold">
+                Secondary Market
+              </h2>
+              <p className="text-xl text-gray-700">
+                Discover and trade fractionalized art shares on the secondary
+                market.
+              </p>
+            </div>
+            <div className="grid grid-cols-3 gap-10 justify-around">
+              {filteredListedItemsData.map((item, index) => (
+                <Link
+                  href={`/marketplace/artwork?id=${
+                    item.workShare?.sharesTokenId || index
+                  }&itemId=${item.itemListed.itemId}`}
+                  key={`listed-item-${index}`}
+                  className="border border-slate-100 flex flex-col gap-2 justify-center p-4 rounded-md shadow-md items-center bg-white max-h-[350px]"
+                >
+                  <div className="flex-1 w-full h-[200px]">
+                    <CustomImage
+                      src={item.masterworksData?.imageURL || IMAGE_FALLBACK}
+                      alt="work"
+                      fallbackSrc={IMAGE_FALLBACK}
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1 justify-center items-center flex-1">
+                    <h2>{item.tokenizationRequest?.certificate?.work}</h2>
+                    <p>{item.tokenizationRequest?.certificate?.artist}</p>
+                    <p>
+                      $
+                      {formatUnits(
+                        BigInt(item.workShare.sharePriceUsd || 0),
+                        18
+                      )}
+                    </p>
+                  </div>
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </div>
