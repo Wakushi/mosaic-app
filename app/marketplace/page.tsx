@@ -13,6 +13,7 @@ import Link from "next/link"
 import { formatUnits } from "viem"
 import CustomImage from "@/components/clientUi/CustomImage"
 import { useUserStore } from "@/store/useStore"
+import Loader from "@/components/clientUi/Loader"
 
 const IMAGE_FALLBACK =
   "https://theredwindows.net/wp-content/themes/koji/assets/images/default-fallback-image.png"
@@ -22,10 +23,12 @@ export default function Marketplace() {
   const initialShares = useUserStore((state) => state.initialShares)
   const listedShares = useUserStore((state) => state.listedShares)
   const setListedShares = useUserStore((state) => state.setListedShares)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   useEffect(() => {
     const fetchListedSharesWithDetails = async () => {
-      if (listedShares.length) return
+      if (!initialShares.length || listedShares.length) return
+      setIsLoading(true)
       const response = await fetch("/api/listed-shares")
       if (!response.ok) {
         throw new Error("Failed to fetch listed shares")
@@ -43,10 +46,11 @@ export default function Marketplace() {
       })
 
       setListedShares(listedSharesDetailed)
+      setIsLoading(false)
     }
 
     fetchListedSharesWithDetails()
-  }, [listedShares, setListedShares])
+  }, [initialShares, listedShares, setListedShares])
 
   const handleSearchChange = (e: any) => {
     setSearchTerm(e.target.value)
@@ -67,6 +71,14 @@ export default function Marketplace() {
           .toLowerCase()
           .includes(searchTerm.toLowerCase())
       ) || []
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center ">
+        <Loader />
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-white">
