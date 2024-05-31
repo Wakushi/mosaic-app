@@ -98,7 +98,11 @@ const ListedShareDetailPage = ({ params }: { params: { id: string } }) => {
               /{listedShareDetail.workShare.maxShareSupply}
             </p>
           )}
-          <BuyMarketShareDialog marketShareItemId={parseInt(id)} />
+          <BuyMarketShareDialog
+            marketShareItemId={parseInt(id)}
+            marketSharePrice={listedShareDetail.listedShare.priceUsd}
+            workTitle={listedShareDetail.tokenizationRequest.certificate.work}
+          />
         </div>
       </div>
     </div>

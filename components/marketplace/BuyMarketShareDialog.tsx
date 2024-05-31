@@ -7,35 +7,27 @@ import { useQueryClient } from "@tanstack/react-query"
 
 interface BuyMarketShareDialogProps {
   marketShareItemId: number
+  workTitle: string
+  marketSharePrice: number
 }
 
 const BuyMarketShareDialog: React.FC<BuyMarketShareDialogProps> = ({
   marketShareItemId,
+  workTitle,
+  marketSharePrice,
 }) => {
   const { toast } = useToast()
   const queryClient = useQueryClient()
   const router = useRouter()
 
-  const fetchMarketShareDetail = async (id: number): Promise<any> => {
-    const response = await fetch(`/api/listed-shares/${id}`)
-    if (!response.ok) {
-      throw new Error("Failed to fetch share details")
-    }
-    return response.json()
-  }
-
   const onBuy = async () => {
     try {
-      const marketShareItem = await fetchMarketShareDetail(marketShareItemId)
-      if (!marketShareItem) {
-        throw new Error("Market share item not found")
-      }
-      await buyMarketShareItem(marketShareItemId, marketShareItem.priceUsd)
+      await buyMarketShareItem(marketShareItemId, marketSharePrice)
       toast({
         title: "Success",
         description: "Market share item purchased successfully!",
       })
-      queryClient.invalidateQueries({ queryKey: ["shares"] })
+      queryClient.invalidateQueries({ queryKey: ["listedShares", "shares"] })
       router.push("/marketplace")
     } catch (error) {
       console.error("Error buying market share item:", error)
@@ -49,7 +41,7 @@ const BuyMarketShareDialog: React.FC<BuyMarketShareDialogProps> = ({
   return (
     <>
       <Button onClick={() => onBuy()} className="w-full">
-        Buy Market Share Item
+        Buy a share of '{workTitle}'
       </Button>
     </>
   )
