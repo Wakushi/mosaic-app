@@ -7,7 +7,12 @@ import {
   DWORK_SHARES_ADDRESS_POLYGON,
   DWORK_SHARES_ABI,
 } from "@/lib/contract"
-import { MasterworksWorkData, ShareDetail, WorkShare, WorkDetail } from "@/types/artwork"
+import {
+  MasterworksWorkData,
+  ShareDetail,
+  WorkShare,
+  WorkDetail,
+} from "@/types/artwork"
 import { getMasterworksData } from "./external-data"
 import { chainConfig } from "./blockchain-config"
 import { readContract } from "@wagmi/core"
@@ -236,38 +241,42 @@ export async function fetchListedArtworks(): Promise<WorkDetail[]> {
       functionName: "getLastTokenId",
     })
     const lastTokenId = Number(lastTokenIdResult)
-    const listedArtworks: WorkDetail[] = [];
+    const listedArtworks: WorkDetail[] = []
 
     for (let i = 1; i <= lastTokenId; i++) {
       try {
-        const tokenizationRequestId = await getTokenizationRequestIdByWorkTokenId(i);
-        const tokenizationRequest = await getTokenizationRequestById(tokenizationRequestId.toString());
+        const tokenizationRequestId =
+          await getTokenizationRequestIdByWorkTokenId(i)
+        const tokenizationRequest = await getTokenizationRequestById(
+          tokenizationRequestId.toString()
+        )
+        if (tokenizationRequest.workTokenId === "0") {
+          continue
+        }
         const masterworksData = await getMasterworksData(
           tokenizationRequest.certificate.artist,
           tokenizationRequest.certificate.work
-        );
+        )
         const workDetail: WorkDetail = {
           tokenizationRequest,
           masterworksData,
-        };
-        
+        }
 
         if (tokenizationRequest.isListed) {
-          listedArtworks.push(workDetail);
+          listedArtworks.push(workDetail)
         }
       } catch (error) {
-        console.error(`Error processing work token ID ${i}:`, error);
-        continue;
+        console.error(`Error processing work token ID ${i}:`, error)
+        continue
       }
     }
 
-    return listedArtworks;
+    return listedArtworks
   } catch (error) {
-    console.error("Error fetching listed artworks:", error);
-    throw new Error("Failed to fetch listed artworks");
+    console.error("Error fetching listed artworks:", error)
+    throw new Error("Failed to fetch listed artworks")
   }
 }
-    
 
 export function convertBigIntToString(obj: any): any {
   if (typeof obj === "bigint") {

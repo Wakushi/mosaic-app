@@ -9,11 +9,11 @@ import BuyWorkButton from "@/components/marketplace/BuyWorkButton"
 const IMAGE_FALLBACK =
   "https://theredwindows.net/wp-content/themes/koji/assets/images/default-fallback-image.png"
 
-const ListedShareDetailPage = ({ params }: { params: { id: string } }) => {
+const ListedArtworkPage = ({ params }: { params: { id: string } }) => {
   const id = params.id
   const { listedArtworks, listedArtworksLoading } = useContext(SharesContext)
 
-  const listedShareDetail = listedArtworks.find(
+  const listedArtwork = listedArtworks.find(
     (work) => +work.tokenizationRequest.workTokenId === parseInt(id)
   )
 
@@ -29,7 +29,7 @@ const ListedShareDetailPage = ({ params }: { params: { id: string } }) => {
     )
   }
 
-  if (!listedShareDetail) {
+  if (!listedArtwork) {
     return (
       <div className="min-h-screen flex items-center justify-center text-3xl">
         Share sold !
@@ -42,8 +42,8 @@ const ListedShareDetailPage = ({ params }: { params: { id: string } }) => {
       <div>
         <div className="p-10 w-[55vw] h-[80vh] bg-white shadow-lg border-4 border-double mb-4">
           <Image
-            src={listedShareDetail.masterworksData.imageURL || IMAGE_FALLBACK}
-            alt={listedShareDetail.tokenizationRequest.certificate.artist}
+            src={listedArtwork.masterworksData.imageURL || IMAGE_FALLBACK}
+            alt={listedArtwork.tokenizationRequest.certificate.artist}
             width={0}
             height={0}
             style={{ width: "100%", height: "100%" }}
@@ -51,45 +51,45 @@ const ListedShareDetailPage = ({ params }: { params: { id: string } }) => {
           />
         </div>
         <p className="text-center">
-          {listedShareDetail.masterworksData.dimensions}
+          {listedArtwork.masterworksData.dimensions}
         </p>
       </div>
       <div className="flex flex-col gap-4 h-[80vh] p-5">
         <h1 className="text-5xl self-start">
-          {listedShareDetail.tokenizationRequest.certificate.work}
+          {listedArtwork.tokenizationRequest.certificate.work}
         </h1>
         <p className="text-4xl text-slate-400">
-          {listedShareDetail.tokenizationRequest.certificate.artist}
+          {listedArtwork.tokenizationRequest.certificate.artist}
         </p>
-        <p className="text-lg">{listedShareDetail.masterworksData.medium}</p>
+        <p className="text-lg">{listedArtwork.masterworksData.medium}</p>
 
         <div className="p-4 bg-white rounded-lg shadow-md">
           <h3 className="text-lg font-semibold">First Work Sale</h3>
           <p className="text-md text-gray-700">
-            Date: {formatDate(listedShareDetail.masterworksData.firstSaleDate)}
+            Date: {formatDate(listedArtwork.masterworksData.firstSaleDate)}
           </p>
           <p className="text-md text-gray-700">
-            Price:{" "}
-            {formatPrice(listedShareDetail.masterworksData.firstSalePrice)}
+            Price: {formatPrice(listedArtwork.masterworksData.firstSalePrice)}
           </p>
         </div>
         <div className="p-4 bg-white rounded-lg shadow-md">
           <h3 className="text-lg font-semibold">Last Work Sale</h3>
           <p className="text-md text-gray-700">
-            Date: {formatDate(listedShareDetail.masterworksData.lastSaleDate)}
+            Date: {formatDate(listedArtwork.masterworksData.lastSaleDate)}
           </p>
           <p className="text-md text-gray-700">
-            Price:{" "}
-            {formatPrice(listedShareDetail.masterworksData.lastSalePrice)}
+            Price: {formatPrice(listedArtwork.masterworksData.lastSalePrice)}
           </p>
         </div>
-		<div className="mt-auto">
-			<BuyWorkButton workTokenId={listedShareDetail.tokenizationRequest.workTokenId} />	
-		</div>
-		
+        <div className="mt-auto">
+          <BuyWorkButton
+            workTokenId={listedArtwork.tokenizationRequest.workTokenId}
+            workTitle={listedArtwork.tokenizationRequest.certificate.work}
+          />
+        </div>
       </div>
     </div>
   )
 }
 
-export default ListedShareDetailPage
+export default ListedArtworkPage
