@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { useToast } from "@/components/ui/use-toast"
 import { useUserStore } from "@/store/useStore"
+import { Button } from "../ui/button"
 
 interface OpenTokenizationRequestButtonProps {
   artwork: Artwork
@@ -85,13 +86,13 @@ const OpenTokenizationRequestButton = forwardRef<
 
   return (
     <>
-      <div
-        ref={ref}
+      <Button
         onClick={() => setAlertOpen(true)}
-        className="p-1 text-sm cursor-pointer"
+        variant="ghost"
+        className="justify-start"
       >
         {listening ? "Event is in progress" : "Open Tokenization Request"}
-      </div>
+      </Button>
       <AlertDialog open={alertOpen} onOpenChange={setAlertOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>

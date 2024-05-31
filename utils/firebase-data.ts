@@ -117,6 +117,31 @@ export const getHashesByTitle = async (
   }
 }
 
+export const deleteArtworkTokenizationRequest = async (
+  getTokenizationRequestById: string
+) => {
+  try {
+    const artworkRef = adminDb
+      .collection("artworks")
+      .where("tokenizationRequestId", "==", getTokenizationRequestById)
+      .limit(1)
+    const snapshot = await artworkRef.get()
+
+    if (snapshot.empty) {
+      throw new Error(
+        `Artwork with tokenizationRequestId ${getTokenizationRequestById} not found`
+      )
+    }
+
+    const artworkDoc = snapshot.docs[0]
+    await artworkDoc.ref.update({ tokenizationRequestId: "" })
+    return true
+  } catch (error) {
+    console.error("Error deleting artwork:", error)
+    throw new Error("Failed to delete artwork")
+  }
+}
+
 export const updateArtworkTokenizationRequest = async (
   artworkTitle: string,
   tokenizationRequestId: string

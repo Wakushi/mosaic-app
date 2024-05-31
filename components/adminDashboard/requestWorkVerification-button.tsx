@@ -14,6 +14,7 @@ import { useToast } from "@/components/ui/use-toast"
 import { useWatchContractEvent } from "wagmi"
 import { DWORK_ABI, DWORK_ADDRESS_POLYGON } from "@/lib/contract"
 import { useUserStore } from "@/store/useStore"
+import { Button } from "../ui/button"
 
 interface RequestWorkVerificationButtonProps {
   artwork: Artwork
@@ -96,13 +97,13 @@ const RequestWorkVerificationButton = forwardRef<
 
   return (
     <>
-      <div
-        ref={ref}
+      <Button
         onClick={() => setAlertOpen(true)}
-        className="p-1 text-sm cursor-pointer"
+        variant="ghost"
+        className="justify-start"
       >
         Request Work Verification
-      </div>
+      </Button>
       <AlertDialog open={alertOpen} onOpenChange={setAlertOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>

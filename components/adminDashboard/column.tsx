@@ -13,6 +13,7 @@ import {
 import { useUserStore } from "@/store/useStore"
 import OpenTokenizationRequestButton from "@/components/adminDashboard/OpenTokenizationRequestButton"
 import RequestWorkVerificationButton from "@/components/adminDashboard/requestWorkVerification-button"
+import DeleteWorkTokenizationButton from "./DeleteTokenizationRequestButton"
 
 export function getColumns(refreshData: () => void): ColumnDef<Artwork>[] {
   const listening = useUserStore.getState().listening
@@ -77,7 +78,7 @@ export function getColumns(refreshData: () => void): ColumnDef<Artwork>[] {
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="flex flex-col">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuSeparator />
               {listening ? (
@@ -111,6 +112,16 @@ export function getColumns(refreshData: () => void): ColumnDef<Artwork>[] {
                   )}
                 </>
               )}
+              {artwork.tokenizationRequestId &&
+                (artwork.status === "pending certificate extraction" ||
+                  artwork.status === "submitted") && (
+                  <DropdownMenuItem asChild>
+                    <DeleteWorkTokenizationButton
+                      tokenizationRequestId={artwork.tokenizationRequestId}
+                      refreshData={refreshData}
+                    />
+                  </DropdownMenuItem>
+                )}
             </DropdownMenuContent>
           </DropdownMenu>
         )
