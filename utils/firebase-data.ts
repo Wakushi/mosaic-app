@@ -118,18 +118,18 @@ export const getHashesByTitle = async (
 }
 
 export const deleteArtworkTokenizationRequest = async (
-  getTokenizationRequestById: string
+  tokenizationRequestId: string
 ) => {
   try {
     const artworkRef = adminDb
       .collection("artworks")
-      .where("tokenizationRequestId", "==", getTokenizationRequestById)
+      .where("tokenizationRequestId", "==", tokenizationRequestId)
       .limit(1)
     const snapshot = await artworkRef.get()
 
     if (snapshot.empty) {
       throw new Error(
-        `Artwork with tokenizationRequestId ${getTokenizationRequestById} not found`
+        `Artwork with tokenizationRequestId ${tokenizationRequestId} not found`
       )
     }
 
