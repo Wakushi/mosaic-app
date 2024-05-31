@@ -42,7 +42,9 @@ const BuyShareDialog: React.FC<BuyShareDialogProps> = ({
         title: "Success",
         description: "Share purchased successfully!",
       })
-      queryClient.invalidateQueries({ queryKey: ["shares"] })
+      queryClient.invalidateQueries({
+        queryKey: ["shares", "initialShares", "listedShares"],
+      })
       reset()
       setOpen(false)
       router.push("/marketplace")
@@ -63,7 +65,7 @@ const BuyShareDialog: React.FC<BuyShareDialogProps> = ({
         Buy
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="min-h-[50vh]">
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>Buy Share</DialogTitle>
           </DialogHeader>

@@ -75,6 +75,10 @@ export type ListedShareDetail = ShareDetail & {
   listedShare: ListedShare
 }
 
+export type OwnedShare = ShareDetail & {
+  balance: number
+}
+
 export type MasterworksWorkData = {
   title: string
   artist: string

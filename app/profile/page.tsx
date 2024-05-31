@@ -1,100 +1,47 @@
 "use client"
 
-import { useContext, useEffect, useState } from "react"
-import { useAccount } from "wagmi"
+import { useContext, useState } from "react"
 import Loader from "@/components/clientUi/Loader"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { DWORK_SHARES_ADDRESS_POLYGON } from "@/lib/contract"
 import Image from "next/image"
 import ListShareDialog from "@/components/listShareButton"
 import { unlistMarketShareItem } from "@/utils/user-contract-interactions"
 import BurnShareButton from "@/components/BurnShareButton"
 import { SharesContext } from "@/services/ShareContext"
+import { useQueryClient } from "@tanstack/react-query"
+import { ListedShareDetail, OwnedShare } from "@/types/artwork"
 
 const IMAGE_FALLBACK =
   "https://theredwindows.net/wp-content/themes/koji/assets/images/default-fallback-image.png"
 
 export default function Profile() {
-  const { address: clientAddress } = useAccount()
-  const [nfts, setNfts] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
   const [activeSection, setActiveSection] = useState<"owned" | "listed">(
     "owned"
   )
-
-  const [ownedShares, setOwnedShares] = useState<any[]>([])
-  const [ownedListedShares, setOwnedListedShares] = useState<any[]>([])
+  const queryClient = useQueryClient()
 
   const {
-    initialShares,
-    listedShares,
+    ownedShares,
+    ownedListedShares,
+    ownedSharesLoading,
+    ownedListedSharesLoading,
     initialSharesLoading,
     listedSharesLoading,
   } = useContext(SharesContext)
-
-  useEffect(() => {
-    if (clientAddress) {
-      const options = { method: "GET", headers: { accept: "application/json" } }
-
-      fetch(
-        `https://polygon-amoy.g.alchemy.com/nft/v3/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}/getNFTsForOwner?owner=${clientAddress}`,
-        options
-      )
-        .then((response) => response.json())
-        .then((response) => {
-          const filteredNfts = response.ownedNfts.filter(
-            (nft: any) =>
-              nft.contract.address.toLowerCase() ===
-              DWORK_SHARES_ADDRESS_POLYGON.toLowerCase()
-          )
-          setNfts(filteredNfts)
-          setLoading(false)
-        })
-        .catch((err) => {
-          console.error(err)
-          setLoading(false)
-        })
-    }
-  }, [clientAddress])
-
-  useEffect(() => {
-    if (nfts.length > 0 && initialShares.length > 0) {
-      const ownedShares: any[] = []
-      nfts.forEach((nft) => {
-        const ownedShare = initialShares.find(
-          (share) => +share.workShare.workTokenId === +nft.tokenId
-        )
-        ownedShares.push({
-          ...ownedShare,
-          balance: nft.balance,
-          tokenId: nft.tokenId,
-        })
-      })
-      setOwnedShares(ownedShares)
-    }
-  }, [nfts, initialShares])
-
-  useEffect(() => {
-    const ownedListedShares = listedShares.filter(
-      (share) =>
-        share.listedShare.seller.toLowerCase() === clientAddress?.toLowerCase()
-    )
-    setOwnedListedShares(ownedListedShares)
-  }, [clientAddress])
 
   const handleSearchChange = (e: any) => {
     setSearchTerm(e.target.value)
   }
 
   const handleUnlist = async (marketShareItemId: number) => {
+    if (ownedListedSharesLoading || !ownedListedShares?.length) return
     try {
       await unlistMarketShareItem(marketShareItemId)
-      const updatedListedShares = ownedListedShares.filter(
-        (share) => share.itemId !== marketShareItemId
-      )
-      setOwnedListedShares(updatedListedShares)
+      queryClient.invalidateQueries({
+        queryKey: ["ownedListedShares", "shares"],
+      })
     } catch (error) {
       console.error("Error unlisting market share item:", error)
     }
@@ -106,13 +53,18 @@ export default function Profile() {
       .includes(searchTerm.toLowerCase())
   )
 
-  const filteredListedShares = ownedListedShares.filter((share) =>
+  const filteredListedShares = ownedListedShares?.filter((share) =>
     share.tokenizationRequest?.certificate.artist
       .toLowerCase()
       .includes(searchTerm.toLowerCase())
   )
 
-  if (loading || initialSharesLoading || listedSharesLoading) {
+  if (
+    ownedSharesLoading ||
+    ownedListedSharesLoading ||
+    initialSharesLoading ||
+    listedSharesLoading
+  ) {
     return (
       <div className="min-h-screen flex items-center justify-center ">
         <Loader />
@@ -161,7 +113,7 @@ export default function Profile() {
           <>
             <h2 className="text-3xl mt-10 mb-4">Listed Shares</h2>
             <div className="grid grid-cols-3 gap-10 mt-4 justify-around">
-              {filteredListedShares.length ? (
+              {filteredListedShares && filteredListedShares.length ? (
                 <ListedSharesList
                   shares={filteredListedShares}
                   handleUnlist={handleUnlist}
@@ -177,15 +129,15 @@ export default function Profile() {
   )
 }
 
-const OwnedSharesList = ({ shares }: { shares: any[] }) => {
+const OwnedSharesList = ({ shares }: { shares: OwnedShare[] }) => {
   const [openDialogTokenId, setOpenDialogTokenId] = useState<number | null>(
     null
   )
   return (
     <>
-      {shares.map((share) => (
+      {shares.map((share, index) => (
         <div
-          key={share.tokenId}
+          key={`${share.workShare.sharesTokenId}-${index}-owned`}
           className="border border-slate-100 flex flex-col gap-2 justify-center p-4 rounded-md shadow-md items-center bg-white max-h-[400px]"
         >
           <div className="flex-1 w-full h-[200px] shadow-lg">
@@ -202,19 +154,21 @@ const OwnedSharesList = ({ shares }: { shares: any[] }) => {
             <p>{share.tokenizationRequest.certificate.artist}</p>
             <p className="mb-4 font-sans">x{share.balance}</p>
             {share.workShare.isRedeemable ? (
-              <BurnShareButton sharesTokenId={share.tokenId} />
+              <BurnShareButton sharesTokenId={share.workShare.sharesTokenId} />
             ) : (
               <Button
                 className="w-[150px]"
-                onClick={() => setOpenDialogTokenId(share.tokenId)}
+                onClick={() =>
+                  setOpenDialogTokenId(share.workShare.sharesTokenId)
+                }
               >
                 List share
               </Button>
             )}
           </div>
-          {openDialogTokenId === share.tokenId && (
+          {openDialogTokenId === share.workShare.sharesTokenId && (
             <ListShareDialog
-              sharesTokenId={share.tokenId}
+              sharesTokenId={share.workShare.sharesTokenId}
               open={true}
               setOpen={() => setOpenDialogTokenId(null)}
             />
@@ -229,14 +183,14 @@ const ListedSharesList = ({
   shares,
   handleUnlist,
 }: {
-  shares: any[]
+  shares: ListedShareDetail[]
   handleUnlist: (id: number) => void
 }) => {
   return (
     <>
-      {shares.map((share) => (
+      {shares.map((share, index) => (
         <div
-          key={share.itemId}
+          key={`${share.workShare.workTokenId}-${index}-listed`}
           className="border border-slate-100 flex flex-col gap-2 justify-center p-4 rounded-md shadow-md items-center bg-white max-h-[400px]"
         >
           <div className="flex-1 w-full h-[200px]">
@@ -251,7 +205,7 @@ const ListedSharesList = ({
           <div className="flex flex-col gap-1 justify-center items-center flex-1">
             <h2>{share.tokenizationRequest?.certificate?.work}</h2>
             <p>{share.tokenizationRequest?.certificate?.artist}</p>
-            <p>Amount: {share.amount}</p>
+            <p>Amount: {share.listedShare.amount}</p>
             {share.workShare?.isRedeemable && (
               <div className="text-red-500 text-center">
                 This share has been sold. Please unlist and burn your share.
@@ -259,7 +213,7 @@ const ListedSharesList = ({
             )}
             <Button
               className="w-full"
-              onClick={() => handleUnlist(share.itemId)}
+              onClick={() => handleUnlist(+share.listedShare.itemId)}
             >
               Unlist
             </Button>

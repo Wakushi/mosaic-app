@@ -1,8 +1,9 @@
-import { ReusableForm } from "@/components/clientUi/form";
-import { Artwork } from "@/types/artwork";
-import { z } from "zod";
-import { useAccount } from "wagmi";
-import { useToast } from "@/components/ui/use-toast";
+import { ReusableForm } from "@/components/clientUi/form"
+import { Artwork } from "@/types/artwork"
+import { z } from "zod"
+import { useAccount } from "wagmi"
+import { useToast } from "@/components/ui/use-toast"
+import { useQueryClient } from "@tanstack/react-query"
 
 const stringToNumber = z
   .union([
@@ -14,12 +15,12 @@ const stringToNumber = z
   ])
   .refine((value) => typeof value === "number", {
     message: "Must be a valid number",
-  });
+  })
 
 const formSchema = z.object({
   shareSupply: stringToNumber,
   sharePriceUsd: stringToNumber,
-});
+})
 
 const fieldsData = [
   {
@@ -34,17 +35,21 @@ const fieldsData = [
     description: "Price of each share in USD.",
     type: "number",
   },
-];
+]
 
-type FormValues = z.infer<typeof formSchema>;
+type FormValues = z.infer<typeof formSchema>
 
 interface CreateSharesFormProps {
-  artwork: Artwork;
-  closeModal: () => void;
+  artwork: Artwork
+  closeModal: () => void
 }
 
-export function CreateSharesForm({ artwork, closeModal}: CreateSharesFormProps) {
-  const { toast } = useToast();
+export function CreateSharesForm({
+  artwork,
+  closeModal,
+}: CreateSharesFormProps) {
+  const { toast } = useToast()
+  const queryClient = useQueryClient()
 
   const onSubmit = async (values: FormValues) => {
     try {
@@ -58,27 +63,29 @@ export function CreateSharesForm({ artwork, closeModal}: CreateSharesFormProps) 
           sharePriceUsd: values.sharePriceUsd,
           artworkTitle: artwork.title,
         }),
-      });
+      })
 
-      const responseData = await response.json();
+      const responseData = await response.json()
 
       if (!response.ok) {
-        throw new Error(responseData.error || "Failed to create shares");
+        throw new Error(responseData.error || "Failed to create shares")
       }
 
       toast({
         title: "Success",
         description: "Shares created successfully",
-      });
+      })
 
-      closeModal();
+      queryClient.invalidateQueries({ queryKey: ["shares"] })
+
+      closeModal()
     } catch (error) {
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Unknown error",
-      });
+      })
     }
-  };
+  }
 
   return (
     <ReusableForm
@@ -87,5 +94,5 @@ export function CreateSharesForm({ artwork, closeModal}: CreateSharesFormProps) 
       onSubmit={onSubmit}
       fields={fieldsData}
     />
-  );
+  )
 }
