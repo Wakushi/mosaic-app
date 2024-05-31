@@ -20,6 +20,10 @@ export function getColumns(refreshData: () => void): ColumnDef<Artwork>[] {
 
   return [
     {
+      accessorKey: "tokenizationRequestId",
+      header: "ID",
+    },
+    {
       accessorKey: "owner",
       header: "Owner",
     },
@@ -87,7 +91,8 @@ export function getColumns(refreshData: () => void): ColumnDef<Artwork>[] {
                 </DropdownMenuItem>
               ) : (
                 <>
-                  {artwork.status === "submitted" && (
+                  {(artwork.status === "submitted" ||
+                    artwork.status === "pending certificate extraction") && (
                     <DropdownMenuItem asChild>
                       <OpenTokenizationRequestButton
                         artwork={artwork}
@@ -104,8 +109,7 @@ export function getColumns(refreshData: () => void): ColumnDef<Artwork>[] {
                       />
                     </DropdownMenuItem>
                   )}
-                  {(artwork.status === "pending certificate extraction" ||
-                    artwork.status === "pending verification") && (
+                  {artwork.status === "pending verification" && (
                     <DropdownMenuItem disabled>
                       No actions available
                     </DropdownMenuItem>

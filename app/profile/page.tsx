@@ -82,7 +82,7 @@ export default function Profile() {
             placeholder="Search by artist"
             value={searchTerm}
             onChange={handleSearchChange}
-            className="p-2 border border-gray-300 rounded-md w-1/4"
+            className="p-2 border border-gray-300 rounded-md w-1/4 bg-white"
           />
           <Button
             variant={activeSection === "listed" ? "outline" : "default"}

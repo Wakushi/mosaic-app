@@ -1,8 +1,8 @@
 import { Abi } from "viem"
 export const DWORK_ADDRESS_POLYGON =
-  "0x8F1015A00E0E68De638e97bb1E2219483DAb4C7b"
+  "0x76Cca7aF84712CD17Db7CB46AF3934AEa05621a6"
 export const DWORK_SHARES_ADDRESS_POLYGON =
-  "0xe71E51976aFb96bb11A1BE7f5bd0adFcAc81d19e"
+  "0xD2150166D0B84590487FFd1Eb37BA36C5a10820b"
 
 export const DWORK_ADDRESS_OPTIMISM = ""
 export const DWORK_SHARES_ADDRESS_OPTIMISM = ""
@@ -989,7 +989,7 @@ export const DWORK_ABI: Abi = [
       {
         name: "tokenizationRequestId",
         type: "uint256",
-        indexed: false,
+        indexed: true,
         internalType: "uint256",
       },
     ],
