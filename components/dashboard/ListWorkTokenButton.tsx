@@ -38,7 +38,6 @@ const ListWorkTokenButton = forwardRef<
   } = useForm({
     resolver: zodResolver(schema),
   })
-  console.log(artwork)
 
   const onSubmit = async (data: any) => {
     const workTokenId = artwork.tokenizationRequest?.workTokenId
@@ -76,7 +75,7 @@ const ListWorkTokenButton = forwardRef<
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>List Work Token</DialogTitle>
+            <DialogTitle>List work for sale</DialogTitle>
             <DialogDescription>
               Enter the price in USD to list the work token.
             </DialogDescription>

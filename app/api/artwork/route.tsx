@@ -6,8 +6,8 @@ import {
   getArtworksByClientAddress,
 } from "@/utils/firebase-data"
 import { Artwork, TokenizationRequest } from "@/types/artwork"
-import { getTokenizationRequestById } from "@/utils/contract-interactions"
 import { getVerificationStepStatus } from "@/utils/helpers"
+import { getTokenizationRequestById } from "@/utils/user-contract-interactions"
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   try {

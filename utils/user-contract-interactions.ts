@@ -7,7 +7,12 @@ import {
 } from "@/lib/contract"
 import { readContract, simulateContract, writeContract } from "@wagmi/core"
 import { chainConfig } from "./blockchain-config"
-import { MasterworksWorkData, ShareDetail, WorkShare } from "@/types/artwork"
+import {
+  MasterworksWorkData,
+  ShareDetail,
+  WorkDetail,
+  WorkShare,
+} from "@/types/artwork"
 import { getMasterworksData } from "./external-data"
 import { parseEther, parseUnits } from "viem"
 
@@ -102,18 +107,19 @@ export async function xChainWorkTokenTransfer(
   destinationChainSelector: string
 ): Promise<string> {
   try {
+    const args = [
+      recipientAddress,
+      newOwnerName,
+      tokenizationRequestId,
+      destinationChainSelector,
+      1,
+      3000000,
+    ]
     const { request: transferRequest } = await simulateContract(config, {
       address: DWORK_ADDRESS_POLYGON,
       abi: DWORK_ABI,
       functionName: "xChainWorkTokenTransfer",
-      args: [
-        recipientAddress,
-        newOwnerName,
-        tokenizationRequestId,
-        destinationChainSelector,
-        1,
-        300000,
-      ],
+      args,
     })
 
     const result = await writeContract(config, transferRequest)
@@ -182,8 +188,8 @@ export async function getAllSharesDetails() {
         functionName: "getWorkSharesByTokenId",
         args: [i],
       })
-      if (!share.workTokenId) continue
 
+      if (!share.workTokenId) continue
       workShares.push({
         sharesTokenId: i,
         maxShareSupply: Number(share.maxShareSupply),
@@ -210,7 +216,7 @@ export async function getAllSharesDetails() {
         functionName: "getTokenizationRequest",
         args: [tokenizationRequestId],
       })
-
+      if (tokenizationRequest.isMinted === false) continue
       const masterworksData: MasterworksWorkData = await getMasterworksData(
         tokenizationRequest.certificate.artist,
         tokenizationRequest.certificate.work
@@ -283,8 +289,8 @@ export function convertBigIntToString(obj: any): any {
 
 export async function listWorkToken(workTokenId: number, listPriceUsd: string) {
   try {
-    console.log(listPriceUsd);
-    
+    console.log(listPriceUsd)
+
     const listPriceUsdFormatted = parseUnits(listPriceUsd, 6)
     console.log("listPriceUsdFormatted", listPriceUsdFormatted)
     console.log("workTokenId", workTokenId)
@@ -341,3 +347,82 @@ export async function buyWorkToken(workTokenId: number) {
   }
 }
 
+export async function getListedArtworks(): Promise<WorkDetail[]> {
+  try {
+    const lastTokenIdResult: any = await readContract(chainConfig, {
+      address: DWORK_ADDRESS_POLYGON,
+      abi: DWORK_ABI,
+      functionName: "getLastTokenId",
+    })
+    const lastTokenId = Number(lastTokenIdResult)
+    const listedArtworks: WorkDetail[] = []
+
+    for (let i = 1; i <= lastTokenId; i++) {
+      try {
+        const tokenizationRequestId =
+          await getTokenizationRequestIdByWorkTokenId(i)
+        const tokenizationRequest = await getTokenizationRequestById(
+          tokenizationRequestId.toString()
+        )
+        if (tokenizationRequest.workTokenId === "0") {
+          continue
+        }
+        const masterworksData = await getMasterworksData(
+          tokenizationRequest.certificate.artist,
+          tokenizationRequest.certificate.work
+        )
+        const workDetail: WorkDetail = {
+          tokenizationRequest,
+          masterworksData,
+        }
+
+        if (tokenizationRequest.isListed) {
+          listedArtworks.push(workDetail)
+        }
+      } catch (error) {
+        console.error(`Error processing work token ID ${i}:`, error)
+        continue
+      }
+    }
+
+    return listedArtworks
+  } catch (error) {
+    console.error("Error fetching listed artworks:", error)
+    throw new Error("Failed to fetch listed artworks")
+  }
+}
+
+export async function getTokenizationRequestIdByWorkTokenId(
+  workTokenId: number
+): Promise<number> {
+  try {
+    const result: any = await readContract(chainConfig, {
+      address: DWORK_ADDRESS_POLYGON,
+      abi: DWORK_ABI,
+      functionName: "getTokenizationRequestIdByWorkTokenId",
+      args: [workTokenId],
+    })
+    return Number(result)
+  } catch (error) {
+    console.error("Error getting tokenization request ID:", error)
+    throw new Error("Failed to get tokenization request ID")
+  }
+}
+
+export async function getTokenizationRequestById(
+  tokenizationRequestId: string
+) {
+  try {
+    const result = await readContract(chainConfig, {
+      address: DWORK_ADDRESS_POLYGON,
+      abi: DWORK_ABI,
+      functionName: "getTokenizationRequest",
+      args: [tokenizationRequestId],
+    })
+
+    return convertBigIntToString(result)
+  } catch (error) {
+    console.error("Error getting tokenization request:", error)
+    throw new Error("Failed to get tokenization request")
+  }
+}

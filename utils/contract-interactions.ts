@@ -7,12 +7,7 @@ import {
   DWORK_SHARES_ADDRESS_POLYGON,
   DWORK_SHARES_ABI,
 } from "@/lib/contract"
-import {
-  MasterworksWorkData,
-  ShareDetail,
-  WorkShare,
-  WorkDetail,
-} from "@/types/artwork"
+import { ShareDetail, WorkShare, WorkDetail } from "@/types/artwork"
 import { getMasterworksData } from "./external-data"
 import { chainConfig } from "./blockchain-config"
 import { readContract } from "@wagmi/core"
@@ -80,24 +75,6 @@ export async function requestWorkVerification(tokenizationRequestId: string) {
   } catch (error) {
     console.error("Error requesting work verification:", error)
     throw new Error("Failed to request work verification")
-  }
-}
-
-export async function getTokenizationRequestById(
-  tokenizationRequestId: string
-) {
-  try {
-    const result = await publicClient.readContract({
-      address: DWORK_ADDRESS_POLYGON,
-      abi: DWORK_ABI,
-      functionName: "getTokenizationRequest",
-      args: [tokenizationRequestId],
-    })
-
-    return convertBigIntToString(result)
-  } catch (error) {
-    console.error("Error getting tokenization request:", error)
-    throw new Error("Failed to get tokenization request")
   }
 }
 
@@ -213,68 +190,6 @@ export async function getListedItemById(id: number) {
   } catch (error) {
     console.error("Error getting listed items:", error)
     throw new Error("Failed to get listed items")
-  }
-}
-
-export async function getTokenizationRequestIdByWorkTokenId(
-  workTokenId: number
-): Promise<number> {
-  try {
-    const result: any = await readContract(chainConfig, {
-      address: DWORK_ADDRESS_POLYGON,
-      abi: DWORK_ABI,
-      functionName: "getTokenizationRequestIdByWorkTokenId",
-      args: [workTokenId],
-    })
-    return Number(result)
-  } catch (error) {
-    console.error("Error getting tokenization request ID:", error)
-    throw new Error("Failed to get tokenization request ID")
-  }
-}
-
-export async function fetchListedArtworks(): Promise<WorkDetail[]> {
-  try {
-    const lastTokenIdResult: any = await readContract(chainConfig, {
-      address: DWORK_ADDRESS_POLYGON,
-      abi: DWORK_ABI,
-      functionName: "getLastTokenId",
-    })
-    const lastTokenId = Number(lastTokenIdResult)
-    const listedArtworks: WorkDetail[] = []
-
-    for (let i = 1; i <= lastTokenId; i++) {
-      try {
-        const tokenizationRequestId =
-          await getTokenizationRequestIdByWorkTokenId(i)
-        const tokenizationRequest = await getTokenizationRequestById(
-          tokenizationRequestId.toString()
-        )
-        if (tokenizationRequest.workTokenId === "0") {
-          continue
-        }
-        const masterworksData = await getMasterworksData(
-          tokenizationRequest.certificate.artist,
-          tokenizationRequest.certificate.work
-        )
-        const workDetail: WorkDetail = {
-          tokenizationRequest,
-          masterworksData,
-        }
-
-        if (tokenizationRequest.isListed) {
-          listedArtworks.push(workDetail)
-        }
-      } catch (error) {
-        console.error(`Error processing work token ID ${i}:`, error)
-        continue
-      }
-    }
-
-    return listedArtworks
-  } catch (error) {
-    console.error("Error fetching listed artworks:", error)
-    throw new Error("Failed to fetch listed artworks")
   }
 }
 
