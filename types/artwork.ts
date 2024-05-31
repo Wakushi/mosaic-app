@@ -62,6 +62,11 @@ export type ShareDetail = {
   masterworksData: MasterworksWorkData
 }
 
+export type WorkDetail = {
+  tokenizationRequest: TokenizationRequest
+  masterworksData: MasterworksWorkData
+}
+
 export type ListedShare = {
   amount: number
   isSold: boolean

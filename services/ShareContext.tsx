@@ -1,26 +1,27 @@
-"use client"
-import { createContext, ReactNode } from "react"
-import { useQuery, UseQueryResult } from "@tanstack/react-query"
-import { ListedShareDetail, OwnedShare, ShareDetail } from "@/types/artwork"
-import {
-  getAllSharesDetails,
-  getListedShares,
-} from "@/utils/user-contract-interactions"
-import { useAccount } from "wagmi"
+"use client";
+import { useQuery, UseQueryResult } from "@tanstack/react-query";
+import { ListedShareDetail, OwnedShare, ShareDetail, WorkDetail } from "@/types/artwork";
+import { getAllSharesDetails, getListedShares } from "@/utils/user-contract-interactions";
+import { useAccount } from "wagmi";
+import { createContext, ReactNode, useEffect } from "react";
+import { DWORK_ADDRESS_OPTIMISM, DWORK_ADDRESS_POLYGON } from "@/lib/contract";
 
 interface SharesContextProviderProps {
-  children: ReactNode
+  children: ReactNode;
 }
 
 interface SharesContextProps {
-  initialShares: ShareDetail[]
-  initialSharesLoading: boolean
-  listedShares: ListedShareDetail[]
-  listedSharesLoading: boolean
-  ownedShares: OwnedShare[]
-  ownedSharesLoading: boolean
-  ownedListedShares?: ListedShareDetail[]
-  ownedListedSharesLoading?: boolean
+  initialShares: ShareDetail[];
+  initialSharesLoading: boolean;
+  listedShares: ListedShareDetail[];
+  listedSharesLoading: boolean;
+  ownedShares: OwnedShare[];
+  ownedSharesLoading: boolean;
+  ownedListedShares?: ListedShareDetail[];
+  ownedListedSharesLoading?: boolean;
+  listedArtworks: WorkDetail[];
+  listedArtworksLoading: boolean;
+  activeWorkContractAddress?: string;
 }
 
 const SharesContext = createContext<SharesContextProps>({
@@ -32,116 +33,127 @@ const SharesContext = createContext<SharesContextProps>({
   ownedSharesLoading: true,
   ownedListedShares: [],
   ownedListedSharesLoading: true,
-})
+  listedArtworks: [],
+  listedArtworksLoading: true,
+  activeWorkContractAddress: DWORK_ADDRESS_POLYGON,
+});
 
-export default function SharesContextProvider(
-  props: SharesContextProviderProps
-) {
-  const account = useAccount()
+export default function SharesContextProvider(props: SharesContextProviderProps) {
+  const account = useAccount();
+  const activeWorkContractAddress = getWorkContractAddress(account?.chain?.id || 80002);
 
-  const {
-    data: initialShares,
-    isLoading: initialSharesLoading,
-  }: UseQueryResult<ShareDetail[], Error> = useQuery<ShareDetail[], Error>({
+  function getWorkContractAddress(chainId: number) {
+    switch (chainId) {
+      case 80002:
+        return DWORK_ADDRESS_POLYGON;
+      case 11155420:
+        return DWORK_ADDRESS_OPTIMISM;
+      default:
+        return DWORK_ADDRESS_POLYGON;
+    }
+  }
+
+  useEffect(() => {}, [account]);
+
+  const { data: initialShares, isLoading: initialSharesLoading }: UseQueryResult<ShareDetail[], Error> = useQuery({
     queryKey: ["initialShares", "shares"],
     queryFn: fetchInitialShares,
     refetchOnMount: true,
     refetchOnWindowFocus: true,
-  })
+  });
 
-  const {
-    data: ownedShares,
-    isLoading: ownedSharesLoading,
-  }: UseQueryResult<OwnedShare[], Error> = useQuery<OwnedShare[], Error>({
+  const { data: ownedShares, isLoading: ownedSharesLoading }: UseQueryResult<OwnedShare[], Error> = useQuery({
     queryKey: ["ownedShares", "shares"],
     queryFn: getOwnerShares,
     enabled: !!account?.address && !!initialShares && !initialSharesLoading,
     refetchOnMount: true,
     refetchOnWindowFocus: true,
-  })
+  });
 
-  const {
-    data: listedShares,
-    isLoading: listedSharesLoading,
-  }: UseQueryResult<ListedShareDetail[], Error> = useQuery<
-    ListedShareDetail[],
-    Error
-  >({
+  const { data: listedShares, isLoading: listedSharesLoading }: UseQueryResult<ListedShareDetail[], Error> = useQuery({
     queryKey: ["listedShares", "shares"],
     queryFn: fetchListedShares,
     enabled: !initialSharesLoading && !!initialShares,
     refetchOnMount: true,
     refetchOnWindowFocus: true,
-  })
+  });
 
-  const {
-    data: ownedListedShares,
-    isLoading: ownedListedSharesLoading,
-  }: UseQueryResult<ListedShareDetail[], Error> = useQuery<
-    ListedShareDetail[],
-    Error
-  >({
+  const { data: ownedListedShares, isLoading: ownedListedSharesLoading }: UseQueryResult<ListedShareDetail[], Error> = useQuery({
     queryKey: ["ownedListedShares", "shares"],
     queryFn: getOwnerListedShares,
-    enabled: !!account.address && !!listedShares && !listedSharesLoading,
+    enabled: !!account?.address && !!listedShares && !listedSharesLoading,
     refetchOnMount: true,
     refetchOnWindowFocus: true,
-  })
+  });
+
+  const { data: listedArtworks, isLoading: listedArtworksLoading }: UseQueryResult<WorkDetail[], Error> = useQuery({
+    queryKey: ["listedArtworks"],
+    queryFn: fetchListedArtworks,
+  });
 
   async function fetchInitialShares(): Promise<ShareDetail[]> {
-    const shares = await getAllSharesDetails()
+    const shares = await getAllSharesDetails();
     if (!shares.length) {
-      throw new Error("Failed to fetch shares data")
+      throw new Error("Failed to fetch shares data");
     }
-    return shares
+    return shares;
   }
 
   async function fetchListedShares(): Promise<ListedShareDetail[]> {
-    if (!initialShares) return []
-    const listedShares = await getListedShares()
+    if (!initialShares) return [];
+    const listedShares = await getListedShares();
     if (!listedShares.length) {
-      throw new Error("Failed to fetch shares data")
+      throw new Error("Failed to fetch shares data");
     }
     const listedSharesDetailed = listedShares.map((listedShare: any) => {
       const shareDetail = initialShares.find(
         (share) => +share.workShare.sharesTokenId === +listedShare.sharesTokenId
-      )
+      );
       return {
         ...shareDetail,
         listedShare,
-      } as ListedShareDetail
-    })
-    return listedSharesDetailed
+      } as ListedShareDetail;
+    });
+    return listedSharesDetailed;
+  }
+
+  async function fetchListedArtworks(): Promise<WorkDetail[]> {
+    const response = await fetch("/api/listed-artworks");
+    if (!response.ok) {
+      throw new Error("Failed to fetch listed artworks");
+    }
+    const data = await response.json();
+    return data;
   }
 
   async function getOwnerShares(): Promise<OwnedShare[]> {
-    const clientAddress = account?.address
-    if (!clientAddress || !initialShares?.length) return []
-    const response = await fetch(`/api/nft?clientAddress=${clientAddress}`)
-    const ownedTokens = await response.json()
-    const detailedOwnerShares: OwnedShare[] = []
+    const clientAddress = account?.address;
+    if (!clientAddress || !initialShares?.length) return [];
+    const response = await fetch(`/api/nft?clientAddress=${clientAddress}`);
+    const ownedTokens = await response.json();
+    const detailedOwnerShares: OwnedShare[] = [];
     ownedTokens.forEach((token: any) => {
       const ownedShare = initialShares.find(
         (share) => +share.workShare.sharesTokenId === +token.tokenId
-      )
+      );
       if (ownedShare) {
         detailedOwnerShares.push({
           ...ownedShare,
           balance: token.balance,
-        })
+        });
       }
-    })
-    return detailedOwnerShares
+    });
+    return detailedOwnerShares;
   }
 
   async function getOwnerListedShares(): Promise<ListedShareDetail[]> {
-    const clientAddress = account?.address
-    if (!clientAddress || !listedShares?.length) return []
+    const clientAddress = account?.address;
+    if (!clientAddress || !listedShares?.length) return [];
     const ownedListedShares = listedShares.filter(
       (share) =>
         share.listedShare.seller.toLowerCase() === clientAddress.toLowerCase()
-    )
-    return ownedListedShares
+    );
+    return ownedListedShares;
   }
 
   const context = {
@@ -153,13 +165,16 @@ export default function SharesContextProvider(
     ownedSharesLoading,
     ownedListedShares: ownedListedShares ?? [],
     ownedListedSharesLoading,
-  }
+    listedArtworks: listedArtworks ?? [],
+    listedArtworksLoading,
+    activeWorkContractAddress,
+  };
 
   return (
     <SharesContext.Provider value={context}>
       {props.children}
     </SharesContext.Provider>
-  )
+  );
 }
 
-export { SharesContext }
+export { SharesContext };

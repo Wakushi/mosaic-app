@@ -6,10 +6,10 @@ import {
   DWORK_SHARES_ADDRESS_POLYGON,
 } from "@/lib/contract"
 import { readContract, simulateContract, writeContract } from "@wagmi/core"
-import { parseEther } from "viem"
 import { chainConfig } from "./blockchain-config"
 import { MasterworksWorkData, ShareDetail, WorkShare } from "@/types/artwork"
 import { getMasterworksData } from "./external-data"
+import { parseEther, parseUnits } from "viem"
 
 const PRICE_VARIATION_ALLOWANCE = 0.00001
 
@@ -279,3 +279,65 @@ export function convertBigIntToString(obj: any): any {
     return obj
   }
 }
+// Work
+
+export async function listWorkToken(workTokenId: number, listPriceUsd: string) {
+  try {
+    console.log(listPriceUsd);
+    
+    const listPriceUsdFormatted = parseUnits(listPriceUsd, 6)
+    console.log("listPriceUsdFormatted", listPriceUsdFormatted)
+    console.log("workTokenId", workTokenId)
+
+    const { request: listWorkTokenRequest } = await simulateContract(config, {
+      address: DWORK_ADDRESS_POLYGON,
+      abi: DWORK_ABI,
+      functionName: "listWorkToken",
+      args: [workTokenId, listPriceUsdFormatted],
+    })
+
+    const result = await writeContract(config, listWorkTokenRequest)
+
+    return result
+  } catch (error) {
+    console.error("Error listing work token:", error)
+    throw new Error("Failed to list work token")
+  }
+}
+
+export async function unlistWorkToken(workTokenId: number) {
+  try {
+    const { request: unlistWorkTokenRequest } = await simulateContract(config, {
+      address: DWORK_ADDRESS_POLYGON,
+      abi: DWORK_ABI,
+      functionName: "unlistWorkToken",
+      args: [workTokenId],
+    })
+
+    const result = await writeContract(config, unlistWorkTokenRequest)
+
+    return result
+  } catch (error) {
+    console.error("Error unlisting work token:", error)
+    throw new Error("Failed to unlist work token")
+  }
+}
+
+export async function buyWorkToken(workTokenId: number) {
+  try {
+    const { request: buyWorkTokenRequest } = await simulateContract(config, {
+      address: DWORK_ADDRESS_POLYGON,
+      abi: DWORK_ABI,
+      functionName: "buyWorkToken",
+      args: [workTokenId],
+    })
+
+    const result = await writeContract(config, buyWorkTokenRequest)
+
+    return result
+  } catch (error) {
+    console.error("Error buying work token:", error)
+    throw new Error("Failed to buy work token")
+  }
+}
+
