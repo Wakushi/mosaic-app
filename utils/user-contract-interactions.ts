@@ -4,6 +4,8 @@ import {
   DWORK_ADDRESS_POLYGON,
   DWORK_SHARES_ABI,
   DWORK_SHARES_ADDRESS_POLYGON,
+  ERC20_ABI,
+  USDC_ADDRESS_POLYGON,
 } from "@/lib/contract"
 import { readContract, simulateContract, writeContract } from "@wagmi/core"
 import { chainConfig } from "./blockchain-config"
@@ -14,7 +16,7 @@ import {
   WorkShare,
 } from "@/types/artwork"
 import { getMasterworksData } from "./external-data"
-import { parseEther, parseUnits } from "viem"
+import { Address, parseEther, parseUnits } from "viem"
 
 const PRICE_VARIATION_ALLOWANCE = 0.00001
 
@@ -23,6 +25,16 @@ export async function getNativeTokenPriceUsd(): Promise<number> {
     address: DWORK_SHARES_ADDRESS_POLYGON,
     abi: DWORK_SHARES_ABI,
     functionName: "getNativeTokenPriceUsd",
+  })
+  return Number(price)
+}
+
+export async function getUsdcValueOfUsd(usdAmount: number): Promise<number> {
+  const price: any = await readContract(config, {
+    address: DWORK_ADDRESS_POLYGON,
+    abi: DWORK_ABI,
+    functionName: "getUsdcValueOfUsd",
+    args: [usdAmount],
   })
   return Number(price)
 }
@@ -289,12 +301,7 @@ export function convertBigIntToString(obj: any): any {
 
 export async function listWorkToken(workTokenId: number, listPriceUsd: string) {
   try {
-    console.log(listPriceUsd)
-
     const listPriceUsdFormatted = parseUnits(listPriceUsd, 6)
-    console.log("listPriceUsdFormatted", listPriceUsdFormatted)
-    console.log("workTokenId", workTokenId)
-
     const { request: listWorkTokenRequest } = await simulateContract(config, {
       address: DWORK_ADDRESS_POLYGON,
       abi: DWORK_ABI,
@@ -329,8 +336,20 @@ export async function unlistWorkToken(workTokenId: number) {
   }
 }
 
-export async function buyWorkToken(workTokenId: number) {
+export async function buyWorkToken(value: number, workTokenId: number) {
   try {
+    console.log("value", value)
+    console.log("workTokenId", workTokenId)
+
+    const { request: approve } = await simulateContract(config, {
+      address: USDC_ADDRESS_POLYGON,
+      abi: ERC20_ABI,
+      functionName: "approve",
+      args: [DWORK_ADDRESS_POLYGON, value],
+    })
+
+    const approvalResult = await writeContract(config, approve)
+
     const { request: buyWorkTokenRequest } = await simulateContract(config, {
       address: DWORK_ADDRESS_POLYGON,
       abi: DWORK_ABI,

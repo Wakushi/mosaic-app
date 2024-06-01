@@ -85,6 +85,7 @@ const ListedArtworkPage = ({ params }: { params: { id: string } }) => {
           <BuyWorkButton
             workTokenId={listedArtwork.tokenizationRequest.workTokenId}
             workTitle={listedArtwork.tokenizationRequest.certificate.work}
+            workPrice={listedArtwork.tokenizationRequest.listingPriceUsd}
           />
         </div>
       </div>
