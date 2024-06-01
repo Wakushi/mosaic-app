@@ -30,6 +30,7 @@ const RequestWorkVerificationButton = forwardRef<
   const [alertOpen, setAlertOpen] = useState(false)
   const { toast } = useToast()
   const triggerRefresh = useUserStore((state) => state.triggerRefresh)
+  const setListening = useUserStore((state) => state.setListening)
 
   useWatchContractEvent({
     address: DWORK_ADDRESS_POLYGON,
@@ -67,6 +68,7 @@ const RequestWorkVerificationButton = forwardRef<
         }
       }
 
+      setListening(true)
       const response = await fetch("/api/admin/requestWorkVerification", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

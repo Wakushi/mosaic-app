@@ -3,6 +3,8 @@ export const DWORK_ADDRESS_POLYGON =
   "0xEfb5111fd7cFaa7e9a3fe8551a8B72b4FE7636bF"
 export const DWORK_SHARES_ADDRESS_POLYGON =
   "0x7891b1Cc9ce5BA1d7d7551401F98F37A052D32d6"
+export const WORK_VERIFIER_ADDRESS_POLYGON =
+  "0xbc79239a7ec78C6a9410e458F942d2C60F6D2570"
 
 export const DWORK_ADDRESS_OPTIMISM = ""
 export const DWORK_SHARES_ADDRESS_OPTIMISM = ""
@@ -2167,5 +2169,320 @@ export const DWORK_SHARES_ABI: Abi = [
     type: "error",
     name: "dWorkSharesManager__TransferFailedOnRedeem",
     inputs: [],
+  },
+]
+
+export const WORK_VERIFIER_ABI: Abi = [
+  {
+    type: "constructor",
+    inputs: [
+      {
+        name: "_functionsRouter",
+        type: "address",
+        internalType: "address",
+      },
+      { name: "_donId", type: "bytes32", internalType: "bytes32" },
+      {
+        name: "_functionsSubId",
+        type: "uint64",
+        internalType: "uint64",
+      },
+      {
+        name: "_secretReference",
+        type: "bytes",
+        internalType: "bytes",
+      },
+      {
+        name: "_workVerificationSource",
+        type: "string",
+        internalType: "string",
+      },
+      {
+        name: "_certificateExtractionSource",
+        type: "string",
+        internalType: "string",
+      },
+    ],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "getDWorkAddress",
+    inputs: [],
+    outputs: [{ name: "", type: "address", internalType: "address" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "getLastRequestId",
+    inputs: [],
+    outputs: [{ name: "", type: "bytes32", internalType: "bytes32" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "getLastVerifiedData",
+    inputs: [
+      {
+        name: "_tokenizationRequestId",
+        type: "uint256",
+        internalType: "uint256",
+      },
+    ],
+    outputs: [
+      {
+        name: "",
+        type: "tuple",
+        internalType: "struct IDWorkConfig.VerifiedWorkData",
+        components: [
+          { name: "artist", type: "string", internalType: "string" },
+          { name: "work", type: "string", internalType: "string" },
+          { name: "ownerName", type: "string", internalType: "string" },
+          { name: "priceUsd", type: "uint256", internalType: "uint256" },
+        ],
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "getRequestType",
+    inputs: [
+      {
+        name: "tokenizationRequestId",
+        type: "uint256",
+        internalType: "uint256",
+      },
+    ],
+    outputs: [
+      {
+        name: "",
+        type: "uint8",
+        internalType: "enum WorkVerifier.WorkCFRequestType",
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "getSecretsReference",
+    inputs: [],
+    outputs: [{ name: "", type: "bytes", internalType: "bytes" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "getTokenizationRequestId",
+    inputs: [{ name: "requestId", type: "bytes32", internalType: "bytes32" }],
+    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "handleOracleFulfillment",
+    inputs: [
+      { name: "requestId", type: "bytes32", internalType: "bytes32" },
+      { name: "response", type: "bytes", internalType: "bytes" },
+      { name: "err", type: "bytes", internalType: "bytes" },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "owner",
+    inputs: [],
+    outputs: [{ name: "", type: "address", internalType: "address" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "renounceOwnership",
+    inputs: [],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "sendCertificateExtractionRequest",
+    inputs: [
+      {
+        name: "_tokenizationRequestId",
+        type: "uint256",
+        internalType: "uint256",
+      },
+      { name: "_args", type: "string[]", internalType: "string[]" },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "sendWorkVerificationRequest",
+    inputs: [
+      {
+        name: "_tokenizationRequestId",
+        type: "uint256",
+        internalType: "uint256",
+      },
+      { name: "_args", type: "string[]", internalType: "string[]" },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "setDWorkAddress",
+    inputs: [{ name: "_dWork", type: "address", internalType: "address" }],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "transferOwnership",
+    inputs: [{ name: "newOwner", type: "address", internalType: "address" }],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "updateCFSubId",
+    inputs: [
+      {
+        name: "_subscriptionId",
+        type: "uint64",
+        internalType: "uint64",
+      },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "updateCertificateExtractionSource",
+    inputs: [{ name: "_newSource", type: "string", internalType: "string" }],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "updateDonId",
+    inputs: [{ name: "_newDonId", type: "bytes32", internalType: "bytes32" }],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "updateGasLimit",
+    inputs: [{ name: "_newGasLimit", type: "uint32", internalType: "uint32" }],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "updateSecretReference",
+    inputs: [
+      { name: "_secretReference", type: "bytes", internalType: "bytes" },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "updateWorkVerificationSource",
+    inputs: [{ name: "_newSource", type: "string", internalType: "string" }],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "event",
+    name: "ChainlinkRequestSent",
+    inputs: [
+      {
+        name: "requestId",
+        type: "bytes32",
+        indexed: false,
+        internalType: "bytes32",
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: "event",
+    name: "OwnershipTransferred",
+    inputs: [
+      {
+        name: "previousOwner",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+      {
+        name: "newOwner",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: "event",
+    name: "RequestFulfilled",
+    inputs: [
+      {
+        name: "id",
+        type: "bytes32",
+        indexed: true,
+        internalType: "bytes32",
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: "event",
+    name: "RequestSent",
+    inputs: [
+      {
+        name: "id",
+        type: "bytes32",
+        indexed: true,
+        internalType: "bytes32",
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: "event",
+    name: "VerifierTaskDone",
+    inputs: [
+      {
+        name: "tokenizationRequestId",
+        type: "uint256",
+        indexed: true,
+        internalType: "uint256",
+      },
+    ],
+    anonymous: false,
+  },
+  { type: "error", name: "EmptyArgs", inputs: [] },
+  { type: "error", name: "EmptySource", inputs: [] },
+  { type: "error", name: "NoInlineSecrets", inputs: [] },
+  { type: "error", name: "OnlyRouterCanFulfill", inputs: [] },
+  {
+    type: "error",
+    name: "OwnableInvalidOwner",
+    inputs: [{ name: "owner", type: "address", internalType: "address" }],
+  },
+  {
+    type: "error",
+    name: "OwnableUnauthorizedAccount",
+    inputs: [{ name: "account", type: "address", internalType: "address" }],
+  },
+  { type: "error", name: "dWorkVerifier__NotWorkContract", inputs: [] },
+  {
+    type: "error",
+    name: "dWorkVerifier__UnexpectedRequestID",
+    inputs: [{ name: "requestId", type: "bytes32", internalType: "bytes32" }],
   },
 ]

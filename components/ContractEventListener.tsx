@@ -2,7 +2,12 @@
 import { useEffect } from "react"
 import { useUserStore } from "@/store/useStore"
 import { useContractEvent } from "@/utils/useContractEvent"
-import { DWORK_ABI, DWORK_ADDRESS_POLYGON } from "@/lib/contract"
+import {
+  DWORK_ABI,
+  DWORK_ADDRESS_POLYGON,
+  WORK_VERIFIER_ABI,
+  WORK_VERIFIER_ADDRESS_POLYGON,
+} from "@/lib/contract"
 import { useToast } from "@/components/ui/use-toast"
 
 const ContractEventListener: React.FC = () => {
@@ -40,12 +45,25 @@ const ContractEventListener: React.FC = () => {
   })
 
   useContractEvent({
+    contractAddress: WORK_VERIFIER_ADDRESS_POLYGON,
+    abi: WORK_VERIFIER_ABI,
+    eventName: "VerifierTaskDone",
+    eventCallback: (logs) => {
+      console.log("Work verifier: ", logs)
+      toast({
+        title: "Verification finished",
+        description: "Work verification finished successfully",
+      })
+      setListening(false)
+    },
+  })
+
+  useContractEvent({
     contractAddress: DWORK_ADDRESS_POLYGON,
     abi: DWORK_ABI,
     eventName: "VerificationProcess",
     eventCallback: () => {
       triggerRefresh()
-      setListening(false)
     },
   })
 

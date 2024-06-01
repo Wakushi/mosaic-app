@@ -1,54 +1,64 @@
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/use-toast';
+import { forwardRef, useState } from "react"
+import { Button } from "@/components/ui/button"
+import { useToast } from "@/components/ui/use-toast"
 
 interface PerformUpkeepButtonProps {
-  tokenizationRequestId: string | number;
-  refreshData: () => void;
+  tokenizationRequestId: string | number
+  refreshData: () => void
 }
 
-const PerformUpkeepButton: React.FC<PerformUpkeepButtonProps> = ({ tokenizationRequestId, refreshData }) => {
-  const [isRequesting, setIsRequesting] = useState(false);
-  const { toast } = useToast();
+const PerformUpkeepButton = forwardRef<
+  HTMLDivElement,
+  PerformUpkeepButtonProps
+>(({ tokenizationRequestId, refreshData }, ref) => {
+  const [isRequesting, setIsRequesting] = useState(false)
+  const { toast } = useToast()
 
   const handlePerformUpkeep = async () => {
-    setIsRequesting(true);
+    setIsRequesting(true)
     try {
-      const response = await fetch('/api/performUpkeep', {
-        method: 'POST',
+      const response = await fetch("/api/performUpkeep", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ tokenizationRequestId: Number(tokenizationRequestId) }),
-      });
+        body: JSON.stringify({
+          tokenizationRequestId: Number(tokenizationRequestId),
+        }),
+      })
 
       if (!response.ok) {
-        throw new Error('Failed to perform upkeep');
+        throw new Error("Failed to perform upkeep")
       }
 
-      const result = await response.json();
+      const result = await response.json()
       toast({
-        title: 'Success',
-        description: 'Upkeep performed successfully',
-      });
+        title: "Success",
+        description: "Upkeep performed successfully",
+      })
 
-      refreshData();
+      refreshData()
     } catch (error) {
-      console.error('Error performing upkeep:', error);
+      console.error("Error performing upkeep:", error)
       toast({
-        title: 'Error',
-        description: 'Error performing upkeep. Please try again.',
-      });
+        title: "Error",
+        description: "Error performing upkeep. Please try again.",
+      })
     } finally {
-      setIsRequesting(false);
+      setIsRequesting(false)
     }
-  };
+  }
 
   return (
-    <Button onClick={handlePerformUpkeep} disabled={isRequesting || !tokenizationRequestId}>
-      {isRequesting ? 'Performing...' : 'Perform Upkeep'}
+    <Button
+      onClick={handlePerformUpkeep}
+      disabled={isRequesting || !tokenizationRequestId}
+    >
+      {isRequesting ? "Performing..." : "Perform Upkeep"}
     </Button>
-  );
-};
+  )
+})
 
-export default PerformUpkeepButton;
+PerformUpkeepButton.displayName = "PerformUpkeepButton"
+
+export default PerformUpkeepButton
