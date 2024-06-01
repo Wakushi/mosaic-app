@@ -353,7 +353,7 @@ export async function buyWorkToken(value: number, workTokenId: number) {
 
     const approvalResultHash = await writeContract(config, approve)
 
-    waitForTransactionReceipt(config, {
+    await waitForTransactionReceipt(config, {
       hash: approvalResultHash,
     })
 
