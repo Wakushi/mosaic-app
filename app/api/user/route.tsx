@@ -6,7 +6,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
     const clientData: Client = await req.json()
     await addClient({ ...clientData, userType: "Gallery" })
-    return NextResponse.json({ message: "Client added successfully" })
+    return NextResponse.json({ message: "Registration successfull" })
   } catch (error) {
     console.error("API error:", error)
     return NextResponse.json({ error: "Failed to add client" }, { status: 500 })

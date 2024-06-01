@@ -113,39 +113,39 @@ export default function Header() {
             </Modal>
           </>
         )}
-        {isRegistered === true && (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button>Menu</Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56">
-              <Link href={"/profile"}>
-                {" "}
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button>Menu</Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56">
+            <Link href={"/profile"}>
+              {" "}
+              <DropdownMenuItem>
+                Profile
+                <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+              </DropdownMenuItem>
+            </Link>
+
+            {userType === "Gallery" && (
+              <Link href="/dashboard">
                 <DropdownMenuItem>
-                  Profile
-                  <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+                  Dashboard
+                  <DropdownMenuShortcut>⌘D</DropdownMenuShortcut>
                 </DropdownMenuItem>
               </Link>
+            )}
+            {isAdmin && (
+              <Link href="/admin">
+                <DropdownMenuItem>
+                  Admin
+                  <DropdownMenuShortcut>⌘A</DropdownMenuShortcut>
+                </DropdownMenuItem>
+              </Link>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
 
-              {userType === "Gallery" && (
-                <Link href="/dashboard">
-                  <DropdownMenuItem>
-                    Dashboard
-                    <DropdownMenuShortcut>⌘D</DropdownMenuShortcut>
-                  </DropdownMenuItem>
-                </Link>
-              )}
-              {isAdmin && (
-                <Link href="/admin">
-                  <DropdownMenuItem>
-                    Admin
-                    <DropdownMenuShortcut>⌘A</DropdownMenuShortcut>
-                  </DropdownMenuItem>
-                </Link>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )}
         <ConnectButton
           accountStatus={{
             smallScreen: "avatar",

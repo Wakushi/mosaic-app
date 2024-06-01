@@ -3,6 +3,7 @@ import { ReusableForm } from "./clientUi/form"
 import { z } from "zod"
 import { useAccount } from "wagmi"
 import { useToast } from "@/components/ui/use-toast"
+import { useRouter } from "next/navigation"
 
 const formSchema = z.object({
   username: z.string().min(2).max(50),
@@ -27,6 +28,7 @@ type FormValues = z.infer<typeof formSchema>
 export function ProfileForm({ toggleModal }: { toggleModal: () => void }) {
   const account = useAccount()
   const { toast } = useToast()
+  const router = useRouter()
 
   const onSubmit = async (values: FormValues) => {
     if (account?.address) {
@@ -44,6 +46,7 @@ export function ProfileForm({ toggleModal }: { toggleModal: () => void }) {
           title: "Registration Success",
           description: responseData.message,
         })
+        router.push("/dashboard")
       } catch (error) {
         toast({
           title: "Registration Error",
