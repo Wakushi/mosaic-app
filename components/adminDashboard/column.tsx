@@ -14,6 +14,7 @@ import { useUserStore } from "@/store/useStore"
 import OpenTokenizationRequestButton from "@/components/adminDashboard/OpenTokenizationRequestButton"
 import RequestWorkVerificationButton from "@/components/adminDashboard/requestWorkVerification-button"
 import DeleteWorkTokenizationButton from "./DeleteTokenizationRequestButton"
+import PerformUpkeepButton from "./performUpkeep"
 
 export function getColumns(refreshData: () => void): ColumnDef<Artwork>[] {
   const listening = useUserStore.getState().listening
@@ -126,6 +127,12 @@ export function getColumns(refreshData: () => void): ColumnDef<Artwork>[] {
                     />
                   </DropdownMenuItem>
                 )}
+                 <DropdownMenuItem asChild>
+                <PerformUpkeepButton
+                  tokenizationRequestId={artwork.tokenizationRequestId || ''}
+                  refreshData={refreshData}
+                />
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         )

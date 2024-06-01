@@ -49,7 +49,7 @@ export default function Marketplace() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-white">
+    <div className="min-h-screen flex flex-col items-center bg-white justify-around">
       <div className="w-screen flex flex-col justify-center items-center p-24 pt-[8rem] gap-4">
         <h1 className="self-start text-4xl">Marketplace</h1>
         <p className="self-start mb-4 text-xl text-gray-600">Discover and trade fractionalized art shares</p>

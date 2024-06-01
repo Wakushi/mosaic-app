@@ -209,3 +209,24 @@ export function convertBigIntToString(obj: any): any {
     return obj
   }
 }
+
+export async function performUpkeep(tokenizationRequestId: number) {
+  try {
+    const formattedArgument = `0x000000000000000000000000000000000000000000000000000000000000000${tokenizationRequestId}`;
+
+    const { request: performUpkeepRequest } = await publicClient.simulateContract({
+      account: walletClient.account,
+      address: DWORK_ADDRESS_POLYGON,
+      abi: DWORK_ABI,
+      functionName: 'performUpkeep',
+      args: [formattedArgument],
+    });
+
+    const result = await walletClient.writeContract(performUpkeepRequest);
+
+    return result;
+  } catch (error) {
+    console.error('Error performing upkeep:', error);
+    throw new Error('Failed to perform upkeep');
+  }
+}

@@ -40,7 +40,7 @@ const ListedShareDetailPage = ({ params }: { params: { id: string } }) => {
   }
 
   return (
-    <div className="min-h-screen flex pt-28 px-14 gap-5">
+    <div className="min-h-screen flex pt-28 px-14 gap-5 justify-around">
       <div>
         <div className="p-10 w-[55vw] h-[80vh] bg-white shadow-lg border-4 border-double mb-4">
           <Image
