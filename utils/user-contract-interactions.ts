@@ -7,7 +7,13 @@ import {
   ERC20_ABI,
   USDC_ADDRESS_POLYGON,
 } from "@/lib/contract"
-import { readContract, simulateContract, writeContract } from "@wagmi/core"
+import {
+  getTransactionReceipt,
+  readContract,
+  simulateContract,
+  waitForTransactionReceipt,
+  writeContract,
+} from "@wagmi/core"
 import { chainConfig } from "./blockchain-config"
 import {
   MasterworksWorkData,
@@ -338,9 +344,6 @@ export async function unlistWorkToken(workTokenId: number) {
 
 export async function buyWorkToken(value: number, workTokenId: number) {
   try {
-    console.log("value", value)
-    console.log("workTokenId", workTokenId)
-
     const { request: approve } = await simulateContract(config, {
       address: USDC_ADDRESS_POLYGON,
       abi: ERC20_ABI,
@@ -348,7 +351,11 @@ export async function buyWorkToken(value: number, workTokenId: number) {
       args: [DWORK_ADDRESS_POLYGON, value],
     })
 
-    const approvalResult = await writeContract(config, approve)
+    const approvalResultHash = await writeContract(config, approve)
+
+    waitForTransactionReceipt(config, {
+      hash: approvalResultHash,
+    })
 
     const { request: buyWorkTokenRequest } = await simulateContract(config, {
       address: DWORK_ADDRESS_POLYGON,
