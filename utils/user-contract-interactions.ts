@@ -452,3 +452,33 @@ export async function getTokenizationRequestById(
     throw new Error("Failed to get tokenization request")
   }
 }
+
+export async function getOwnedShares(owner: Address): Promise<any> {
+  const result: any = await readContract(chainConfig, {
+    address: DWORK_SHARES_ADDRESS_POLYGON,
+    abi: DWORK_SHARES_ABI,
+    functionName: "getLastTokenId",
+  })
+
+  const shareLastTokenId = Number(result)
+
+  const ownedShares: any[] = []
+
+  for (let i = 1; i <= shareLastTokenId; i++) {
+    const balance: any = await readContract(config, {
+      address: DWORK_SHARES_ADDRESS_POLYGON,
+      abi: DWORK_SHARES_ABI,
+      functionName: "balanceOf",
+      args: [owner, i],
+    })
+
+    if (balance > 0) {
+      ownedShares.push({
+        sharesTokenId: i,
+        balance: Number(balance),
+      })
+    }
+  }
+
+  return ownedShares
+}

@@ -10,11 +10,11 @@ import {
   getAllSharesDetails,
   getListedArtworks,
   getListedShares,
+  getOwnedShares,
 } from "@/utils/user-contract-interactions"
 import { useAccount } from "wagmi"
 import { createContext, ReactNode, useEffect } from "react"
 import { DWORK_ADDRESS_OPTIMISM, DWORK_ADDRESS_POLYGON } from "@/lib/contract"
-import { MoralisNft } from "@/types/moralis-nft"
 
 interface SharesContextProviderProps {
   children: ReactNode
@@ -157,18 +157,17 @@ export default function SharesContextProvider(
   async function getOwnerShares(): Promise<OwnedShare[]> {
     const clientAddress = account?.address
     if (!clientAddress || !initialShares?.length) return []
-    const response = await fetch(`/api/nft?clientAddress=${clientAddress}`)
-    const ownedTokens = await response.json()
 
+    const ownedTokens = await getOwnedShares(clientAddress)
     const detailedOwnerShares: OwnedShare[] = []
-    ownedTokens.forEach((token: MoralisNft) => {
+    ownedTokens.forEach((token: any) => {
       const ownedShare = initialShares.find(
-        (share) => +share.workShare.sharesTokenId === +token.token_id
+        (share) => +share.workShare.sharesTokenId === +token.sharesTokenId
       )
       if (ownedShare) {
         detailedOwnerShares.push({
           ...ownedShare,
-          balance: +token.amount,
+          balance: +token.balance,
         })
       }
     })
